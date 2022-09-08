@@ -14,21 +14,20 @@
             <PatternLayout pattern="%style{%date{DEFAULT}}{yellow} [%t] %highlight{%-5level}{
                     FATAL=bg_red, ERROR=red, WARN=yellow, INFO=green}: %message%n%style{%exception}{red}"/>
         </Console>
+        <!--
         <RollingFile name="RollingTXTFileAppender" fileName="${log_file}"
                 filePattern="${archived_log}">
             <PatternLayout pattern="%d{DEFAULT} [%t] %-5level %message%n"/>
             <Policies>
-                <!-- Triggers a roll each time the application starts -->
                 <OnStartupTriggeringPolicy/>
 
                 <SizeBasedTriggeringPolicy size="8 kB"/>
 
-                <!-- Creates new archive each 12 hours -->
                 <TimeBasedTriggeringPolicy interval="12" modulate="true"/>
             </Policies>
-            <!-- Maximum index value = 10 -->
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
+        -->
     </Appenders>
     <Loggers>
         <Root level="TRACE">
