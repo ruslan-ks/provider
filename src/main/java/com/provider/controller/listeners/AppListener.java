@@ -2,7 +2,7 @@ package com.provider.controller.listeners;
 
 import com.provider.constants.attributes.AppAttributes;
 import com.provider.localization.LanguageInfo;
-import com.provider.localization.MapBasedLanguageLocaleInfo;
+import com.provider.localization.MapBasedLanguageInfo;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.*;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +34,7 @@ public class AppListener implements ServletContextListener {
     private void setAppLanguageInfoAttribute(@NotNull ServletContext servletContext) {
         final Map<String, Locale> languageLocaleMap = Map.of("en", Locale.ENGLISH,
                 "uk", new Locale("uk", "UA"));
-        final LanguageInfo languageInfo = MapBasedLanguageLocaleInfo.newInstance(languageLocaleMap);
+        final LanguageInfo languageInfo = MapBasedLanguageInfo.newInstance(languageLocaleMap);
         servletContext.setAttribute(AppAttributes.LANGUAGE_INFO, languageInfo);
     }
 

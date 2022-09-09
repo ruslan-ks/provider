@@ -10,10 +10,10 @@ import java.util.Set;
 /**
  * Contains languages and corresponding locales. Based on Map where keys are languages and values are locales.
  */
-public class MapBasedLanguageLocaleInfo implements LanguageInfo {
+public class MapBasedLanguageInfo implements LanguageInfo {
     private final Map<String, Locale> languageLocaleMap;
 
-    private MapBasedLanguageLocaleInfo(@NotNull Map<String, Locale> languageLocaleMap) {
+    private MapBasedLanguageInfo(@NotNull Map<String, Locale> languageLocaleMap) {
         this.languageLocaleMap = Map.copyOf(languageLocaleMap);
     }
 
@@ -22,8 +22,8 @@ public class MapBasedLanguageLocaleInfo implements LanguageInfo {
      * @param languageLocaleMap a map of supported languages and corresponding locales
      * @return new instance
      */
-    public static @NotNull MapBasedLanguageLocaleInfo newInstance(@NotNull Map<String, Locale> languageLocaleMap) {
-        return new MapBasedLanguageLocaleInfo(languageLocaleMap);
+    public static @NotNull MapBasedLanguageInfo newInstance(@NotNull Map<String, Locale> languageLocaleMap) {
+        return new MapBasedLanguageInfo(languageLocaleMap);
     }
 
     @Override
