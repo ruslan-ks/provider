@@ -1,7 +1,6 @@
 package com.provider.controller.command;
 
 import com.provider.constants.params.CommandParams;
-import com.provider.controller.command.exception.BadCommandException;
 import com.provider.controller.command.exception.FrontCommandException;
 import com.provider.controller.command.exception.IllegalCommandException;
 import jakarta.servlet.ServletConfig;
@@ -12,14 +11,14 @@ import org.jetbrains.annotations.NotNull;
 /**
  * FrontCommand factory implementation.
  */
-public class SimpleFrontCommandFactory implements FrontCommandFactory {
+public class FrontCommandFactoryImpl implements FrontCommandFactory {
 
     /**
      * A convenience method.
      * @return new factory instance
      */
-    public static SimpleFrontCommandFactory newInstance() {
-        return new SimpleFrontCommandFactory();
+    public static FrontCommandFactoryImpl newInstance() {
+        return new FrontCommandFactoryImpl();
     }
 
     @Override
