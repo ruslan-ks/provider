@@ -7,4 +7,6 @@ public final class RequestAttributes {
     private RequestAttributes() {}
 
     public static final String LOCALE = "locale";
+
+    public static final String FAILED_TO_SIGN_IN = "failedToSignIn";
 }
