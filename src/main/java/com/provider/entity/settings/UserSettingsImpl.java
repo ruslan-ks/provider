@@ -1,4 +1,4 @@
-package com.provider.settings;
+package com.provider.entity.settings;
 
 import org.jetbrains.annotations.NotNull;
 

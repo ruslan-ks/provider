@@ -3,10 +3,10 @@ package com.provider.controller.filters;
 import com.provider.constants.attributes.AppAttributes;
 import com.provider.constants.attributes.RequestAttributes;
 import com.provider.constants.attributes.SessionAttributes;
-import com.provider.constants.parameters.UserSettingsParameters;
+import com.provider.constants.params.UserSettingsParams;
 import com.provider.localization.LanguageInfo;
-import com.provider.settings.SimpleUserSettings;
-import com.provider.settings.UserSettings;
+import com.provider.entity.settings.UserSettingsImpl;
+import com.provider.entity.settings.UserSettings;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,48 +26,50 @@ public class UserSettingsFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        logger.trace("{}::init", this);
+        logger.info("{}::init", this);
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-        logger.trace("{}::doFilter", this);
+        logger.debug("doFilter: filter: {}", this);
         if (request instanceof HttpServletRequest) {
             final var httpServletRequest = (HttpServletRequest) request;
-            setUserSettingsAttribute(httpServletRequest);
-            setLocaleAttribute(httpServletRequest);
+            setLocalizationSettingsAttributes(httpServletRequest);
         } else {
             logger.error("Request object {} cannot be cast to HttServletRequest", request);
         }
         chain.doFilter(request, response);
     }
 
+    private void setLocalizationSettingsAttributes(HttpServletRequest httpServletRequest) {
+        setUserSettingsAttribute(httpServletRequest);
+        setLocaleAttribute(httpServletRequest);
+    }
+
     /**
      * Creates and sets UserSettings as session scope attribute
-     * @param request incoming request
      */
     private void setUserSettingsAttribute(HttpServletRequest request) {
         final HttpSession session = request.getSession();
-        final String userChosenLanguage = request.getParameter(UserSettingsParameters.LANGUAGE);
-        final UserSettings userSettings = SimpleUserSettings.newInstance();
+        final String userChosenLanguage = request.getParameter(UserSettingsParams.LANGUAGE);
+        final UserSettings userSettings = UserSettingsImpl.newInstance();
         boolean settingsChanged = false;
         if (userChosenLanguage != null) {
             userSettings.setLanguage(userChosenLanguage);
             settingsChanged = true;
-            logger.trace("Setting user language: {} on settings {}", userChosenLanguage, userSettings);
+            logger.debug("Setting user language: {} on settings {}", userChosenLanguage, userSettings);
         }
-        logger.trace("Setting user settings {} on session {}", userSettings, request.getSession());
 
         // if session changed or there is no userSettings in the session
         if (settingsChanged || session.getAttribute(SessionAttributes.USER_SETTINGS) == null) {
-           session.setAttribute(SessionAttributes.USER_SETTINGS, userSettings);
+            logger.debug("Setting user settings {} on session {}", userSettings, request.getSession());
+            session.setAttribute(SessionAttributes.USER_SETTINGS, userSettings);
         }
     }
 
     /**
      * Sets user locale as a request attribute
-     * @param request incoming request
      */
     private void setLocaleAttribute(HttpServletRequest request) {
         final var userSettings = (UserSettings) request.getSession().getAttribute(SessionAttributes.USER_SETTINGS);
@@ -77,7 +79,7 @@ public class UserSettingsFilter implements Filter {
             final Locale locale = languageInfo.getLocale(language);
             request.setAttribute(RequestAttributes.LOCALE, locale);
         } else {
-            logger.error("Attribute {} not found in session scope", SessionAttributes.USER_SETTINGS);
+            logger.error("User settings {} not found in session scope", SessionAttributes.USER_SETTINGS);
             setDefaultLocale(request, languageInfo);
         }
     }
