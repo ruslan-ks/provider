@@ -1,6 +1,12 @@
 package com.provider.controller.listeners;
 
 import com.provider.constants.attributes.AppAttributes;
+import com.provider.service.UserService;
+import com.provider.service.UserServiceImpl;
+import com.provider.dao.exception.DBException;
+import com.provider.entity.user.User;
+import com.provider.entity.user.UserImpl;
+import com.provider.entity.user.UserPassword;
 import com.provider.localization.LanguageInfo;
 import com.provider.localization.MapBasedLanguageInfo;
 import jakarta.servlet.*;
@@ -11,20 +17,23 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Sets application initial attributes used by its parts
  */
 @WebListener
 public class AppListener implements ServletContextListener {
-    private final Logger logger = LoggerFactory.getLogger(AppListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(AppListener.class);
 
     public AppListener() {}
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         setAppScopeAttributes(servletContextEvent.getServletContext());
-        logger.trace("Application context initialized");
+        logger.info("Application context initialized successfully");
+
+        tryCreateRootUser();
     }
 
     private void setAppScopeAttributes(@NotNull ServletContext servletContext) {
@@ -36,6 +45,30 @@ public class AppListener implements ServletContextListener {
                 "uk", new Locale("uk", "UA"));
         final LanguageInfo languageInfo = MapBasedLanguageInfo.newInstance(languageLocaleMap);
         servletContext.setAttribute(AppAttributes.LANGUAGE_INFO, languageInfo);
+    }
+
+    public void tryCreateRootUser() {
+        try {
+            // TODO: fix this: root object doesn't get updated if root user already exists in db.
+            User root = UserImpl.newInstance(0, "root", "root", "root", "000000",
+                    User.Role.root);
+            final UserService userService = UserServiceImpl.newInstance();
+            final Optional<User> found = userService.findUserByLogin(root.getLogin());
+            final UserPassword rootPassword;
+            if (found.isEmpty()) {
+                // Create new password and insert with new user
+                rootPassword = UserPassword.hash("password");
+                final boolean inserted = userService.insertUser(root, rootPassword);
+                logger.info("Init: inserted root user: {}", inserted);
+            } else {
+                // Get existing user and password
+                root = found.get();
+                rootPassword = userService.findUserPassword(root.getId()).orElseThrow();
+            }
+            logger.info("Root user: {}\nRoot user password: {}", root, rootPassword);
+        } catch (DBException ex) {
+            logger.error("Failed to create root user", ex);
+        }
     }
 
     @Override
