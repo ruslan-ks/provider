@@ -4,13 +4,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public class SimpleUserSettings implements UserSettings {
+public class UserSettingsImpl implements UserSettings {
     private String language;
 
-    private SimpleUserSettings() {}
+    private UserSettingsImpl() {}
 
-    public static @NotNull SimpleUserSettings newInstance() {
-        return new SimpleUserSettings();
+    public static @NotNull UserSettingsImpl newInstance() {
+        return new UserSettingsImpl();
     }
 
     @Override
