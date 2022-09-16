@@ -9,9 +9,9 @@
 <include:bootstrapStyles/>
 <header class="navbar navbar-expand-md bg-dark navbar-dark">
     <div class="container">
-        <a href="#" class="navbar-brand">Provi<span class="badge bg-warning text-dark p-1">der</span></a>
+        <a href="#" class="navbar-brand">Provider</a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
 
