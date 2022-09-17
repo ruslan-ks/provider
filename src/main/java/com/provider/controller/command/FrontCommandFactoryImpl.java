@@ -26,6 +26,9 @@ public class FrontCommandFactoryImpl implements FrontCommandFactory {
                                             @NotNull HttpServletResponse response,
                                             @NotNull ServletConfig config) throws FrontCommandException {
         final String paramCommand = request.getParameter(CommandParams.COMMAND);
+        if (paramCommand == null) {
+            throw new IllegalCommandException("Parameter '" + CommandParams.COMMAND + "' is null");
+        }
         switch (paramCommand) {
             case CommandParams.SIGN_IN:
                 return SignInCommand.newInstance(request, response);

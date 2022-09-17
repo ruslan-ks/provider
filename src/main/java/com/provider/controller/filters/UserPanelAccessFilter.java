@@ -37,7 +37,9 @@ public class UserPanelAccessFilter implements Filter {
         if (signedUser != null) {
             chain.doFilter(request, response);
         } else {
-            request.getRequestDispatcher("/signIn").forward(request, response);
+            final ServletContext context = request.getServletContext();
+            final String signInPageUrl = context.getInitParameter("signInPath");
+            request.getRequestDispatcher(signInPageUrl).forward(request, response);
         }
     }
 }

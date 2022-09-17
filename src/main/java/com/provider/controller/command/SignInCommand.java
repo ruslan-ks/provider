@@ -7,6 +7,7 @@ import com.provider.service.UserServiceImpl;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,6 +27,9 @@ public class SignInCommand implements FrontCommand {
     private final HttpServletRequest request;
     private final HttpServletResponse response;
 
+    final String userPanelPath;
+    final String signInPath;
+
     private SignInCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response)
             throws CommandParamException {
         final String paramLogin = request.getParameter(SignInParams.LOGIN);
@@ -37,6 +41,10 @@ public class SignInCommand implements FrontCommand {
         this.paramPassword = paramPassword;
         this.request = request;
         this.response = response;
+
+        final ServletContext context = request.getServletContext();
+        userPanelPath = request.getContextPath() + "/" + context.getInitParameter("userPanelPath");
+        signInPath = request.getContextPath() + "/" + context.getInitParameter("signInPath");
     }
 
     public static @NotNull FrontCommand newInstance(@NotNull HttpServletRequest request,
@@ -55,13 +63,9 @@ public class SignInCommand implements FrontCommand {
         if (userOptional.isPresent()) {
             final HttpSession session = request.getSession();
             session.setAttribute(SessionAttributes.SIGNED_USER, userOptional.get());
-            response.sendRedirect("userPanel");
+            response.sendRedirect(userPanelPath);
             return;
         }
-        response.sendRedirect("signIn?" + SignInParams.FAILED_TO_SIGN_IN + "=true");
-    }
-
-    private boolean isSomeoneSignedIn() {
-        return request.getSession().getAttribute(SessionAttributes.SIGNED_USER) != null;
+        response.sendRedirect(signInPath + "?" + SignInParams.FAILED_TO_SIGN_IN + "=true");
     }
 }
