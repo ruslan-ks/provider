@@ -26,7 +26,7 @@ public class SignInAccessFilter implements Filter {
             final var httpServletRequest = (HttpServletRequest) request;
             if (isSomeoneSignedIn(httpServletRequest)) {
                 final ServletContext context = request.getServletContext();
-                final String userPanelPath = context.getInitParameter("userPanelPath");
+                final String userPanelPath = context.getInitParameter("userPanel");
                 request.getRequestDispatcher(userPanelPath).forward(request, response);
             }
         } else {

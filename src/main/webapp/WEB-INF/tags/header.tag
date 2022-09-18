@@ -33,11 +33,12 @@
                     <li class="nav-item">
                         <c:choose>
                             <c:when test="${not empty sessionScope[SessionAttributes.SIGNED_USER]}">
-                                <a href="userPanel"
+                                <a href="${pageContext.request.contextPath}/${initParam.userPanel}"
                                    class="nav-link">${sessionScope[SessionAttributes.SIGNED_USER].name}</a>
                             </c:when>
                             <c:otherwise>
-                                <a href="signIn" class="nav-link"><fmt:message key="nav.signIn"/></a>
+                                <a href="${pageContext.request.contextPath}/${initParam.signIn}"
+                                   class="nav-link"><fmt:message key="nav.signIn"/></a>
                             </c:otherwise>
                         </c:choose>
 

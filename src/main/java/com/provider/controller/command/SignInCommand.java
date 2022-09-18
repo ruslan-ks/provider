@@ -43,8 +43,8 @@ public class SignInCommand implements FrontCommand {
         this.response = response;
 
         final ServletContext context = request.getServletContext();
-        userPanelPath = request.getContextPath() + "/" + context.getInitParameter("userPanelPath");
-        signInPath = request.getContextPath() + "/" + context.getInitParameter("signInPath");
+        userPanelPath = request.getContextPath() + "/" + context.getInitParameter("userPanel");
+        signInPath = request.getContextPath() + "/" + context.getInitParameter("signIn");
     }
 
     public static @NotNull FrontCommand newInstance(@NotNull HttpServletRequest request,

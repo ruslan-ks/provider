@@ -5,12 +5,16 @@
          version="5.0">
     <!-- Page url paths relative to application context path -->
     <context-param>
-        <param-name>signInPath</param-name>
+        <param-name>signIn</param-name>
         <param-value>signIn</param-value>
     </context-param>
     <context-param>
-        <param-name>userPanelPath</param-name>
+        <param-name>userPanel</param-name>
         <param-value>userPanel</param-value>
+    </context-param>
+    <context-param>
+        <param-name>controller</param-name>
+        <param-value>controller</param-value>
     </context-param>
 
     <!-- JSP mappings are placed here. Servlet mappings are configured using annotations -->

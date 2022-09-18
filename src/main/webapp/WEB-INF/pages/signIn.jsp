@@ -20,7 +20,7 @@
 <fmt:bundle basename="LabelsBundle">
     <div class="alert alert-primary mx-auto mt-5 mb-1 w-50"><fmt:message key="signIn.howToGetRegisteredMsg"/></div>
 
-    <form method="post" action="controller?${CommandParams.COMMAND}=${CommandParams.SIGN_IN}"
+    <form method="post" action="${initParam.controller}?${CommandParams.COMMAND}=${CommandParams.SIGN_IN}"
           class="container-sm w-50 my-2 p-4 bg-light shadow rounded">
         <h6 ><fmt:message key="signIn.enterLoginAndPass"/></h6>
         <hr>
