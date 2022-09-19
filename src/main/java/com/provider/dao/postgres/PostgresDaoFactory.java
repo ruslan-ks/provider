@@ -1,8 +1,7 @@
 package com.provider.dao.postgres;
 
-import com.provider.dao.DaoFactory;
-import com.provider.dao.UserDao;
-import com.provider.dao.UserPasswordDao;
+import com.provider.dao.*;
+import com.provider.dao.exception.DBException;
 import org.jetbrains.annotations.NotNull;
 
 public class PostgresDaoFactory implements DaoFactory {
@@ -18,5 +17,15 @@ public class PostgresDaoFactory implements DaoFactory {
     @Override
     public @NotNull UserPasswordDao newUserPasswordDao() {
         return new PostgresUserPasswordDao();
+    }
+
+    @Override
+    public @NotNull UserStatusDao newUserStatusDao() {
+        return new PostgresUserStatusDao();
+    }
+
+    @Override
+    public @NotNull ConnectionSupplier newConnectionSupplier() throws DBException {
+        return new PostgresConnectionSupplier();
     }
 }

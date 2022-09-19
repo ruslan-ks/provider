@@ -1,19 +1,18 @@
 package com.provider.service;
 
-import com.provider.dao.ConnectionSupplier;
-import com.provider.dao.DaoFactory;
-import com.provider.dao.UserDao;
-import com.provider.dao.UserPasswordDao;
+import com.provider.dao.*;
 import com.provider.dao.exception.DBException;
-import com.provider.dao.postgres.PostgresConnectionSupplier;
 import com.provider.dao.postgres.PostgresDaoFactory;
 import com.provider.dao.transaction.Transaction;
 import com.provider.entity.user.User;
 import com.provider.entity.user.UserPassword;
+import com.provider.entity.user.UserStatus;
+import com.provider.entity.user.UserStatusImpl;
 import com.provider.entity.user.hashing.PasswordHashing;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
+import java.time.Instant;
 import java.util.Optional;
 
 /**
@@ -30,7 +29,7 @@ public class UserServiceImpl implements UserService {
 
     private UserServiceImpl() throws DBException {
         daoFactory = PostgresDaoFactory.newInstance();
-        connectionSupplier = PostgresConnectionSupplier.newInstance();
+        connectionSupplier = daoFactory.newConnectionSupplier();
     }
 
     public static UserServiceImpl newInstance() throws DBException {
@@ -63,19 +62,28 @@ public class UserServiceImpl implements UserService {
     public boolean insertUser(@NotNull User user, @NotNull UserPassword userPassword) throws DBException {
         final UserDao userDao = daoFactory.newUserDao();
         final UserPasswordDao userPasswordDao = daoFactory.newUserPasswordDao();
-        try (var transaction = Transaction.of(connectionSupplier.get(), userDao, userPasswordDao)) {
+        final UserStatusDao userStatusDao = daoFactory.newUserStatusDao();
+        try (var transaction = Transaction.of(connectionSupplier.get(), userDao, userPasswordDao,
+                userStatusDao)) {
             final boolean userInserted;
             final boolean passwordInserted;
+            final boolean statusInserted;
             try {
                 userInserted = userDao.insert(user);
+
                 userPassword.setUserId(user.getId());
                 passwordInserted = userPasswordDao.insert(userPassword);
+
+                final UserStatus userStatus = UserStatusImpl.newInstance(user.getId(), UserStatus.Status.ACTIVE,
+                        "new", Instant.now());
+                statusInserted = userStatusDao.insert(userStatus);
+
                 transaction.commit();
             } catch (Throwable ex) {
                 transaction.rollback();
                 throw ex;
             }
-            return userInserted && passwordInserted;
+            return userInserted && passwordInserted && statusInserted;
         }
     }
 
