@@ -3,6 +3,7 @@
 <%@ tag import="com.provider.constants.attributes.SessionAttributes" %>
 <%@ tag import="com.provider.constants.attributes.RequestAttributes" %>
 <%@ tag import="com.provider.constants.params.UserSettingsParams" %>
+<%@ tag import="com.provider.constants.params.CommandParams" %>
 <%@ taglib prefix="include" tagdir="/WEB-INF/tags/include" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -30,19 +31,30 @@
                     <li class="nav-item"><a href="#" class="nav-link"><fmt:message key="nav.main"/></a></li>
                     <li class="nav-item"><a href="#" class="nav-link"><fmt:message key="nav.catalogue"/></a></li>
                     <li class="nav-item"><a href="#" class="nav-link"><fmt:message key="nav.about"/></a></li>
-                    <li class="nav-item">
-                        <c:choose>
-                            <c:when test="${not empty sessionScope[SessionAttributes.SIGNED_USER]}">
-                                <a href="${pageContext.request.contextPath}/${initParam.userPanel}"
-                                   class="nav-link">${sessionScope[SessionAttributes.SIGNED_USER].name}</a>
-                            </c:when>
-                            <c:otherwise>
+                    <c:choose>
+                        <c:when test="${not empty sessionScope[SessionAttributes.SIGNED_USER]}">
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" id="navbarScrollingDropdown" role="button"
+                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                        ${sessionScope[SessionAttributes.SIGNED_USER].name}
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
+                                    <li><a href="${pageContext.request.contextPath}/${initParam.userPanel}"
+                                           class="dropdown-item"><fmt:message key="nav.userPanel"/></a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item"
+                                           href="${initParam.controller}?${CommandParams.COMMAND}=${CommandParams.SIGN_OUT}">
+                                        <fmt:message key="nav.signOut"/></a></li>
+                                </ul>
+                            </li>
+                        </c:when>
+                        <c:otherwise>
+                            <li class="nav-item">
                                 <a href="${pageContext.request.contextPath}/${initParam.signIn}"
                                    class="nav-link"><fmt:message key="nav.signIn"/></a>
-                            </c:otherwise>
-                        </c:choose>
-
-                    </li>
+                            </li>
+                        </c:otherwise>
+                    </c:choose>
                     <li class="nav-item">
                         <select name="${UserSettingsParams.LANGUAGE}" id="langSelect" class="form-select"
                                 aria-label="language" onchange="handleLanguageSelectChange()">

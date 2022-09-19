@@ -1,6 +1,8 @@
-package com.provider.controller.command;
+package com.provider.controller.command.impl;
 
 import com.provider.constants.params.CommandParams;
+import com.provider.controller.command.FrontCommand;
+import com.provider.controller.command.FrontCommandFactory;
 import com.provider.controller.command.exception.FrontCommandException;
 import com.provider.controller.command.exception.IllegalCommandException;
 import jakarta.servlet.ServletConfig;
@@ -31,7 +33,9 @@ public class FrontCommandFactoryImpl implements FrontCommandFactory {
         }
         switch (paramCommand) {
             case CommandParams.SIGN_IN:
-                return SignInCommand.newInstance(request, response);
+                return new SignInCommand(request, response);
+            case CommandParams.SIGN_OUT:
+                return new SignOutCommand(request, response);
             default:
                 throw new IllegalCommandException("Unknown command: " + paramCommand);
         }
