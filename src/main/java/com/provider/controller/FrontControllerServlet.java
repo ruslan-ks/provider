@@ -2,7 +2,7 @@ package com.provider.controller;
 
 import com.provider.controller.command.FrontCommand;
 import com.provider.controller.command.FrontCommandFactory;
-import com.provider.controller.command.FrontCommandFactoryImpl;
+import com.provider.controller.command.impl.FrontCommandFactoryImpl;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;

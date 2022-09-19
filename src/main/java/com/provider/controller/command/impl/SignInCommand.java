@@ -1,13 +1,13 @@
-package com.provider.controller.command;
+package com.provider.controller.command.impl;
 
 import com.provider.constants.attributes.SessionAttributes;
 import com.provider.constants.params.SignInParams;
+import com.provider.controller.command.FrontCommand;
 import com.provider.service.UserService;
 import com.provider.service.UserServiceImpl;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
-import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,19 +19,15 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Optional;
 
-public class SignInCommand implements FrontCommand {
+public class SignInCommand extends FrontCommand {
     private static final Logger logger = LoggerFactory.getLogger(SignInCommand.class);
 
     private final String paramLogin;
     private final String paramPassword;
-    private final HttpServletRequest request;
-    private final HttpServletResponse response;
 
-    final String userPanelPath;
-    final String signInPath;
-
-    private SignInCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response)
+    SignInCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response)
             throws CommandParamException {
+        super(request, response);
         final String paramLogin = request.getParameter(SignInParams.LOGIN);
         final String paramPassword = request.getParameter(SignInParams.PASSWORD);
         if (paramLogin == null || paramPassword == null) {
@@ -39,24 +35,13 @@ public class SignInCommand implements FrontCommand {
         }
         this.paramLogin = paramLogin;
         this.paramPassword = paramPassword;
-        this.request = request;
-        this.response = response;
 
-        final ServletContext context = request.getServletContext();
-        userPanelPath = request.getContextPath() + "/" + context.getInitParameter("userPanel");
-        signInPath = request.getContextPath() + "/" + context.getInitParameter("signIn");
-    }
 
-    public static @NotNull FrontCommand newInstance(@NotNull HttpServletRequest request,
-                                                    @NotNull HttpServletResponse response)
-            throws CommandParamException {
-        return new SignInCommand(request, response);
     }
 
     @Override
     public void execute() throws ServletException, IOException, DBException {
-        // TODO: remove this logs
-        logger.debug("SignInCommand.execute: login: {}, password: {}", paramLogin, paramPassword);
+        logger.debug("SignInCommand.execute: request: {}", request);
 
         final UserService userService = UserServiceImpl.newInstance();
         final Optional<User> userOptional = userService.authenticate(paramLogin, paramPassword);
