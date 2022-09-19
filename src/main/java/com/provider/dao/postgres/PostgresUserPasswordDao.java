@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class PostgresUserPasswordDao extends UserPasswordDao {
+
+    PostgresUserPasswordDao() {}
+
     @Override
     public @NotNull List<UserPassword> findAll() {
         throw new UnsupportedOperationException();

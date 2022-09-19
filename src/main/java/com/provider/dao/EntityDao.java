@@ -18,10 +18,26 @@ import java.util.Optional;
 public abstract class EntityDao<K, T extends Entity> {
     protected Connection connection;
 
+    /**
+     * Sets jdbc connection
+     * @param connection jdbc connection
+     */
     public void setConnection(@NotNull Connection connection) {
         this.connection = connection;
     }
 
+    /**
+     * Sets connection field to null
+     */
+    public void resetConnection() {
+        this.connection = null;
+    }
+
+    /**
+     * Finds entity by key
+     * @param key entity table key, most often - Integer or Long
+     * @return optional containing entity if found, empty optional otherwise
+     */
     public abstract @NotNull Optional<T> findByKey(@NotNull K key) throws DBException;
 
     public abstract @NotNull List<T> findAll() throws DBException;

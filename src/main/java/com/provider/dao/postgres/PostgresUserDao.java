@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class PostgresUserDao extends UserDao {
+
+    PostgresUserDao() {}
+
     @Override
     public @NotNull Optional<User> findByKey(@NotNull Long key) {
         throw new UnsupportedOperationException();

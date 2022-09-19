@@ -6,18 +6,19 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 public class TransactionImpl implements Transaction {
     private final Connection connection;
     private int previousTransactionIsolation;
+    private final List<EntityDao<?, ?>> entityDaoList;
 
     private TransactionImpl(@NotNull Connection connection, @NotNull EntityDao<?, ?>... entityDaos)
             throws DBException {
         this.connection = connection;
         tryConfigureConnection();
-        for (var dao : entityDaos) {
-            dao.setConnection(this.connection);
-        }
+        this.entityDaoList = List.of(entityDaos);
+        this.entityDaoList.forEach(dao -> dao.setConnection(this.connection));
     }
 
     public static TransactionImpl newInstance(@NotNull Connection connection,
@@ -60,6 +61,7 @@ public class TransactionImpl implements Transaction {
             connection.setAutoCommit(false);
             connection.setTransactionIsolation(previousTransactionIsolation);
             connection.close();
+            entityDaoList.forEach(EntityDao::resetConnection);
         } catch (SQLException ex) {
             throw new DBException(ex);
         }

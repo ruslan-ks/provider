@@ -14,16 +14,12 @@ import java.sql.SQLException;
 public class PostgresConnectionSupplier implements ConnectionSupplier {
     private final Context context;
 
-    private PostgresConnectionSupplier() throws DBException {
+    PostgresConnectionSupplier() throws DBException {
         try {
             context = new InitialContext();
         } catch (NamingException ex) {
             throw new DBException(ex);
         }
-    }
-
-    public static PostgresConnectionSupplier newInstance() throws DBException {
-        return new PostgresConnectionSupplier();
     }
 
     @Override
