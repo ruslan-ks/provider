@@ -9,4 +9,5 @@ public final class CommandParams {
 
     public static final String COMMAND = "command";
     public static final String SIGN_IN = "signIn";
+    public static final String SIGN_OUT = "signOut";
 }
