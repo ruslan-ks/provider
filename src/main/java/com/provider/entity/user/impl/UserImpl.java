@@ -1,5 +1,6 @@
-package com.provider.entity.user;
+package com.provider.entity.user.impl;
 
+import com.provider.entity.user.User;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -77,7 +78,6 @@ public class UserImpl implements User {
                 '}';
     }
 
-    // TODO: maybe I should change these methods... too many mutable fields used
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

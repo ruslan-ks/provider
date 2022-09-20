@@ -1,5 +1,6 @@
-package com.provider.entity.user;
+package com.provider.entity.user.impl;
 
+import com.provider.entity.user.UserStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;

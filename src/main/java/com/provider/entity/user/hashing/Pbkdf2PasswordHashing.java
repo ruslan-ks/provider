@@ -1,7 +1,7 @@
 package com.provider.entity.user.hashing;
 
 import com.provider.entity.user.UserPassword;
-import com.provider.entity.user.UserPasswordImpl;
+import com.provider.entity.user.impl.UserPasswordImpl;
 import org.jetbrains.annotations.NotNull;
 
 import javax.crypto.SecretKeyFactory;
