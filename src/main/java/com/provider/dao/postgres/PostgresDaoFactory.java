@@ -10,6 +10,11 @@ public class PostgresDaoFactory implements DaoFactory {
     }
 
     @Override
+    public @NotNull ConnectionSupplier newConnectionSupplier() throws DBException {
+        return new PostgresConnectionSupplier();
+    }
+
+    @Override
     public @NotNull UserDao newUserDao() {
         return new PostgresUserDao();
     }
@@ -25,7 +30,7 @@ public class PostgresDaoFactory implements DaoFactory {
     }
 
     @Override
-    public @NotNull ConnectionSupplier newConnectionSupplier() throws DBException {
-        return new PostgresConnectionSupplier();
+    public @NotNull UserAccountDao newUserAccountDao() {
+        return new PostgresUserAccountDao();
     }
 }

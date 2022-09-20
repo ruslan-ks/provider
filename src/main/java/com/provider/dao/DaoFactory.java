@@ -8,6 +8,12 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface DaoFactory {
     /**
+     * Creates new ConnectionSupplier for created daos
+     * @return new ConnectionSupplier
+     */
+    @NotNull ConnectionSupplier newConnectionSupplier() throws DBException;
+
+    /**
      * Creates new UserDao
      * @return new UserDao
      */
@@ -25,9 +31,5 @@ public interface DaoFactory {
      */
     @NotNull UserStatusDao newUserStatusDao();
 
-    /**
-     * Creates new ConnectionSupplier for created daos
-     * @return new ConnectionSupplier
-     */
-    @NotNull ConnectionSupplier newConnectionSupplier() throws DBException;
+    @NotNull UserAccountDao newUserAccountDao();
 }

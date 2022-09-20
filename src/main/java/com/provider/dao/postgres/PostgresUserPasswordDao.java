@@ -3,23 +3,17 @@ package com.provider.dao.postgres;
 import com.provider.dao.UserPasswordDao;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.UserPassword;
-import com.provider.entity.user.UserPasswordImpl;
+import com.provider.entity.user.impl.UserPasswordImpl;
 import com.provider.entity.user.hashing.PasswordHashing;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Optional;
 
 public class PostgresUserPasswordDao extends UserPasswordDao {
 
     PostgresUserPasswordDao() {}
-
-    @Override
-    public @NotNull List<UserPassword> findAll() {
-        throw new UnsupportedOperationException();
-    }
 
     private static final String SQL_INSERT = "INSERT INTO user_passwords(user_id, hash, salt, hash_method) VALUES " +
             "(?, ?, ?, ?)";

@@ -3,14 +3,13 @@ package com.provider.dao.postgres;
 import com.provider.dao.UserStatusDao;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.UserStatus;
-import com.provider.entity.user.UserStatusImpl;
+import com.provider.entity.user.impl.UserStatusImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.List;
 import java.util.Optional;
 
 public class PostgresUserStatusDao extends UserStatusDao {
@@ -38,11 +37,6 @@ public class PostgresUserStatusDao extends UserStatusDao {
             throw new DBException(ex);
         }
         return Optional.empty();
-    }
-
-    @Override
-    public @NotNull List<UserStatus> findAll() throws DBException {
-        throw new UnsupportedOperationException();
     }
 
     private static final String SQL_INSERT = "INSERT INTO user_statuses(user_id, status, comment, set_time) " +

@@ -3,13 +3,12 @@ package com.provider.dao.postgres;
 import com.provider.dao.UserDao;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
-import com.provider.entity.user.UserImpl;
+import com.provider.entity.user.impl.UserImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
 import java.util.Optional;
 
 public class PostgresUserDao extends UserDao {
@@ -18,11 +17,6 @@ public class PostgresUserDao extends UserDao {
 
     @Override
     public @NotNull Optional<User> findByKey(@NotNull Long key) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public @NotNull List<User> findAll() {
         throw new UnsupportedOperationException();
     }
 
