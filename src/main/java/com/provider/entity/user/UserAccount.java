@@ -1,0 +1,43 @@
+package com.provider.entity.user;
+
+import com.provider.entity.Currency;
+import com.provider.entity.Entity;
+import org.jetbrains.annotations.NotNull;
+
+import java.math.BigDecimal;
+
+/**
+ * Represents money account
+ */
+public interface UserAccount extends Entity {
+    /**
+     * Returns account id
+     * @return account id
+     */
+    long getId();
+
+    /**
+     * Returns account owner id
+     * @return owner id
+     */
+    long getUserId();
+
+    /**
+     * Sets account id
+     * @param id account id
+     * @throws IllegalArgumentException if param id <= 0
+     */
+    void setId(long id);
+
+    /**
+     * Returns account currency
+     * @return account currency
+     */
+    @NotNull Currency getCurrency();
+
+    /**
+     * Returns money amount
+     * @return money amount
+     */
+    @NotNull BigDecimal getAmount();
+}
