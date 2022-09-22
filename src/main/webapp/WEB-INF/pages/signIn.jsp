@@ -2,6 +2,7 @@
 <%@ page import="com.provider.constants.attributes.RequestAttributes" %>
 <%@ page import="com.provider.constants.params.CommandParams" %>
 <%@ page import="com.provider.constants.params.SignInParams" %>
+<%@ page import="com.provider.constants.Paths" %>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -20,7 +21,7 @@
 <fmt:bundle basename="LabelsBundle">
     <div class="alert alert-primary mx-auto mt-5 mb-1 w-50"><fmt:message key="signIn.howToGetRegisteredMsg"/></div>
 
-    <form method="post" action="${initParam.controller}?${CommandParams.COMMAND}=${CommandParams.SIGN_IN}"
+    <form method="post" action="${pageContext.request.contextPath}/${Paths.SIGN_IN}"
           class="container-sm w-50 my-2 p-4 bg-light shadow rounded">
         <h6 ><fmt:message key="signIn.enterLoginAndPass"/></h6>
         <hr>

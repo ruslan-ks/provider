@@ -1,5 +1,6 @@
 package com.provider.controller.command.impl;
 
+import com.provider.constants.Paths;
 import com.provider.constants.attributes.SessionAttributes;
 import com.provider.constants.params.SignInParams;
 import com.provider.controller.command.FrontCommand;
@@ -35,8 +36,6 @@ public class SignInCommand extends FrontCommand {
         }
         this.paramLogin = paramLogin;
         this.paramPassword = paramPassword;
-
-
     }
 
     @Override
@@ -48,9 +47,9 @@ public class SignInCommand extends FrontCommand {
         if (userOptional.isPresent()) {
             final HttpSession session = request.getSession();
             session.setAttribute(SessionAttributes.SIGNED_USER, userOptional.get());
-            response.sendRedirect(userPanelPath);
+            response.sendRedirect(Paths.USER_PANEL);
             return;
         }
-        response.sendRedirect(signInPath + "?" + SignInParams.FAILED_TO_SIGN_IN + "=true");
+        response.sendRedirect(Paths.SIGN_IN_PAGE + "?" + SignInParams.FAILED_TO_SIGN_IN + "=true");
     }
 }

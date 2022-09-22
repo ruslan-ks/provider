@@ -1,7 +1,7 @@
 package com.provider.controller.command.impl;
 
+import com.provider.constants.Paths;
 import com.provider.constants.attributes.SessionAttributes;
-import com.provider.constants.params.SignInParams;
 import com.provider.controller.command.FrontCommand;
 import com.provider.dao.exception.DBException;
 import jakarta.servlet.ServletException;
@@ -23,6 +23,6 @@ public class SignOutCommand extends FrontCommand {
         if (session.getAttribute(SessionAttributes.SIGNED_USER) != null) {
             session.removeAttribute(SessionAttributes.SIGNED_USER);
         }
-        response.sendRedirect(signInPath);
+        response.sendRedirect(Paths.SIGN_IN_PAGE);
     }
 }

@@ -3,7 +3,7 @@
 <%@ tag import="com.provider.constants.attributes.SessionAttributes" %>
 <%@ tag import="com.provider.constants.attributes.RequestAttributes" %>
 <%@ tag import="com.provider.constants.params.UserSettingsParams" %>
-<%@ tag import="com.provider.constants.params.CommandParams" %>
+<%@ tag import="com.provider.constants.Paths" %>
 <%@ taglib prefix="include" tagdir="/WEB-INF/tags/include" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -39,18 +39,18 @@
                                         ${sessionScope[SessionAttributes.SIGNED_USER].name}
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
-                                    <li><a href="${pageContext.request.contextPath}/${initParam.userPanel}"
+                                    <li><a href="${pageContext.request.contextPath}/${Paths.USER_PANEL}"
                                            class="dropdown-item"><fmt:message key="nav.userPanel"/></a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item"
-                                           href="${initParam.controller}?${CommandParams.COMMAND}=${CommandParams.SIGN_OUT}">
+                                           href="${pageContext.request.contextPath}/${Paths.SIGN_OUT}">
                                         <fmt:message key="nav.signOut"/></a></li>
                                 </ul>
                             </li>
                         </c:when>
                         <c:otherwise>
                             <li class="nav-item">
-                                <a href="${pageContext.request.contextPath}/${initParam.signIn}"
+                                <a href="${pageContext.request.contextPath}/${Paths.SIGN_IN_PAGE}"
                                    class="nav-link"><fmt:message key="nav.signIn"/></a>
                             </li>
                         </c:otherwise>
