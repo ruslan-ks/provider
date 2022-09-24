@@ -40,4 +40,11 @@ public interface UserAccount extends Entity {
      * @return money amount
      */
     @NotNull BigDecimal getAmount();
+
+    /**
+     * Replenish account
+     * @param value positive value(> 0)
+     * @throws IllegalArgumentException if value <= 0
+     */
+    void replenish(@NotNull BigDecimal value);
 }

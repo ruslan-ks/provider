@@ -11,7 +11,7 @@ public class UserAccountImpl implements UserAccount {
     private long id;
     private final long userId;
     private final Currency currency;
-    private final BigDecimal amount;
+    private BigDecimal amount;
 
     UserAccountImpl(long id, long userId, @NotNull Currency currency) {
         this(id, userId, currency, BigDecimal.ZERO);
@@ -56,6 +56,14 @@ public class UserAccountImpl implements UserAccount {
     @Override
     public @NotNull BigDecimal getAmount() {
         return amount;
+    }
+
+    @Override
+    public void replenish(@NotNull BigDecimal value) {
+        if (value.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Value(" + value + ") < 0");
+        }
+        amount = amount.add(value);
     }
 
     @Override

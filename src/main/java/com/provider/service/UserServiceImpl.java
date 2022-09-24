@@ -2,7 +2,6 @@ package com.provider.service;
 
 import com.provider.dao.*;
 import com.provider.dao.exception.DBException;
-import com.provider.dao.postgres.PostgresDaoFactory;
 import com.provider.dao.transaction.Transaction;
 import com.provider.entity.Currency;
 import com.provider.entity.user.User;
@@ -16,25 +15,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 import java.time.Instant;
-import java.util.List;
 import java.util.Optional;
 
 /**
  * User service implementation. Contains business logic and data access methods for User.
  */
-public class UserServiceImpl implements UserService {
-    private final DaoFactory daoFactory;
-    private final ConnectionSupplier connectionSupplier;
-
-    /*
-    More Constructors(and corresponding newInstance() methods)
-    taking DaoFactory and ConnectionSupplier may be provided in the future.
-     */
-
-    private UserServiceImpl() throws DBException {
-        daoFactory = PostgresDaoFactory.newInstance();
-        connectionSupplier = daoFactory.newConnectionSupplier();
-    }
+public class UserServiceImpl extends AbstractService implements UserService {
+    private UserServiceImpl() throws DBException {}
 
     public static UserServiceImpl newInstance() throws DBException {
         return new UserServiceImpl();
@@ -117,16 +104,5 @@ public class UserServiceImpl implements UserService {
             return foundUser;
         }
         return Optional.empty();
-    }
-
-    @Override
-    public @NotNull List<UserAccount> findAllUserAccounts(long userId) throws DBException {
-        try (var connection = connectionSupplier.get()) {
-            final UserAccountDao userAccountDao = daoFactory.newUserAccountDao();
-            userAccountDao.setConnection(connection);
-            return userAccountDao.findAll(userId);
-        } catch (SQLException ex) {
-            throw new DBException();
-        }
     }
 }

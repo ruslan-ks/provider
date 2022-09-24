@@ -2,11 +2,9 @@ package com.provider.service;
 
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
-import com.provider.entity.user.UserAccount;
 import com.provider.entity.user.UserPassword;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
@@ -39,11 +37,4 @@ public interface UserService {
      * @return Optional containing user object if login and password are correct, Optional.empty() otherwise
      */
     @NotNull Optional<User> authenticate(@NotNull String login, @NotNull String password) throws DBException;
-
-    /**
-     * Returns list containing all accounts belonging to user with a specified id
-     * @param userId user id
-     * @return llist containing all accounts belonging to user with a specified id
-     */
-    @NotNull List<UserAccount> findAllUserAccounts(long userId) throws DBException;
 }
