@@ -15,9 +15,29 @@ public class PostgresUserDao extends UserDao {
 
     PostgresUserDao() {}
 
+    private static final String SQL_FIND_BY_ID =
+            "SELECT " +
+                    "id AS id, " +
+                    "login AS login, " +
+                    "name AS name, " +
+                    "surname AS surname, " +
+                    "phone AS phone, " +
+                    "role AS role " +
+            "FROM users " +
+                    "WHERE id = ?";
+
     @Override
-    public @NotNull Optional<User> findByKey(@NotNull Long key) {
-        throw new UnsupportedOperationException();
+    public @NotNull Optional<User> findByKey(@NotNull Long key) throws DBException {
+        try (var preparedStatement = connection.prepareStatement(SQL_FIND_BY_ID)) {
+            preparedStatement.setLong(1, key);
+            final ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return Optional.of(fetchUser(resultSet));
+            }
+        } catch (SQLException ex) {
+            throw new DBException(ex);
+        }
+        return Optional.empty();
     }
 
     private static final String SQL_INSERT = "INSERT INTO users(login, role, name, surname, phone) VALUES" +
@@ -83,11 +103,6 @@ public class PostgresUserDao extends UserDao {
         final String phone = resultSet.getString("phone");
         final String role = resultSet.getString("role");
 
-        return newUserInstance(id, name, surname, login, phone, User.Role.valueOf(role));
-    }
-
-    private static @NotNull User newUserInstance(long id, @NotNull String name, @NotNull String surname, @NotNull String login,
-                                                 @NotNull String phone, @NotNull User.Role role) {
-        return UserImpl.newInstance(id, name, surname, login, phone, role);
+        return UserImpl.newInstance(id, name, surname, login, phone, User.Role.valueOf(role));
     }
 }

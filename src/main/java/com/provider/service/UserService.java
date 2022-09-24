@@ -7,7 +7,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
+/**
+ * Contains business logic and db access for User class data
+ */
 public interface UserService {
+    /**
+     * Find user by id
+     * @param id user id
+     * @return Optional containing user with a specified id if found, empty optional otherwise
+     */
+    @NotNull Optional<User> findUserById(long id) throws DBException;
+
     /**
      * Searches for user in db
      * @param login user login

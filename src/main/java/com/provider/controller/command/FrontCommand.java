@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpSession;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Command used by the front controller servlet.
@@ -75,7 +75,26 @@ public abstract class FrontCommand {
      * Returns signed-in user
      * @return Optional containing signed-in user if session is present and user attribute is saved to the session
      */
-    protected final @NotNull Optional<User> getSignedInUser() {
+    protected final @NotNull Optional<User> getSessionUser() {
         return getSession().map(s -> (User) s.getAttribute(SessionAttributes.SIGNED_USER));
+    }
+
+    /**
+     * Extracts and returns request parameters
+     * @param paramNames parameter names
+     * @return Map containing parameter name -> value pairs
+     * @throws CommandParamException if at least one of parameters not found
+     **/
+    protected final @NotNull Map<String, String> getRequestParams(String... paramNames)
+            throws CommandParamException {
+        final Map<String, String> resultMap = new HashMap<>();
+        for (var name : paramNames) {
+            final String value = request.getParameter(name);
+            if (value == null) {
+                throw new CommandParamException("Parameter '" + name + "' is null");
+            }
+            resultMap.put(name, value);
+        }
+        return resultMap;
     }
 }

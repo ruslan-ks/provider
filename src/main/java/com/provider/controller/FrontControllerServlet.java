@@ -50,8 +50,10 @@ public class FrontControllerServlet extends HttpServlet {
             final FrontCommand frontCommand = frontCommandFactory.getCommand(request, response, getServletConfig());
             frontCommand.execute();
         } catch (CommandAccessException ex) {
+            logger.debug("Controller caught exception", ex);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         } catch (IllegalCommandException | CommandParamException ex) {
+            logger.debug("Controller caught exception", ex);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         } catch (DBException ex) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

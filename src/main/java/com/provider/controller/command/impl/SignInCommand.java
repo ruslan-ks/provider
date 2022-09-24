@@ -16,34 +16,28 @@ import jakarta.servlet.http.HttpSession;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 
 public class SignInCommand extends FrontCommand {
-    private final String paramLogin;
-    private final String paramPassword;
-
-    SignInCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response)
-            throws CommandParamException {
+    SignInCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
         super(request, response);
-        final String paramLogin = request.getParameter(SignInParams.LOGIN);
-        final String paramPassword = request.getParameter(SignInParams.PASSWORD);
-        if (paramLogin == null || paramPassword == null) {
-            throw new CommandParamException("Wrong request parameters");
-        }
-        this.paramLogin = paramLogin;
-        this.paramPassword = paramPassword;
     }
 
     @Override
-    public void execute() throws ServletException, IOException, DBException {
+    public void execute() throws ServletException, IOException, DBException, CommandParamException {
+        final Map<String, String> paramMap = getRequestParams(SignInParams.LOGIN, SignInParams.PASSWORD);
+        final String login = paramMap.get(SignInParams.LOGIN);
+        final String password = paramMap.get(SignInParams.PASSWORD);
+
         final UserService userService = UserServiceImpl.newInstance();
-        final Optional<User> userOptional = userService.authenticate(paramLogin, paramPassword);
-        if (userOptional.isPresent()) {
-            final HttpSession session = request.getSession();
-            session.setAttribute(SessionAttributes.SIGNED_USER, userOptional.get());
+        final Optional<User> userOptional = userService.authenticate(login, password);
+        final Optional<HttpSession> sessionOptional = getSession();
+        if (userOptional.isPresent() && sessionOptional.isPresent()) {
+            sessionOptional.get().setAttribute(SessionAttributes.SIGNED_USER, userOptional.get());
             response.sendRedirect(Paths.USER_PANEL_PAGE);
-            return;
+        } else {
+            response.sendRedirect(Paths.SIGN_IN_JSP + "?" + SignInParams.FAILED_TO_SIGN_IN + "=true");
         }
-        response.sendRedirect(Paths.SIGN_IN_JSP + "?" + SignInParams.FAILED_TO_SIGN_IN + "=true");
     }
 }

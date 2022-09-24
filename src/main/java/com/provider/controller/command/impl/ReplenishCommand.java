@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Map;
 import java.util.Optional;
 
 public class ReplenishCommand extends MemberAccessCommand {
@@ -24,28 +25,24 @@ public class ReplenishCommand extends MemberAccessCommand {
     }
 
     @Override
-    protected void executeAccessed() throws DBException, CommandParamException, IOException {
-        final String accountIdParam = request.getParameter(ReplenishParams.ACCOUNT_ID);
-        final String amountParam = request.getParameter(ReplenishParams.AMOUNT);
+    protected void executeAccessed(@NotNull User user) throws DBException, CommandParamException, IOException {
+        final Map<String, String> paramMap = getRequestParams(ReplenishParams.ACCOUNT_ID, ReplenishParams.AMOUNT);
 
-        CommandUtil.throwIfNullParam(accountIdParam, amountParam);
-
-        final long accountId = CommandUtil.parseLongParam(accountIdParam);
-        final BigDecimal amount = CommandUtil.parseBigDecimalParam(amountParam);
+        final long accountId = CommandUtil.parseLongParam(paramMap.get(ReplenishParams.ACCOUNT_ID));
+        final BigDecimal amount = CommandUtil.parseBigDecimalParam(paramMap.get(ReplenishParams.AMOUNT));
         if (!isValidAmount(amount)) {
-            throw new IllegalArgumentException("Invalid amount: " + amount);
+            throw new CommandParamException("Invalid amount: " + amount);
         }
 
-        final User user = getSignedInUser().orElseThrow();
         final AccountService accountService = AccountServiceImpl.newInstance();
         final Optional<UserAccount> userAccount = accountService.findAccount(accountId);
 
         if (userAccount.isPresent() && accountService.isUserAccount(userAccount.get(), user)) {
             accountService.replenish(userAccount.get(), amount);
             response.sendRedirect(Paths.USER_PANEL_PAGE);
-            return;
+        } else {
+            throw new CommandParamException("Illegal account id: " + accountId);
         }
-        throw new CommandParamException("Illegal account id: " + accountId);
     }
 
     private static boolean isValidAmount(@NotNull BigDecimal amount) {

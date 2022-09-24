@@ -28,6 +28,17 @@ public class UserServiceImpl extends AbstractService implements UserService {
     }
 
     @Override
+    public @NotNull Optional<User> findUserById(long id) throws DBException {
+        try (var connection = connectionSupplier.get()) {
+            final UserDao userDao = daoFactory.newUserDao();
+            userDao.setConnection(connection);
+            return userDao.findByKey(id);
+        } catch (SQLException ex) {
+            throw new DBException(ex);
+        }
+    }
+
+    @Override
     public @NotNull Optional<User> findUserByLogin(@NotNull String login) throws DBException {
         try (var connection = connectionSupplier.get()) {
             final UserDao userDao = daoFactory.newUserDao();

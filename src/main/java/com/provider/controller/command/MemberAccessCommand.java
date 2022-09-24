@@ -4,12 +4,12 @@ import com.provider.constants.Paths;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
+import com.provider.service.UserService;
+import com.provider.service.UserServiceImpl;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -18,18 +18,16 @@ import java.util.Optional;
  * Command that may be accessed only by signed-in users(admins too)
  */
 public abstract class MemberAccessCommand extends FrontCommand {
-    private static final Logger logger = LoggerFactory.getLogger(MemberAccessCommand.class);
-
-    public MemberAccessCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
+    protected MemberAccessCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
         super(request, response);
     }
 
     @Override
     public final void execute() throws DBException, ServletException, IOException, CommandParamException {
-        final Optional<User> user = getSignedInUser();
-        if (user.isPresent()) {
-            logger.debug("STARTING executeAccessed()");
-            executeAccessed();
+        final UserService userService = UserServiceImpl.newInstance();
+        final Optional<User> user = getSessionUser();
+        if (user.isPresent() && userService.findUserById(user.get().getId()).isPresent()) {
+            executeAccessed(user.get());
         } else {
             executeDenied();
         }
@@ -37,10 +35,12 @@ public abstract class MemberAccessCommand extends FrontCommand {
 
     /**
      * Executed if a resource can be accessed by a user.
-     * Should never be called from outside this class.
+     * Must never be called from outside this class.
      * Guarantees that <code>getSignedInUser()</code> returns not empty optional when called from inside this method
+     * @param user signed-in user guaranteed to be existing user
      */
-    protected abstract void executeAccessed() throws DBException, ServletException, IOException, CommandParamException;
+    protected abstract void executeAccessed(@NotNull User user)
+            throws DBException, ServletException, IOException, CommandParamException;
 
     /**
      * Called if access is denied.

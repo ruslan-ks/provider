@@ -3,6 +3,7 @@ package com.provider.controller.command.impl;
 import com.provider.constants.Paths;
 import com.provider.constants.attributes.SessionAttributes;
 import com.provider.controller.command.MemberAccessCommand;
+import com.provider.entity.user.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
@@ -15,8 +16,8 @@ public class SignOutCommand extends MemberAccessCommand {
     }
 
     @Override
-    protected void executeAccessed() throws IOException {
-        getSession().orElseThrow().removeAttribute(SessionAttributes.SIGNED_USER);
+    protected void executeAccessed(@NotNull User user) throws IOException {
+        getSession().ifPresent(s -> s.removeAttribute(SessionAttributes.SIGNED_USER));
         response.sendRedirect(Paths.SIGN_IN_JSP);
     }
 }

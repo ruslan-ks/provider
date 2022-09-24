@@ -22,8 +22,7 @@ public class UserPanelPageCommand extends MemberAccessCommand {
     }
 
     @Override
-    protected void executeAccessed() throws DBException, ServletException, IOException {
-        final User user = getSignedInUser().orElseThrow();
+    protected void executeAccessed(@NotNull User user) throws DBException, ServletException, IOException {
         final AccountService accountService = AccountServiceImpl.newInstance();
         final List<UserAccount> userAccountList = accountService.findUserAccounts(user.getId());
         request.setAttribute(RequestAttributes.USER_ACCOUNTS, userAccountList);
