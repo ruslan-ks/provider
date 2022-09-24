@@ -2,12 +2,14 @@ package com.provider.service;
 
 import com.provider.dao.*;
 import com.provider.dao.exception.DBException;
-import com.provider.dao.postgres.PostgresDaoFactory;
 import com.provider.dao.transaction.Transaction;
+import com.provider.entity.Currency;
 import com.provider.entity.user.User;
+import com.provider.entity.user.UserAccount;
 import com.provider.entity.user.UserPassword;
 import com.provider.entity.user.UserStatus;
-import com.provider.entity.user.UserStatusImpl;
+import com.provider.entity.user.impl.UserAccountImpl;
+import com.provider.entity.user.impl.UserStatusImpl;
 import com.provider.entity.user.hashing.PasswordHashing;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,19 +20,8 @@ import java.util.Optional;
 /**
  * User service implementation. Contains business logic and data access methods for User.
  */
-public class UserServiceImpl implements UserService {
-    private final DaoFactory daoFactory;
-    private final ConnectionSupplier connectionSupplier;
-
-    /*
-    More Constructors(and corresponding newInstance() methods)
-    taking DaoFactory and ConnectionSupplier may be provided in the future.
-     */
-
-    private UserServiceImpl() throws DBException {
-        daoFactory = PostgresDaoFactory.newInstance();
-        connectionSupplier = daoFactory.newConnectionSupplier();
-    }
+public class UserServiceImpl extends AbstractService implements UserService {
+    private UserServiceImpl() throws DBException {}
 
     public static UserServiceImpl newInstance() throws DBException {
         return new UserServiceImpl();
@@ -63,11 +54,13 @@ public class UserServiceImpl implements UserService {
         final UserDao userDao = daoFactory.newUserDao();
         final UserPasswordDao userPasswordDao = daoFactory.newUserPasswordDao();
         final UserStatusDao userStatusDao = daoFactory.newUserStatusDao();
+        final UserAccountDao userAccountDao =  daoFactory.newUserAccountDao();
         try (var transaction = Transaction.of(connectionSupplier.get(), userDao, userPasswordDao,
-                userStatusDao)) {
+                userStatusDao, userAccountDao)) {
             final boolean userInserted;
             final boolean passwordInserted;
             final boolean statusInserted;
+            final boolean accountInserted;
             try {
                 userInserted = userDao.insert(user);
 
@@ -78,17 +71,20 @@ public class UserServiceImpl implements UserService {
                         "new", Instant.now());
                 statusInserted = userStatusDao.insert(userStatus);
 
+                final UserAccount userAccount = UserAccountImpl.newInstance(0, user.getId(), Currency.USD);
+                accountInserted = userAccountDao.insert(userAccount);
+
                 transaction.commit();
             } catch (Throwable ex) {
                 transaction.rollback();
                 throw ex;
             }
-            return userInserted && passwordInserted && statusInserted;
+            return userInserted && passwordInserted && statusInserted && accountInserted;
         }
     }
 
     @Override
-    public @NotNull Optional<User> authenticate(String login, String password)
+    public @NotNull Optional<User> authenticate(@NotNull String login, @NotNull String password)
             throws DBException {
         final Optional<User> foundUser = findUserByLogin(login);
         if (foundUser.isEmpty()) {

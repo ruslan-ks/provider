@@ -8,5 +8,5 @@ public final class RequestAttributes {
 
     public static final String LOCALE = "locale";
 
-    public static final String FAILED_TO_SIGN_IN = "failedToSignIn";
+    public static final String USER_ACCOUNTS = "userAccounts";
 }

@@ -1,10 +1,11 @@
-<%@ tag body-content="empty" %>
+<%@ tag body-content="empty" dynamic-attributes="dynamicAttributes" %>
 <%@ tag import="com.provider.constants.attributes.RequestAttributes" %>
 <%@ attribute name="user" type="com.provider.entity.user.User" rtexprvalue="true" required="true" %>
+<%@ taglib prefix="pro" uri="http://provider.com" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<div class="card shadow rounded border-0">
+<div class="card shadow rounded border-0" <pro:attributes map="${dynamicAttributes}"/> >
     <fmt:setLocale value="${requestScope[RequestAttributes.LOCALE]}" />
     <fmt:bundle basename="LabelsBundle">
         <div class="card-header"><fmt:message key="user.profile"/></div>

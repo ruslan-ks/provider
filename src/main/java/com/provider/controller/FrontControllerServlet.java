@@ -2,7 +2,11 @@ package com.provider.controller;
 
 import com.provider.controller.command.FrontCommand;
 import com.provider.controller.command.FrontCommandFactory;
+import com.provider.controller.command.exception.CommandAccessException;
+import com.provider.controller.command.exception.CommandParamException;
+import com.provider.controller.command.exception.IllegalCommandException;
 import com.provider.controller.command.impl.FrontCommandFactoryImpl;
+import com.provider.dao.exception.DBException;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
@@ -20,7 +24,7 @@ public class FrontControllerServlet extends HttpServlet {
     private final Logger logger = LoggerFactory.getLogger(FrontControllerServlet.class);
 
     // Factory that is used to obtain appropriate command
-    final FrontCommandFactory frontCommandFactory = FrontCommandFactoryImpl.newInstance();
+    private final FrontCommandFactory frontCommandFactory = FrontCommandFactoryImpl.newInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -40,11 +44,17 @@ public class FrontControllerServlet extends HttpServlet {
      * @param request incoming request
      * @param response resulting response
      */
-    private void handleRequest(HttpServletRequest request, HttpServletResponse response) {
+    private void handleRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         try {
             final FrontCommand frontCommand = frontCommandFactory.getCommand(request, response, getServletConfig());
             frontCommand.execute();
-        } catch (Exception ex) {
+        } catch (CommandAccessException ex) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        } catch (IllegalCommandException | CommandParamException ex) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        } catch (DBException ex) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             logger.error("Front controller servlet caught exception", ex);
         }
     }

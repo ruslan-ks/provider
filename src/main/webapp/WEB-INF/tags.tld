@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<taglib xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd"
+        version="2.1">
+    <tlib-version>1.0</tlib-version>
+    <short-name>protags</short-name>
+    <uri>http://provider.com</uri>
+
+    <!-- 'unpack' tag -->
+    <tag>
+        <description>Unpacks Iterable of strings to a single string</description>
+        <name>attributes</name>
+        <tag-class>com.provider.tags.AttributesTagHandler</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>map</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.util.Map</type>
+        </attribute>
+        <dynamic-attributes>false</dynamic-attributes>
+    </tag>
+</taglib>

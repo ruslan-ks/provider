@@ -36,5 +36,5 @@ public interface UserService {
      * @param password user-provided password(NOT a hash)
      * @return Optional containing user object if login and password are correct, Optional.empty() otherwise
      */
-    @NotNull Optional<User> authenticate(String login, String password) throws DBException;
+    @NotNull Optional<User> authenticate(@NotNull String login, @NotNull String password) throws DBException;
 }

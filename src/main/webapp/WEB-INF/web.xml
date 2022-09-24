@@ -3,30 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
          version="5.0">
-    <!-- Page url paths relative to application context path -->
-    <context-param>
-        <param-name>signIn</param-name>
-        <param-value>signIn</param-value>
-    </context-param>
-    <context-param>
-        <param-name>userPanel</param-name>
-        <param-value>userPanel</param-value>
-    </context-param>
-    <context-param>
-        <param-name>controller</param-name>
-        <param-value>controller</param-value>
-    </context-param>
-
     <!-- JSP mappings are placed here. Servlet mappings are configured using annotations -->
-    <servlet>
-        <servlet-name>userPanelJsp</servlet-name>
-        <jsp-file>/WEB-INF/pages/userPanel.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>userPanelJsp</servlet-name>
-        <url-pattern>/userPanel</url-pattern>
-    </servlet-mapping>
-
     <servlet>
         <servlet-name>signInJsp</servlet-name>
         <jsp-file>/WEB-INF/pages/signIn.jsp</jsp-file>
@@ -35,4 +12,5 @@
         <servlet-name>signInJsp</servlet-name>
         <url-pattern>/signIn</url-pattern>
     </servlet-mapping>
+
 </web-app>
