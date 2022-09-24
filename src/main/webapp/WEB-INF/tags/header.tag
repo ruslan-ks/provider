@@ -39,7 +39,7 @@
                                         ${sessionScope[SessionAttributes.SIGNED_USER].name}
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
-                                    <li><a href="${pageContext.request.contextPath}/${Paths.USER_PANEL}"
+                                    <li><a href="${pageContext.request.contextPath}/${Paths.USER_PANEL_PAGE}"
                                            class="dropdown-item"><fmt:message key="nav.userPanel"/></a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item"
@@ -50,7 +50,7 @@
                         </c:when>
                         <c:otherwise>
                             <li class="nav-item">
-                                <a href="${pageContext.request.contextPath}/${Paths.SIGN_IN_PAGE}"
+                                <a href="${pageContext.request.contextPath}/${Paths.SIGN_IN_JSP}"
                                    class="nav-link"><fmt:message key="nav.signIn"/></a>
                             </li>
                         </c:otherwise>

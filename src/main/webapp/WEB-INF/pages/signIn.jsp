@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.provider.constants.attributes.RequestAttributes" %>
-<%@ page import="com.provider.constants.params.CommandParams" %>
 <%@ page import="com.provider.constants.params.SignInParams" %>
 <%@ page import="com.provider.constants.Paths" %>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>

@@ -5,7 +5,7 @@ import com.provider.service.UserService;
 import com.provider.service.UserServiceImpl;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
-import com.provider.entity.user.UserImpl;
+import com.provider.entity.user.impl.UserImpl;
 import com.provider.entity.user.UserPassword;
 import com.provider.localization.LanguageInfo;
 import com.provider.localization.MapBasedLanguageInfo;
@@ -65,6 +65,7 @@ public class AppListener implements ServletContextListener {
                 root = found.get();
                 rootPassword = userService.findUserPassword(root.getId()).orElseThrow();
             }
+            // TODO: delete this log
             logger.info("Root user: {}\nRoot user password: {}", root, rootPassword);
         } catch (DBException ex) {
             logger.error("Failed to create root user", ex);
