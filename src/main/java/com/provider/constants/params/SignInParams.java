@@ -1,6 +1,6 @@
 package com.provider.constants.params;
 
-public final class SignInParams {
+public class SignInParams {
     private SignInParams() {}
 
     public static final String LOGIN = "login";

@@ -3,7 +3,7 @@ package com.provider.constants.attributes;
 /**
  * Constant class containing session attribute names
  */
-public final class SessionAttributes {
+public class SessionAttributes {
     private SessionAttributes() {}
 
     /**

@@ -3,7 +3,7 @@ package com.provider.constants.attributes;
 /**
  * Constant class containing application scope(servlet context) attribute names.
  */
-public final class AppAttributes {
+public class AppAttributes {
     private AppAttributes() {}
 
     /**
