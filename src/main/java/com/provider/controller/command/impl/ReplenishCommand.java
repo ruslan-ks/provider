@@ -5,7 +5,10 @@ import com.provider.constants.params.ReplenishParams;
 import com.provider.controller.command.CommandUtil;
 import com.provider.controller.command.MemberAccessCommand;
 import com.provider.controller.command.exception.CommandParamException;
+import com.provider.controller.command.result.CommandResult;
+import com.provider.controller.command.result.CommandResultImpl;
 import com.provider.dao.exception.DBException;
+import com.provider.entity.Currency;
 import com.provider.entity.user.User;
 import com.provider.entity.user.UserAccount;
 import com.provider.service.AccountService;
@@ -14,7 +17,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Optional;
@@ -25,24 +27,23 @@ public class ReplenishCommand extends MemberAccessCommand {
     }
 
     @Override
-    protected void executeAccessed(@NotNull User user) throws DBException, CommandParamException, IOException {
-        final Map<String, String> paramMap = getRequestParams(ReplenishParams.ACCOUNT_ID, ReplenishParams.AMOUNT);
+    protected CommandResult executeAccessed(@NotNull User user) throws DBException, CommandParamException {
+        final Map<String, String> paramMap = getRequestParams(ReplenishParams.CURRENCY, ReplenishParams.AMOUNT);
 
-        final long accountId = CommandUtil.parseLongParam(paramMap.get(ReplenishParams.ACCOUNT_ID));
+        final Currency accountCurrency = CommandUtil.parseCurrencyParam(paramMap.get(ReplenishParams.CURRENCY));
         final BigDecimal amount = CommandUtil.parseBigDecimalParam(paramMap.get(ReplenishParams.AMOUNT));
         if (!isValidAmount(amount)) {
             throw new CommandParamException("Invalid amount: " + amount);
         }
 
         final AccountService accountService = AccountServiceImpl.newInstance();
-        final Optional<UserAccount> userAccount = accountService.findAccount(accountId);
+        final Optional<UserAccount> userAccount = accountService.findUserAccount(user, accountCurrency);
 
         if (userAccount.isPresent() && accountService.isUserAccount(userAccount.get(), user)) {
             accountService.replenish(userAccount.get(), amount);
-            response.sendRedirect(Paths.USER_PANEL_PAGE);
-        } else {
-            throw new CommandParamException("Illegal account id: " + accountId);
+            return CommandResultImpl.of(Paths.USER_PANEL_PAGE);
         }
+        throw new CommandParamException("Account not found");
     }
 
     private static boolean isValidAmount(@NotNull BigDecimal amount) {

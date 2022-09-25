@@ -1,6 +1,6 @@
 package com.provider.constants;
 
-import com.provider.controller.command.FrontCommand;
+import com.provider.constants.params.CommandParams;
 
 /**
  * Resource paths relative to the project root.
@@ -33,32 +33,27 @@ public class Paths {
     private static final String CONTROLLER = "controller";
 
     /**
-     * Command parameter name
-     */
-    public static final String COMMAND = "command";
-
-    /**
      * Sign in controller action
      */
-    public static final String SIGN_IN = CONTROLLER + "?" + COMMAND + "=" + FrontCommand.SIGN_IN;
+    public static final String SIGN_IN = CONTROLLER + "?" + CommandParams.COMMAND + "=" + CommandParams.SIGN_IN;
 
     /**
      * Sign out controller action
      */
-    public static final String SIGN_OUT = CONTROLLER + "?" + COMMAND + "=" + FrontCommand.SIGN_OUT;
+    public static final String SIGN_OUT = CONTROLLER + "?" + CommandParams.COMMAND + "=" + CommandParams.SIGN_OUT;
 
     /**
      *
      */
-    public static final String REPLENISH = CONTROLLER + "?" + COMMAND + "=" + FrontCommand.REPLENISH;
+    public static final String REPLENISH = CONTROLLER + "?" + CommandParams.COMMAND + "=" + CommandParams.REPLENISH;
 
     /**
      * User panel controller action
      */
-    public static final String USER_PANEL_PAGE = CONTROLLER + "?" + COMMAND + "=" + FrontCommand.USER_PANEL;
+    public static final String USER_PANEL_PAGE = CONTROLLER + "?" + CommandParams.COMMAND + "=" + CommandParams.USER_PANEL;
 
     /**
      * Replenish page - allows to replenish user account
      */
-    public static final String REPLENISH_PAGE = CONTROLLER + "?" + COMMAND + "=" + FrontCommand.REPLENISH_PAGE;
+    public static final String REPLENISH_PAGE = CONTROLLER + "?" + CommandParams.COMMAND + "=" + CommandParams.REPLENISH_PAGE;
 }

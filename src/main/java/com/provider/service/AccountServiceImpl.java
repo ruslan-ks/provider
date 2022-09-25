@@ -2,6 +2,7 @@ package com.provider.service;
 
 import com.provider.dao.UserAccountDao;
 import com.provider.dao.exception.DBException;
+import com.provider.entity.Currency;
 import com.provider.entity.user.User;
 import com.provider.entity.user.UserAccount;
 import org.jetbrains.annotations.NotNull;
@@ -55,5 +56,13 @@ public class AccountServiceImpl extends AbstractService implements AccountServic
     @Override
     public boolean isUserAccount(@NotNull UserAccount account, @NotNull User user) {
         return account.getUserId() == user.getId();
+    }
+
+    @Override
+    public @NotNull Optional<UserAccount> findUserAccount(@NotNull User user, @NotNull Currency accountCurrency)
+            throws DBException {
+        return findUserAccounts(user.getId()).stream()
+                .filter(acc -> acc.getCurrency().equals(accountCurrency))
+                .findAny();
     }
 }

@@ -1,6 +1,7 @@
 package com.provider.service;
 
 import com.provider.dao.exception.DBException;
+import com.provider.entity.Currency;
 import com.provider.entity.user.User;
 import com.provider.entity.user.UserAccount;
 import org.jetbrains.annotations.NotNull;
@@ -39,4 +40,13 @@ public interface AccountService {
      * @return true if account belongs to user
      */
     boolean isUserAccount(@NotNull UserAccount account, @NotNull User user) throws DBException;
+
+    /**
+     * Returns User account of specified currency.
+     * For each currency User can have one and only one account
+     * @param user user
+     * @param accountCurrency account currency
+     * @return Optional containing user account if found, empty Optional otherwise
+     */
+    @NotNull Optional<UserAccount> findUserAccount(@NotNull User user, @NotNull Currency accountCurrency) throws DBException;
 }

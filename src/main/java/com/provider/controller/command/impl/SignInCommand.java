@@ -4,6 +4,8 @@ import com.provider.constants.Paths;
 import com.provider.constants.attributes.SessionAttributes;
 import com.provider.constants.params.SignInParams;
 import com.provider.controller.command.FrontCommand;
+import com.provider.controller.command.result.CommandResult;
+import com.provider.controller.command.result.CommandResultImpl;
 import com.provider.service.UserService;
 import com.provider.service.UserServiceImpl;
 import com.provider.controller.command.exception.CommandParamException;
@@ -25,7 +27,7 @@ public class SignInCommand extends FrontCommand {
     }
 
     @Override
-    public void execute() throws ServletException, IOException, DBException, CommandParamException {
+    public CommandResult execute() throws ServletException, IOException, DBException, CommandParamException {
         final Map<String, String> paramMap = getRequestParams(SignInParams.LOGIN, SignInParams.PASSWORD);
         final String login = paramMap.get(SignInParams.LOGIN);
         final String password = paramMap.get(SignInParams.PASSWORD);
@@ -35,9 +37,8 @@ public class SignInCommand extends FrontCommand {
         final Optional<HttpSession> sessionOptional = getSession();
         if (userOptional.isPresent() && sessionOptional.isPresent()) {
             sessionOptional.get().setAttribute(SessionAttributes.SIGNED_USER, userOptional.get());
-            response.sendRedirect(Paths.USER_PANEL_PAGE);
-        } else {
-            response.sendRedirect(Paths.SIGN_IN_JSP + "?" + SignInParams.FAILED_TO_SIGN_IN + "=true");
+            return CommandResultImpl.of(Paths.USER_PANEL_PAGE);
         }
+        return CommandResultImpl.of(Paths.SIGN_IN_JSP + "?" + SignInParams.FAILED_TO_SIGN_IN + "=true");
     }
 }

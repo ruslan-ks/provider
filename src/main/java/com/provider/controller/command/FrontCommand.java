@@ -2,6 +2,7 @@ package com.provider.controller.command;
 
 import com.provider.constants.attributes.SessionAttributes;
 import com.provider.controller.command.exception.CommandParamException;
+import com.provider.controller.command.result.CommandResult;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
 import jakarta.servlet.ServletException;
@@ -12,35 +13,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Command used by the front controller servlet.
  */
 public abstract class FrontCommand {
-    /**
-     * Sign in command
-     */
-    public static final String SIGN_IN = "signIn";
-
-    /**
-     * Sign out command
-     */
-    public static final String SIGN_OUT = "signOut";
-
-    /**
-     * Get user panel page command
-     */
-    public static final String USER_PANEL = "userPanel";
-
-    /**
-     * Get replenish page command
-     */
-    public static final String REPLENISH_PAGE = "replenishPage";
-
-    /**
-     * Replenish account command
-     */
-    public static final String REPLENISH = "replenish";
 
     /**
      * Incoming request
@@ -60,8 +38,9 @@ public abstract class FrontCommand {
     /**
      * Executes user's request. Effects request and response objects(if provided).
      * Returns result via calling forward or redirect.
+     * @return CommandResult - object containing result data - page location for redirect/forward and so on
      */
-    public abstract void execute() throws DBException, ServletException, IOException, CommandParamException;
+    public abstract CommandResult execute() throws DBException, ServletException, IOException, CommandParamException;
 
     /**
      * Returns current session
@@ -80,21 +59,21 @@ public abstract class FrontCommand {
     }
 
     /**
-     * Extracts and returns request parameters
-     * @param paramNames parameter names
-     * @return Map containing parameter name -> value pairs
-     * @throws CommandParamException if at least one of parameters not found
+     * Extracts and returns request parameters, works only fo parameters of type String(not for String[])
+     *
+     * @param requiredParamNames required parameter names
+     * @return Immutable Map containing parameter name -> value[] pairs; may contain more params than required
+     * @throws CommandParamException if at least one of required parameters not found
      **/
-    protected final @NotNull Map<String, String> getRequestParams(String... paramNames)
+    protected final @NotNull Map<String, String> getRequestParams(String... requiredParamNames)
             throws CommandParamException {
-        final Map<String, String> resultMap = new HashMap<>();
-        for (var name : paramNames) {
-            final String value = request.getParameter(name);
-            if (value == null) {
+        final Map<String, String> paramMap = request.getParameterMap().entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue()[0]));
+        for (var name : requiredParamNames) {
+            if (!paramMap.containsKey(name)) {
                 throw new CommandParamException("Parameter '" + name + "' is null");
             }
-            resultMap.put(name, value);
         }
-        return resultMap;
+        return paramMap;
     }
 }

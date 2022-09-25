@@ -6,6 +6,7 @@ import com.provider.controller.command.exception.CommandAccessException;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.controller.command.exception.IllegalCommandException;
 import com.provider.controller.command.impl.FrontCommandFactoryImpl;
+import com.provider.controller.command.result.CommandResult;
 import com.provider.dao.exception.DBException;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -14,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * The only servlet of the whole application. All requests are handled here.
@@ -29,13 +31,19 @@ public class FrontControllerServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        handleRequest(request, response);
+        final Optional<CommandResult> result = handleRequest(request, response);
+        if (result.isPresent()) {
+            request.getRequestDispatcher(result.get().getViewLocation()).forward(request, response);
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        handleRequest(request, response);
+        final Optional<CommandResult> result = handleRequest(request, response);
+        if (result.isPresent()) {
+            response.sendRedirect(result.get().getViewLocation());
+        }
     }
 
     /**
@@ -44,11 +52,11 @@ public class FrontControllerServlet extends HttpServlet {
      * @param request incoming request
      * @param response resulting response
      */
-    private void handleRequest(HttpServletRequest request, HttpServletResponse response)
+    private Optional<CommandResult> handleRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             final FrontCommand frontCommand = frontCommandFactory.getCommand(request, response, getServletConfig());
-            frontCommand.execute();
+            return Optional.of(frontCommand.execute());
         } catch (CommandAccessException ex) {
             logger.debug("Controller caught exception", ex);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -59,5 +67,6 @@ public class FrontControllerServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             logger.error("Front controller servlet caught exception", ex);
         }
+        return Optional.empty();
     }
 }

@@ -2,6 +2,8 @@ package com.provider.controller.command;
 
 import com.provider.constants.Paths;
 import com.provider.controller.command.exception.CommandParamException;
+import com.provider.controller.command.result.CommandResult;
+import com.provider.controller.command.result.CommandResultImpl;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
 import com.provider.service.UserService;
@@ -23,14 +25,13 @@ public abstract class MemberAccessCommand extends FrontCommand {
     }
 
     @Override
-    public final void execute() throws DBException, ServletException, IOException, CommandParamException {
+    public final CommandResult execute() throws DBException, ServletException, IOException, CommandParamException {
         final UserService userService = UserServiceImpl.newInstance();
         final Optional<User> user = getSessionUser();
         if (user.isPresent() && userService.findUserById(user.get().getId()).isPresent()) {
-            executeAccessed(user.get());
-        } else {
-            executeDenied();
+            return executeAccessed(user.get());
         }
+        return executeDenied();
     }
 
     /**
@@ -39,14 +40,15 @@ public abstract class MemberAccessCommand extends FrontCommand {
      * Guarantees that <code>getSignedInUser()</code> returns not empty optional when called from inside this method
      * @param user signed-in user guaranteed to be existing user
      */
-    protected abstract void executeAccessed(@NotNull User user)
+    protected abstract CommandResult executeAccessed(@NotNull User user)
             throws DBException, ServletException, IOException, CommandParamException;
 
     /**
      * Called if access is denied.
      * Sends redirect to the sign-in page by default
      */
-    protected void executeDenied() throws IOException {
-        response.sendRedirect(Paths.SIGN_IN_JSP);
+    protected CommandResult executeDenied() {
+        // TODO: add message parameter, so signIn.jsp can show it
+        return CommandResultImpl.of(Paths.SIGN_IN_JSP);
     }
 }

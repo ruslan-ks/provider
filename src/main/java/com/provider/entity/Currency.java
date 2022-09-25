@@ -1,6 +1,6 @@
 package com.provider.entity;
 
-public enum Currency {
+public enum Currency implements Entity {
     USD,
     UAH
 }
