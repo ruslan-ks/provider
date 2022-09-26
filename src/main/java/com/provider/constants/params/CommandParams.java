@@ -34,4 +34,9 @@ public class CommandParams {
      * Replenish account command
      */
     public static final String REPLENISH = "replenish";
+
+    /**
+     * User management page access command
+     */
+    public static final String USERS_MANAGEMENT_PAGE = "usersManagementPage";
 }

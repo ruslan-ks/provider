@@ -28,6 +28,11 @@ public class Paths {
     public static final String REPLENISH_JSP = "/WEB-INF/pages/replenish.jsp";
 
     /**
+     * User management jsp
+     */
+    public static final String USERS_MANAGEMENT_JSP = "/WEB-INF/pages/usersManagement.jsp";
+
+    /**
      * Front controller servlet
      */
     private static final String CONTROLLER = "controller";
@@ -50,10 +55,18 @@ public class Paths {
     /**
      * User panel controller action
      */
-    public static final String USER_PANEL_PAGE = CONTROLLER + "?" + CommandParams.COMMAND + "=" + CommandParams.USER_PANEL;
+    public static final String USER_PANEL_PAGE = CONTROLLER + "?" + CommandParams.COMMAND + "=" +
+            CommandParams.USER_PANEL;
 
     /**
      * Replenish page - allows to replenish user account
      */
-    public static final String REPLENISH_PAGE = CONTROLLER + "?" + CommandParams.COMMAND + "=" + CommandParams.REPLENISH_PAGE;
+    public static final String REPLENISH_PAGE = CONTROLLER + "?" + CommandParams.COMMAND + "=" +
+            CommandParams.REPLENISH_PAGE;
+
+    /**
+     * User management page access
+     */
+    public static final String USERS_MANAGEMENT_PAGE = CONTROLLER + "?" + CommandParams.COMMAND + "=" +
+            CommandParams.USERS_MANAGEMENT_PAGE;
 }

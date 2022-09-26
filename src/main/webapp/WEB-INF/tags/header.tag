@@ -7,7 +7,23 @@
 <%@ taglib prefix="include" tagdir="/WEB-INF/tags/include" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="pro" uri="http://functions.provider.com" %>
+
 <include:bootstrapStyles/>
+
+<jsp:useBean id="userSettings" beanName="${SessionAttributes.USER_SETTINGS}" scope="session"
+             type="com.provider.entity.settings.UserSettings"/>
+<jsp:useBean id="languageInfo" beanName="${AppAttributes.LANGUAGE_INFO}" scope="application"
+             type="com.provider.localization.LanguageInfo"/>
+<c:set var="languages" value="${languageInfo.supportedLanguages}" scope="page"/>
+
+<%-- TODO: move this default language-setting logic to a filter --%>
+<c:set var="selectedLanguage"
+       value="<%= userSettings.getLanguage().orElseGet(languageInfo::getDefaultLanguage) %>" scope="page"/>
+<fmt:setLocale value="${requestScope[RequestAttributes.LOCALE]}" />
+
+<%-- Just a conviniant short name for user --%>
+<c:set var="user" value="${sessionScope[SessionAttributes.SIGNED_USER]}" scope="page"/>
 <header class="navbar navbar-expand-md bg-dark navbar-dark">
     <div class="container">
         <a href="#" class="navbar-brand">Provider</a>
@@ -15,16 +31,6 @@
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
-
-        <jsp:useBean id="userSettings" beanName="${SessionAttributes.USER_SETTINGS}" scope="session"
-                     type="com.provider.entity.settings.UserSettings"/>
-        <jsp:useBean id="languageInfo" beanName="${AppAttributes.LANGUAGE_INFO}" scope="application"
-                     type="com.provider.localization.LanguageInfo"/>
-        <c:set var="languages" value="${languageInfo.supportedLanguages}" scope="page"/>
-        <c:set var="selectedLanguage"
-               value="<%= userSettings.getLanguage().orElseGet(languageInfo::getDefaultLanguage) %>" scope="page"/>
-
-        <fmt:setLocale value="${requestScope[RequestAttributes.LOCALE]}" />
         <fmt:bundle basename="LabelsBundle">
             <nav class="collapse navbar-collapse" id="navMenu">
                 <ul class="navbar-nav ms-auto">
@@ -32,13 +38,21 @@
                     <li class="nav-item"><a href="#" class="nav-link"><fmt:message key="nav.catalogue"/></a></li>
                     <li class="nav-item"><a href="#" class="nav-link"><fmt:message key="nav.about"/></a></li>
                     <c:choose>
-                        <c:when test="${not empty sessionScope[SessionAttributes.SIGNED_USER]}">
+                        <c:when test="${not empty user}">
                             <li class="nav-item dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" id="navbarScrollingDropdown" role="button"
                                    data-bs-toggle="dropdown" aria-expanded="false">
                                         ${sessionScope[SessionAttributes.SIGNED_USER].name}
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
+                                    <c:if test="${pro:isAdminOrHigher(user)}">
+                                        <li><a href="${pageContext.request.contextPath}/${Paths.USERS_MANAGEMENT_PAGE}"
+                                               class="dropdown-item"><fmt:message key="nav.manageUsers"/></a></li>
+                                    </c:if>
+                                    <c:if test="${pro:isRoot(user)}">
+                                        <li><a href="#"
+                                               class="dropdown-item">Root page placeholder</a></li>
+                                    </c:if>
                                     <li><a href="${pageContext.request.contextPath}/${Paths.USER_PANEL_PAGE}"
                                            class="dropdown-item"><fmt:message key="nav.userPanel"/></a></li>
                                     <li><hr class="dropdown-divider"></li>

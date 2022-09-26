@@ -41,6 +41,8 @@ public class FrontCommandFactoryImpl implements FrontCommandFactory {
                 return new ReplenishPageCommand(request, response);
             case CommandParams.REPLENISH:
                 return new ReplenishCommand(request, response);
+            case CommandParams.USERS_MANAGEMENT_PAGE:
+                return new UsersManagementPageCommand(request, response);
             default:
                 throw new IllegalCommandException("Unknown command: " + paramCommand);
         }
