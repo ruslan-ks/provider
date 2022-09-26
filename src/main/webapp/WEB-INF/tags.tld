@@ -4,12 +4,11 @@
         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd"
         version="2.1">
     <tlib-version>1.0</tlib-version>
-    <short-name>protags</short-name>
+    <short-name>proTags</short-name>
     <uri>http://provider.com</uri>
 
-    <!-- 'unpack' tag -->
     <tag>
-        <description>Unpacks Iterable of strings to a single string</description>
+        <description>Unpacks attributes map to a single string</description>
         <name>attributes</name>
         <tag-class>com.provider.tags.AttributesTagHandler</tag-class>
         <body-content>empty</body-content>

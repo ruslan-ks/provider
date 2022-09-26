@@ -1,9 +1,6 @@
 package com.provider.entity.user;
 
 import com.provider.entity.Entity;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Optional;
 
 public interface User extends Entity {
     enum Role {
