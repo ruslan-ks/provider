@@ -3,7 +3,7 @@ package com.provider.controller.command.impl;
 import com.provider.constants.Paths;
 import com.provider.constants.params.ReplenishParams;
 import com.provider.controller.command.CommandUtil;
-import com.provider.controller.command.MemberAccessCommand;
+import com.provider.controller.command.MemberCommand;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.controller.command.result.CommandResult;
 import com.provider.controller.command.result.CommandResultImpl;
@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.Optional;
 
-public class ReplenishPageCommand extends MemberAccessCommand {
+public class ReplenishPageCommand extends MemberCommand {
     private static final Logger logger = LoggerFactory.getLogger(ReplenishPageCommand.class);
 
     ReplenishPageCommand(HttpServletRequest request, HttpServletResponse response) {

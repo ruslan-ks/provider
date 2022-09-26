@@ -3,7 +3,7 @@ package com.provider.controller.command.impl;
 import com.provider.constants.Paths;
 import com.provider.constants.params.ReplenishParams;
 import com.provider.controller.command.CommandUtil;
-import com.provider.controller.command.MemberAccessCommand;
+import com.provider.controller.command.MemberCommand;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.controller.command.result.CommandResult;
 import com.provider.controller.command.result.CommandResultImpl;
@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Optional;
 
-public class ReplenishCommand extends MemberAccessCommand {
+public class ReplenishCommand extends MemberCommand {
     ReplenishCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
         super(request, response);
     }
