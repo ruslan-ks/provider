@@ -12,17 +12,19 @@ import java.sql.Statement;
 import java.util.Optional;
 
 public class PostgresUserDao extends UserDao {
-
     PostgresUserDao() {}
+
+    private static final String SQL_USER_FIELDS = "id AS id, " +
+            "login AS login, " +
+            "name AS name, " +
+            "surname AS surname, " +
+            "phone AS phone, " +
+            "role AS role, " +
+            "status AS status ";
 
     private static final String SQL_FIND_BY_ID =
             "SELECT " +
-                    "id AS id, " +
-                    "login AS login, " +
-                    "name AS name, " +
-                    "surname AS surname, " +
-                    "phone AS phone, " +
-                    "role AS role " +
+                    SQL_USER_FIELDS +
             "FROM users " +
                     "WHERE id = ?";
 
@@ -40,8 +42,8 @@ public class PostgresUserDao extends UserDao {
         return Optional.empty();
     }
 
-    private static final String SQL_INSERT = "INSERT INTO users(login, role, name, surname, phone) VALUES" +
-            "(?, ?, ?, ?, ?)";
+    private static final String SQL_INSERT = "INSERT INTO users(login, role, name, surname, phone, status) VALUES" +
+            "(?, ?, ?, ?, ?, ?)";
 
     @Override
     public boolean insert(@NotNull User user) throws DBException {
@@ -52,7 +54,8 @@ public class PostgresUserDao extends UserDao {
             statement.setString(i++, user.getRole().name());
             statement.setString(i++, user.getName());
             statement.setString(i++, user.getSurname());
-            statement.setString(i, user.getPhone());
+            statement.setString(i++, user.getPhone());
+            statement.setString(i, user.getStatus().name());
 
             final int affectedRows = statement.executeUpdate();
             if (affectedRows > 0) {
@@ -72,12 +75,7 @@ public class PostgresUserDao extends UserDao {
 
     private static final String SQL_FIND_BY_LOGIN =
             "SELECT " +
-                    "id AS id, " +
-                    "login AS login, " +
-                    "name AS name, " +
-                    "surname AS surname, " +
-                    "phone AS phone, " +
-                    "role AS role " +
+                    SQL_USER_FIELDS +
             "FROM users " +
                     "WHERE login = ?";
 
@@ -90,6 +88,7 @@ public class PostgresUserDao extends UserDao {
                 return Optional.of(fetchUser(resultSet));
             }
         } catch (SQLException ex) {
+
             throw new DBException(ex);
         }
         return Optional.empty();
@@ -101,8 +100,9 @@ public class PostgresUserDao extends UserDao {
         final String surname = resultSet.getString("surname");
         final String login = resultSet.getString("login");
         final String phone = resultSet.getString("phone");
-        final String role = resultSet.getString("role");
+        final User.Role role = User.Role.valueOf(resultSet.getString("role"));
+        final User.Status status = User.Status.valueOf(resultSet.getString("status"));
 
-        return UserImpl.newInstance(id, name, surname, login, phone, User.Role.valueOf(role));
+        return UserImpl.of(id, name, surname, login, phone, role, status);
     }
 }

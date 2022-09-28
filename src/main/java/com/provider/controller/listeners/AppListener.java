@@ -50,8 +50,8 @@ public class AppListener implements ServletContextListener {
     public void tryCreateRootUser() {
         try {
             // TODO: fix this: root object doesn't get updated if root user already exists in db.
-            User root = UserImpl.newInstance(0, "root", "root", "root", "000000",
-                    User.Role.root);
+            User root = UserImpl.of(0, "root", "root", "root", "000000",
+                    User.Role.ROOT, User.Status.ACTIVE);
             final UserService userService = UserServiceImpl.newInstance();
             final Optional<User> found = userService.findUserByLogin(root.getLogin());
             final UserPassword rootPassword;

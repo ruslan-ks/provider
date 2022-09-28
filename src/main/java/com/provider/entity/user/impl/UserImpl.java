@@ -12,20 +12,22 @@ public class UserImpl implements User {
     private final String login;
     private final String phone;
     private final Role role;
+    private final Status status;
 
     private UserImpl(long id, @NotNull String name, @NotNull String surname, @NotNull String login,
-                     @NotNull String phone, @NotNull Role role) {
+                     @NotNull String phone, @NotNull Role role, @NotNull Status status) {
         this.id = id;
         this.name = name;
         this.surname = surname;
         this.login = login;
         this.phone = phone;
         this.role = role;
+        this.status = status;
     }
 
-    public static User newInstance(long id, @NotNull String name, @NotNull String surname, @NotNull String login,
-                                   @NotNull String phone, @NotNull Role role) {
-        return new UserImpl(id, name, surname, login, phone, role);
+    public static User of(long id, @NotNull String name, @NotNull String surname, @NotNull String login,
+                          @NotNull String phone, @NotNull Role role, @NotNull Status status) {
+        return new UserImpl(id, name, surname, login, phone, role, status);
     }
 
     @Override
@@ -42,28 +44,33 @@ public class UserImpl implements User {
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return name;
     }
 
     @Override
-    public String getSurname() {
+    public @NotNull String getSurname() {
         return surname;
     }
 
     @Override
-    public String getLogin() {
+    public @NotNull String getLogin() {
         return login;
     }
 
     @Override
-    public String getPhone() {
+    public @NotNull String getPhone() {
         return phone;
     }
 
     @Override
-    public Role getRole() {
+    public @NotNull Role getRole() {
         return role;
+    }
+
+    @Override
+    public @NotNull Status getStatus() {
+        return status;
     }
 
     @Override

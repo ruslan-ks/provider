@@ -26,7 +26,6 @@ public abstract class MemberCommand extends CheckedAccessCommand {
     protected boolean hasAccessRights(@NotNull User user) throws DBException {
         final UserService userService = UserServiceImpl.newInstance();
         final Optional<User> foundUser = userService.findUserById(user.getId());
-        logger.debug("Current user status: {}", userService.getCurrentUserStatus(user.getId()));
         return foundUser.isPresent() && userService.isActiveUser(foundUser.get());
     }
 

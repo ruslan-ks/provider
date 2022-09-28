@@ -66,4 +66,13 @@ public class TransactionImpl implements Transaction {
             throw new DBException(ex);
         }
     }
+
+    @Override
+    public String toString() {
+        return "TransactionImpl{" +
+                "connection=" + connection +
+                ", previousTransactionIsolation=" + previousTransactionIsolation +
+                ", entityDaoList=" + entityDaoList +
+                '}';
+    }
 }

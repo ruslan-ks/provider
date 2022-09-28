@@ -1,13 +1,19 @@
 package com.provider.entity.user;
 
 import com.provider.entity.Entity;
+import org.jetbrains.annotations.NotNull;
 
 public interface User extends Entity {
     enum Role {
-        root,
-        admin,
-        member,
-        guest
+        ROOT,
+        ADMIN,
+        MEMBER,
+        GUEST
+    }
+
+    enum Status {
+        ACTIVE,
+        SUSPENDED
     }
 
     long getId();
@@ -19,13 +25,15 @@ public interface User extends Entity {
      */
     void setId(long id);
 
-    String getName();
+    @NotNull String getName();
 
-    String getSurname();
+    @NotNull String getSurname();
 
-    String getLogin();
+    @NotNull String getLogin();
 
-    String getPhone();
+    @NotNull String getPhone();
 
-    Role getRole();
+    @NotNull Role getRole();
+
+    @NotNull Status getStatus();
 }

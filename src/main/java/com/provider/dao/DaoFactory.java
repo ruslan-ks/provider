@@ -25,11 +25,5 @@ public interface DaoFactory {
      */
     @NotNull UserPasswordDao newUserPasswordDao();
 
-    /**
-     * Creates new UserStatusDao
-     * @return new UserStatusDao
-     */
-    @NotNull UserStatusDao newUserStatusDao();
-
     @NotNull UserAccountDao newUserAccountDao();
 }

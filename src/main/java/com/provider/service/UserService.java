@@ -3,7 +3,6 @@ package com.provider.service;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
 import com.provider.entity.user.UserPassword;
-import com.provider.entity.user.UserStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -50,16 +49,10 @@ public interface UserService {
     @NotNull Optional<User> authenticate(@NotNull String login, @NotNull String password) throws DBException;
 
     /**
-     * Returns current user status
-     * @param userId user id
-     * @return Optional containing current user status if found, empty optional otherwise
-     */
-    @NotNull Optional<UserStatus> getCurrentUserStatus(long userId) throws DBException;
-
-    /**
      * Checks if user is active - not suspended(banned and so on)
+     * Does not check user data in a db
      * @param user user to be checked
      * @return true if user is active
      */
-    boolean isActiveUser(@NotNull User user) throws DBException;
+    boolean isActiveUser(@NotNull User user);
 }

@@ -25,11 +25,6 @@ public class PostgresDaoFactory implements DaoFactory {
     }
 
     @Override
-    public @NotNull UserStatusDao newUserStatusDao() {
-        return new PostgresUserStatusDao();
-    }
-
-    @Override
     public @NotNull UserAccountDao newUserAccountDao() {
         return new PostgresUserAccountDao();
     }

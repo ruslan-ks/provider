@@ -7,20 +7,21 @@ import com.provider.entity.Currency;
 import com.provider.entity.user.User;
 import com.provider.entity.user.UserAccount;
 import com.provider.entity.user.UserPassword;
-import com.provider.entity.user.UserStatus;
 import com.provider.entity.user.impl.UserAccountImpl;
-import com.provider.entity.user.impl.UserStatusImpl;
 import com.provider.entity.user.hashing.PasswordHashing;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
-import java.time.Instant;
 import java.util.Optional;
 
 /**
  * User service implementation. Contains business logic and data access methods for User.
  */
 public class UserServiceImpl extends AbstractService implements UserService {
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+
     private UserServiceImpl() throws DBException {}
 
     public static UserServiceImpl newInstance() throws DBException {
@@ -64,13 +65,11 @@ public class UserServiceImpl extends AbstractService implements UserService {
     public boolean insertUser(@NotNull User user, @NotNull UserPassword userPassword) throws DBException {
         final UserDao userDao = daoFactory.newUserDao();
         final UserPasswordDao userPasswordDao = daoFactory.newUserPasswordDao();
-        final UserStatusDao userStatusDao = daoFactory.newUserStatusDao();
         final UserAccountDao userAccountDao =  daoFactory.newUserAccountDao();
         try (var transaction = Transaction.of(connectionSupplier.get(), userDao, userPasswordDao,
-                userStatusDao, userAccountDao)) {
+                userAccountDao)) {
             final boolean userInserted;
             final boolean passwordInserted;
-            final boolean statusInserted;
             final boolean accountInserted;
             try {
                 userInserted = userDao.insert(user);
@@ -78,19 +77,16 @@ public class UserServiceImpl extends AbstractService implements UserService {
                 userPassword.setUserId(user.getId());
                 passwordInserted = userPasswordDao.insert(userPassword);
 
-                final UserStatus userStatus = UserStatusImpl.newInstance(user.getId(), UserStatus.Status.ACTIVE,
-                        "new", Instant.now());
-                statusInserted = userStatusDao.insert(userStatus);
-
                 final UserAccount userAccount = UserAccountImpl.newInstance(0, user.getId(), Currency.USD);
                 accountInserted = userAccountDao.insert(userAccount);
 
                 transaction.commit();
             } catch (Throwable ex) {
                 transaction.rollback();
+                logger.error("Couldn't execute transaction {}", transaction, ex);
                 throw ex;
             }
-            return userInserted && passwordInserted && statusInserted && accountInserted;
+            return userInserted && passwordInserted && accountInserted;
         }
     }
 
@@ -118,20 +114,7 @@ public class UserServiceImpl extends AbstractService implements UserService {
     }
 
     @Override
-    public @NotNull Optional<UserStatus> getCurrentUserStatus(long userId) throws DBException {
-        try (var connection = connectionSupplier.get()) {
-            final UserStatusDao userStatusDao = daoFactory.newUserStatusDao();
-            userStatusDao.setConnection(connection);
-            return userStatusDao.findCurrentUserStatus(userId);
-        } catch (SQLException ex) {
-            throw new DBException();
-        }
-    }
-
-    @Override
-    public boolean isActiveUser(@NotNull User user) throws DBException {
-        final Optional<UserStatus.Status> userStatus = getCurrentUserStatus(user.getId())
-                .map(UserStatus::getStatus);
-        return userStatus.isPresent() && userStatus.get().equals(UserStatus.Status.ACTIVE);
+    public boolean isActiveUser(@NotNull User user) {
+        return user.getStatus().equals(User.Status.ACTIVE);
     }
 }
