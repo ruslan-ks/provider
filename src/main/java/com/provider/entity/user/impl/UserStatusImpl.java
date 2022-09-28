@@ -61,6 +61,8 @@ public class UserStatusImpl implements UserStatus {
         return "UserStatusImpl{" +
                 "userId=" + userId +
                 ", status=" + status +
+                ", comment='" + comment + '\'' +
+                ", setTime=" + setTime +
                 '}';
     }
 
@@ -69,11 +71,14 @@ public class UserStatusImpl implements UserStatus {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserStatusImpl that = (UserStatusImpl) o;
-        return userId == that.userId && status == that.status;
+        return userId == that.userId
+                && status == that.status
+                && Objects.equals(comment, that.comment)
+                && Objects.equals(setTime, that.setTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, status);
+        return Objects.hash(userId, status, comment, setTime);
     }
 }

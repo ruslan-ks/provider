@@ -13,6 +13,14 @@ import java.util.Set;
  */
 public interface UserStatus extends Entity {
     /**
+     * Possible user statuses
+     */
+    enum Status {
+        ACTIVE,
+        SUSPENDED
+    }
+
+    /**
      * Returns user id
      * @return user id - non-negative value
      */
@@ -42,15 +50,6 @@ public interface UserStatus extends Entity {
      * @return status setting time
      */
     @NotNull Instant getSetTime();
-
-
-    /**
-     * Possible user statuses
-     */
-    enum Status {
-        ACTIVE,
-        SUSPENDED;
-    }
 
     /**
      * User status may change from first to second:

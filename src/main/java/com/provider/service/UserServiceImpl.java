@@ -116,4 +116,22 @@ public class UserServiceImpl extends AbstractService implements UserService {
         }
         return Optional.empty();
     }
+
+    @Override
+    public @NotNull Optional<UserStatus> getCurrentUserStatus(long userId) throws DBException {
+        try (var connection = connectionSupplier.get()) {
+            final UserStatusDao userStatusDao = daoFactory.newUserStatusDao();
+            userStatusDao.setConnection(connection);
+            return userStatusDao.findCurrentUserStatus(userId);
+        } catch (SQLException ex) {
+            throw new DBException();
+        }
+    }
+
+    @Override
+    public boolean isActiveUser(@NotNull User user) throws DBException {
+        final Optional<UserStatus.Status> userStatus = getCurrentUserStatus(user.getId())
+                .map(UserStatus::getStatus);
+        return userStatus.isPresent() && userStatus.get().equals(UserStatus.Status.ACTIVE);
+    }
 }

@@ -16,18 +16,25 @@ public class PostgresUserStatusDao extends UserStatusDao {
 
     PostgresUserStatusDao() {}
 
-    private final static String SQL_SELECT_BY_USER_ID =
+    @Override
+    public @NotNull Optional<UserStatus> findByKey(@NotNull Integer userId) {
+        throw new UnsupportedOperationException();
+    }
+
+    private final static String SQL_SELECT_CURRENT_BY_USER_ID =
             "SELECT " +
                     "user_id AS user_id, " +
                     "status AS status, " +
                     "comment AS comment, " +
                     "set_time AS set_time " +
             "FROM user_statuses " +
-            "WHERE user_id = ?";
+            "WHERE user_id = ?" +
+            "ORDER BY set_time DESC " +
+            "LIMIT 1";
 
     @Override
-    public @NotNull Optional<UserStatus> findByKey(@NotNull Integer userId) throws DBException {
-        try (var preparedStatement = connection.prepareStatement(SQL_SELECT_BY_USER_ID)) {
+    public @NotNull Optional<UserStatus> findCurrentUserStatus(long userId) throws DBException {
+        try (var preparedStatement = connection.prepareStatement(SQL_SELECT_CURRENT_BY_USER_ID)) {
             preparedStatement.setLong(1, userId);
             final ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -65,7 +72,8 @@ public class PostgresUserStatusDao extends UserStatusDao {
         final long userId = resultSet.getLong("user_id");
         final String status = resultSet.getString("status");
         final String comment = resultSet.getString("comment");
-        final Instant setTime = resultSet.getObject("set_time", Instant.class);
+        // getObject("set_time", Instant.class);
+        final Instant setTime = resultSet.getTimestamp("set_time").toInstant();
         return UserStatusImpl.newInstance(userId, UserStatus.Status.valueOf(status), comment, setTime);
     }
 }

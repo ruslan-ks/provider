@@ -47,6 +47,7 @@ public abstract class CheckedAccessCommand extends FrontCommand {
     protected abstract CommandResult executeAccessed(@NotNull User user)
             throws DBException, ServletException, IOException, CommandParamException;
 
+    // TODO: move this impl to MemberCommand
     /**
      * Called if access is denied.
      * Sends redirect to the sign-in page by default
