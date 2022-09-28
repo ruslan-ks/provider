@@ -15,7 +15,7 @@ import java.util.Optional;
 /**
  * Command that may be accessed only by legal signed-in users with any role >= member
  */
-public abstract class MemberCommand extends CheckedAccessCommand {
+public abstract class MemberCommand extends UserAccessCommand {
     private static final Logger logger = LoggerFactory.getLogger(MemberCommand.class);
 
     protected MemberCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {

@@ -17,8 +17,8 @@ import java.util.Optional;
 /**
  * Checks if user is allowed to execute a command before executing
  */
-public abstract class CheckedAccessCommand extends FrontCommand {
-    public CheckedAccessCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
+public abstract class UserAccessCommand extends FrontCommand {
+    public UserAccessCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
         super(request, response);
     }
 
