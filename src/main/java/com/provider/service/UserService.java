@@ -55,4 +55,18 @@ public interface UserService {
      * @return true if user is active
      */
     boolean isActiveUser(@NotNull User user);
+
+    /**
+     * Checks whether user is admin or higher
+     * @param user user to be checked
+     * @return true is user has admin rights
+     */
+    boolean hasAdminRights(@NotNull User user);
+
+    /**
+     * Checks whether user has root rights
+     * @param user user to be checked
+     * @return true is user has root rights
+     */
+    boolean hasRootRights(@NotNull User user);
 }

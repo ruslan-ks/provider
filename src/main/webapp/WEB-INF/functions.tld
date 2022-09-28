@@ -11,12 +11,12 @@
 
     <function>
         <name>isAdminOrHigher</name>
-        <function-class>com.provider.entity.user.RoleChecks</function-class>
-        <function-signature>boolean isAdminOrHigher(com.provider.entity.user.User)</function-signature>
+        <function-class>com.provider.functions.RoleCheckingFunctions</function-class>
+        <function-signature>boolean hasAdminRights(com.provider.entity.user.User)</function-signature>
     </function>
     <function>
         <name>isRoot</name>
-        <function-class>com.provider.entity.user.RoleChecks</function-class>
-        <function-signature>boolean isRoot(com.provider.entity.user.User)</function-signature>
+        <function-class>com.provider.functions.RoleCheckingFunctions</function-class>
+        <function-signature>boolean hasRootRights(com.provider.entity.user.User)</function-signature>
     </function>
 </taglib>

@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -116,5 +117,15 @@ public class UserServiceImpl extends AbstractService implements UserService {
     @Override
     public boolean isActiveUser(@NotNull User user) {
         return user.getStatus().equals(User.Status.ACTIVE);
+    }
+
+    @Override
+    public boolean hasAdminRights(@NotNull User user) {
+        return List.of(User.Role.ADMIN, User.Role.ROOT).contains(user.getRole());
+    }
+
+    @Override
+    public boolean hasRootRights(@NotNull User user) {
+        return user.getRole().equals(User.Role.ROOT);
     }
 }
