@@ -32,11 +32,11 @@ public class ReplenishCommand extends MemberCommand {
 
         final Currency accountCurrency = CommandUtil.parseCurrencyParam(paramMap.get(ReplenishParams.CURRENCY));
         final BigDecimal amount = CommandUtil.parseBigDecimalParam(paramMap.get(ReplenishParams.AMOUNT));
-        if (!isValidAmount(amount)) {
+        final AccountService accountService = AccountServiceImpl.newInstance();
+        if (!accountService.isValidAmount(amount)) {
             throw new CommandParamException("Invalid amount: " + amount);
         }
 
-        final AccountService accountService = AccountServiceImpl.newInstance();
         final Optional<UserAccount> userAccount = accountService.findUserAccount(user, accountCurrency);
 
         if (userAccount.isPresent() && accountService.isUserAccount(userAccount.get(), user)) {
@@ -44,9 +44,5 @@ public class ReplenishCommand extends MemberCommand {
             return CommandResultImpl.of(Paths.USER_PANEL_PAGE);
         }
         throw new CommandParamException("Account not found");
-    }
-
-    private static boolean isValidAmount(@NotNull BigDecimal amount) {
-        return amount.compareTo(BigDecimal.ZERO) > 0;
     }
 }

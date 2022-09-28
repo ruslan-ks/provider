@@ -46,17 +46,14 @@ public abstract class MemberCommand extends UserAccessCommand {
 
     @Override
     protected CommandResult executeDenied() {
-        final Map<String, String> messageParams;
         if (isMember) {
             getSession().orElseThrow().removeAttribute(SessionAttributes.SIGNED_USER);
-            messageParams = isActive
+            final Map<String, String> messageParams = isActive
                     ? Collections.emptyMap()
                     : Map.of(SignInMessageParams.SUSPENDED, "true");
-        } else {
-            messageParams = Map.of(SignInMessageParams.SIGN_IN_REQUIRED, "true");
+            final ParameterizedUrl url = ParameterizedUrl.of(Paths.SIGN_IN_JSP, messageParams);
+            return CommandResultImpl.of(url.getString());
         }
-        final ParameterizedUrl url = ParameterizedUrl.of(Paths.SIGN_IN_JSP, messageParams);
-        logger.debug("Denied url: {}", url);
-        return CommandResultImpl.of(url.getString());
+        return CommandResultImpl.of(Paths.SIGN_IN_JSP);
     }
 }

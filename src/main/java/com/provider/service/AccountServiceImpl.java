@@ -65,4 +65,9 @@ public class AccountServiceImpl extends AbstractService implements AccountServic
                 .filter(acc -> acc.getCurrency().equals(accountCurrency))
                 .findAny();
     }
+
+    @Override
+    public boolean isValidAmount(@NotNull BigDecimal amount) {
+        return amount.compareTo(BigDecimal.ZERO) > 0;
+    }
 }

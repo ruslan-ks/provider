@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpSession;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -38,21 +39,22 @@ public class SignInCommand extends FrontCommand {
         final Optional<User> userOptional = userService.authenticate(login, password);
         final Optional<HttpSession> sessionOptional = getSession();
 
+        final Map<String, String> messageParamMap;
         if (userOptional.isEmpty()) {
-            final ParameterizedUrl url = ParameterizedUrl.of(Paths.SIGN_IN_JSP,
-                    Map.of(SignInMessageParams.INVALID_LOGIN_OR_PASS, "true"));
-            return CommandResultImpl.of(url.getString());
-        }
-        if (!userService.isActiveUser(userOptional.get())) {
-            final ParameterizedUrl url = ParameterizedUrl.of(Paths.SIGN_IN_JSP,
-                    Map.of(SignInMessageParams.SUSPENDED, "true"));
-            return CommandResultImpl.of(url.getString());
-        }
-        if (sessionOptional.isEmpty()) {
+            // invalid login or password
+            messageParamMap = Map.of(SignInMessageParams.INVALID_LOGIN_OR_PASS, "true");
+        } else if (!userService.isActiveUser(userOptional.get())) {
+            // user is not active - he was suspended, and he's not allowed to sign in
+            messageParamMap = Map.of(SignInMessageParams.SUSPENDED, "true");
+        } else if (sessionOptional.isEmpty()) {
+            // there is no session, we just cannot save this guy
             // TODO: add message here
-            return CommandResultImpl.of(Paths.SIGN_IN_JSP);
+            messageParamMap = Collections.emptyMap();
+        } else {
+            // success
+            sessionOptional.get().setAttribute(SessionAttributes.SIGNED_USER, userOptional.get());
+            return CommandResultImpl.of(Paths.USER_PANEL_PAGE);
         }
-        sessionOptional.get().setAttribute(SessionAttributes.SIGNED_USER, userOptional.get());
-        return CommandResultImpl.of(Paths.USER_PANEL_PAGE);
+        return CommandResultImpl.of(ParameterizedUrl.of(Paths.SIGN_IN_JSP, messageParamMap).getString());
     }
 }

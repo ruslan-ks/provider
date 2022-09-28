@@ -49,4 +49,11 @@ public interface AccountService {
      * @return Optional containing user account if found, empty Optional otherwise
      */
     @NotNull Optional<UserAccount> findUserAccount(@NotNull User user, @NotNull Currency accountCurrency) throws DBException;
+
+    /**
+     * Checks if amount is valid
+     * @param amount money amount to be checked
+     * @return true if amount is valid
+     */
+    boolean isValidAmount(@NotNull BigDecimal amount);
 }
