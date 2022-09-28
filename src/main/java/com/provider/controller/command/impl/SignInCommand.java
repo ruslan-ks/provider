@@ -2,6 +2,7 @@ package com.provider.controller.command.impl;
 
 import com.provider.constants.Paths;
 import com.provider.constants.attributes.SessionAttributes;
+import com.provider.constants.params.SignInMessageParams;
 import com.provider.constants.params.SignInParams;
 import com.provider.controller.command.FrontCommand;
 import com.provider.controller.command.result.CommandResult;
@@ -11,6 +12,7 @@ import com.provider.service.UserServiceImpl;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
+import com.provider.util.ParameterizedUrl;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -35,10 +37,22 @@ public class SignInCommand extends FrontCommand {
         final UserService userService = UserServiceImpl.newInstance();
         final Optional<User> userOptional = userService.authenticate(login, password);
         final Optional<HttpSession> sessionOptional = getSession();
-        if (userOptional.isPresent() && sessionOptional.isPresent()) {
-            sessionOptional.get().setAttribute(SessionAttributes.SIGNED_USER, userOptional.get());
-            return CommandResultImpl.of(Paths.USER_PANEL_PAGE);
+
+        if (userOptional.isEmpty()) {
+            final ParameterizedUrl url = ParameterizedUrl.of(Paths.SIGN_IN_JSP,
+                    Map.of(SignInMessageParams.INVALID_LOGIN_OR_PASS, "true"));
+            return CommandResultImpl.of(url.getString());
         }
-        return CommandResultImpl.of(Paths.SIGN_IN_JSP + "?" + SignInParams.FAILED_TO_SIGN_IN + "=true");
+        if (!userService.isActiveUser(userOptional.get())) {
+            final ParameterizedUrl url = ParameterizedUrl.of(Paths.SIGN_IN_JSP,
+                    Map.of(SignInMessageParams.SUSPENDED, "true"));
+            return CommandResultImpl.of(url.getString());
+        }
+        if (sessionOptional.isEmpty()) {
+            // TODO: add message here
+            return CommandResultImpl.of(Paths.SIGN_IN_JSP);
+        }
+        sessionOptional.get().setAttribute(SessionAttributes.SIGNED_USER, userOptional.get());
+        return CommandResultImpl.of(Paths.USER_PANEL_PAGE);
     }
 }

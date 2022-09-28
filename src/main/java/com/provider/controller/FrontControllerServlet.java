@@ -32,7 +32,9 @@ public class FrontControllerServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         final Optional<CommandResult> result = handleRequest(request, response);
+        logger.debug("OPTIONAL<COMMAND RESULT>: {}", result);
         if (result.isPresent()) {
+            logger.debug("FORWARD URL: {}", result.get().getViewLocation());
             request.getRequestDispatcher(result.get().getViewLocation()).forward(request, response);
         }
     }

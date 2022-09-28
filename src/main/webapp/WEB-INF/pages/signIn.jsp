@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.provider.constants.attributes.RequestAttributes" %>
 <%@ page import="com.provider.constants.params.SignInParams" %>
+<%@ page import="com.provider.constants.params.SignInMessageParams" %>
 <%@ page import="com.provider.constants.Paths" %>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -8,7 +9,6 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -36,8 +36,11 @@
                 <input type="password" name="${SignInParams.PASSWORD}" class="form-control" id="passwordInput">
             </div>
         </div>
-        <c:if test="${param[SignInParams.FAILED_TO_SIGN_IN]}">
-            <div class="alert alert-danger py-1"><fmt:message key="signIn.loginOrPassFailed"/></div>
+        <c:if test="${not empty param[SignInMessageParams.INVALID_LOGIN_OR_PASS]}">
+            <div class="alert alert-danger py-1"><fmt:message key="signIn.invalidLoginOrPass"/></div>
+        </c:if>
+        <c:if test="${not empty param[SignInMessageParams.SUSPENDED]}">
+            <div class="alert alert-danger py-1"><fmt:message key="signIn.youWereSuspended"/></div>
         </c:if>
         <div class="row">
             <div class="container-fluid">

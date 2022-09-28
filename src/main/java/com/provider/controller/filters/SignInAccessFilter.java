@@ -1,5 +1,6 @@
 package com.provider.controller.filters;
 
+import com.provider.constants.Paths;
 import com.provider.constants.attributes.SessionAttributes;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.*;
@@ -13,21 +14,14 @@ import java.io.IOException;
 public class SignInAccessFilter implements Filter {
     private static final Logger logger = LoggerFactory.getLogger(SignInAccessFilter.class);
 
-    public void init(FilterConfig config) throws ServletException {
-    }
-
-    public void destroy() {
-    }
-
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
         logger.debug("doFilter: filter: {}", this);
         if (request instanceof HttpServletRequest) {
             final var httpServletRequest = (HttpServletRequest) request;
             if (isSomeoneSignedIn(httpServletRequest)) {
-                final ServletContext context = request.getServletContext();
-                final String userPanelPath = context.getInitParameter("userPanel");
-                request.getRequestDispatcher(userPanelPath).forward(request, response);
+                request.getRequestDispatcher(Paths.USER_PANEL_PAGE).forward(request, response);
+                return;
             }
         } else {
             logger.error("Request object {} cannot be cast to HttServletRequest", request);

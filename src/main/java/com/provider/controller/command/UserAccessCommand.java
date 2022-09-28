@@ -1,9 +1,7 @@
 package com.provider.controller.command;
 
-import com.provider.constants.Paths;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.controller.command.result.CommandResult;
-import com.provider.controller.command.result.CommandResultImpl;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
 import jakarta.servlet.ServletException;
@@ -47,13 +45,9 @@ public abstract class UserAccessCommand extends FrontCommand {
     protected abstract CommandResult executeAccessed(@NotNull User user)
             throws DBException, ServletException, IOException, CommandParamException;
 
-    // TODO: move this impl to MemberCommand
     /**
      * Called if access is denied.
      * Sends redirect to the sign-in page by default
      */
-    protected CommandResult executeDenied() {
-        // TODO: add message parameter, so signIn.jsp could show it
-        return CommandResultImpl.of(Paths.SIGN_IN_JSP);
-    }
+    protected abstract CommandResult executeDenied();
 }

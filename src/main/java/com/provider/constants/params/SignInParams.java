@@ -1,10 +1,18 @@
 package com.provider.constants.params;
 
+/**
+ * SignIn command parameters
+ */
 public class SignInParams {
     private SignInParams() {}
 
+    /**
+     * login input field name
+     */
     public static final String LOGIN = "login";
-    public static final String PASSWORD = "password";
 
-    public static final String FAILED_TO_SIGN_IN = "failedToSignIn";
+    /**
+     * password input field name
+     */
+    public static final String PASSWORD = "password";
 }
