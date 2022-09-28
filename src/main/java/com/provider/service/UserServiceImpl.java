@@ -23,7 +23,7 @@ import java.util.Optional;
 public class UserServiceImpl extends AbstractService implements UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
-    private UserServiceImpl() throws DBException {}
+    UserServiceImpl() throws DBException {}
 
     public static UserServiceImpl newInstance() throws DBException {
         return new UserServiceImpl();
@@ -69,25 +69,22 @@ public class UserServiceImpl extends AbstractService implements UserService {
         final UserAccountDao userAccountDao =  daoFactory.newUserAccountDao();
         try (var transaction = Transaction.of(connectionSupplier.get(), userDao, userPasswordDao,
                 userAccountDao)) {
-            final boolean userInserted;
-            final boolean passwordInserted;
-            final boolean accountInserted;
             try {
-                userInserted = userDao.insert(user);
+                final boolean userInserted = userDao.insert(user);
 
                 userPassword.setUserId(user.getId());
-                passwordInserted = userPasswordDao.insert(userPassword);
+                final boolean passwordInserted = userPasswordDao.insert(userPassword);
 
                 final UserAccount userAccount = UserAccountImpl.newInstance(0, user.getId(), Currency.USD);
-                accountInserted = userAccountDao.insert(userAccount);
+                final boolean accountInserted = userAccountDao.insert(userAccount);
 
                 transaction.commit();
+                return userInserted && passwordInserted && accountInserted;
             } catch (Throwable ex) {
                 transaction.rollback();
                 logger.error("Couldn't execute transaction {}", transaction, ex);
                 throw ex;
             }
-            return userInserted && passwordInserted && accountInserted;
         }
     }
 

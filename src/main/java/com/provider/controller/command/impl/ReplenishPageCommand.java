@@ -12,7 +12,6 @@ import com.provider.entity.Currency;
 import com.provider.entity.user.User;
 import com.provider.entity.user.UserAccount;
 import com.provider.service.AccountService;
-import com.provider.service.AccountServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +33,7 @@ public class ReplenishPageCommand extends MemberCommand {
         final Map<String, String> paramMap = getRequestParams(ReplenishParams.CURRENCY);
         final Currency accountCurrency = CommandUtil.parseCurrencyParam(paramMap.get(ReplenishParams.CURRENCY));
 
-        final AccountService accountService = AccountServiceImpl.newInstance();
+        final AccountService accountService = serviceFactory.getAccountService();
         final Optional<UserAccount> account = accountService.findUserAccount(user, accountCurrency);
 
         logger.debug("ReplenishPageCommand: user: {}, currency: {}, account: {}", user, accountCurrency, account);

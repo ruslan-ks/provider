@@ -9,7 +9,6 @@ import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
 import com.provider.entity.user.UserAccount;
 import com.provider.service.AccountService;
-import com.provider.service.AccountServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +22,7 @@ public class UserPanelPageCommand extends MemberCommand {
 
     @Override
     protected CommandResult executeAccessed(@NotNull User user) throws DBException {
-        final AccountService accountService = AccountServiceImpl.newInstance();
+        final AccountService accountService = serviceFactory.getAccountService();
         final List<UserAccount> userAccountList = accountService.findUserAccounts(user.getId());
         request.setAttribute(RequestAttributes.USER_ACCOUNTS, userAccountList);
         return CommandResultImpl.of(Paths.USER_PANEL_JSP);

@@ -15,10 +15,6 @@ import java.util.Optional;
 public class AccountServiceImpl extends AbstractService implements AccountService {
     AccountServiceImpl() throws DBException {}
 
-    public static AccountServiceImpl newInstance() throws DBException {
-        return new AccountServiceImpl();
-    }
-
     @Override
     public @NotNull List<UserAccount> findUserAccounts(long userId) throws DBException {
         try (var connection = connectionSupplier.get()) {

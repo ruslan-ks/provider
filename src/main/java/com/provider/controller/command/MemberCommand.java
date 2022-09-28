@@ -8,7 +8,6 @@ import com.provider.controller.command.result.CommandResultImpl;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
 import com.provider.service.UserService;
-import com.provider.service.UserServiceImpl;
 import com.provider.util.ParameterizedUrl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -35,7 +34,7 @@ public abstract class MemberCommand extends UserAccessCommand {
 
     @Override
     protected boolean hasAccessRights(@NotNull User user) throws DBException {
-        final UserService userService = UserServiceImpl.newInstance();
+        final UserService userService = serviceFactory.getUserService();
         final Optional<User> foundUser = userService.findUserById(user.getId());
         isMember = foundUser.isPresent();
         if (isMember) {

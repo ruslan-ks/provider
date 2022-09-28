@@ -1,8 +1,9 @@
 package com.provider.controller.listeners;
 
 import com.provider.constants.attributes.AppAttributes;
+import com.provider.service.ServiceFactory;
+import com.provider.service.ServiceFactoryImpl;
 import com.provider.service.UserService;
-import com.provider.service.UserServiceImpl;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
 import com.provider.entity.user.impl.UserImpl;
@@ -52,7 +53,8 @@ public class AppListener implements ServletContextListener {
             // TODO: fix this: root object doesn't get updated if root user already exists in db.
             User root = UserImpl.of(0, "root", "root", "root", "000000",
                     User.Role.ROOT, User.Status.ACTIVE);
-            final UserService userService = UserServiceImpl.newInstance();
+            final ServiceFactory serviceFactory = ServiceFactoryImpl.newInstance();
+            final UserService userService = serviceFactory.getUserService();
             final Optional<User> found = userService.findUserByLogin(root.getLogin());
             final UserPassword rootPassword;
             if (found.isEmpty()) {

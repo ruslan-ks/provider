@@ -12,7 +12,6 @@ import com.provider.entity.Currency;
 import com.provider.entity.user.User;
 import com.provider.entity.user.UserAccount;
 import com.provider.service.AccountService;
-import com.provider.service.AccountServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +31,7 @@ public class ReplenishCommand extends MemberCommand {
 
         final Currency accountCurrency = CommandUtil.parseCurrencyParam(paramMap.get(ReplenishParams.CURRENCY));
         final BigDecimal amount = CommandUtil.parseBigDecimalParam(paramMap.get(ReplenishParams.AMOUNT));
-        final AccountService accountService = AccountServiceImpl.newInstance();
+        final AccountService accountService = serviceFactory.getAccountService();
         if (!accountService.isValidAmount(amount)) {
             throw new CommandParamException("Invalid amount: " + amount);
         }

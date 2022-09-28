@@ -5,6 +5,8 @@ import com.provider.controller.command.exception.CommandParamException;
 import com.provider.controller.command.result.CommandResult;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
+import com.provider.service.ServiceFactory;
+import com.provider.service.ServiceFactoryImpl;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,6 +31,11 @@ public abstract class FrontCommand {
      * Resulting response
      */
     protected final HttpServletResponse response;
+
+    /**
+     * Service factory that should be used to obtain service objects
+     */
+    protected ServiceFactory serviceFactory = ServiceFactoryImpl.newInstance();
 
     protected FrontCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
         this.request = request;

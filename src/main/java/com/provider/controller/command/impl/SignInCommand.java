@@ -8,7 +8,6 @@ import com.provider.controller.command.FrontCommand;
 import com.provider.controller.command.result.CommandResult;
 import com.provider.controller.command.result.CommandResultImpl;
 import com.provider.service.UserService;
-import com.provider.service.UserServiceImpl;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
@@ -35,7 +34,7 @@ public class SignInCommand extends FrontCommand {
         final String login = paramMap.get(SignInParams.LOGIN);
         final String password = paramMap.get(SignInParams.PASSWORD);
 
-        final UserService userService = UserServiceImpl.newInstance();
+        final UserService userService = serviceFactory.getUserService();
         final Optional<User> userOptional = userService.authenticate(login, password);
         final Optional<HttpSession> sessionOptional = getSession();
 
