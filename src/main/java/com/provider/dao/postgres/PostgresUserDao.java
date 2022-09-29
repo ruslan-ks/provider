@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class PostgresUserDao extends UserDao {
@@ -94,6 +96,38 @@ public class PostgresUserDao extends UserDao {
         return Optional.empty();
     }
 
+    private static final String SQL_FIND_RANGE =
+            "SELECT " +
+                    SQL_USER_FIELDS +
+            "FROM users " +
+            "ORDER BY id " +
+            "OFFSET ? " +
+            "LIMIT ? ";
+
+    @Override
+    public List<User> findRange(long offset, int limit) throws DBException {
+        if (offset < 0 || limit <= 0) {
+            throw new IllegalArgumentException("Invalid range: offset: " + offset + ", limit: " + limit);
+        }
+        try (var preparedStatement = connection.prepareStatement(SQL_FIND_RANGE)) {
+            int i = 1;
+            preparedStatement.setLong(i++, offset);
+            preparedStatement.setInt(i, limit);
+            final ResultSet resultSet = preparedStatement.executeQuery();
+            return fetchUsers(resultSet);
+        } catch (SQLException ex) {
+            throw new DBException(ex);
+        }
+    }
+
+    private static @NotNull List<User> fetchUsers(@NotNull ResultSet resultSet) throws SQLException {
+        final List<User> userList = new ArrayList<>();
+        while (resultSet.next()) {
+            userList.add(fetchUser(resultSet));
+        }
+        return userList;
+    }
+
     private static @NotNull User fetchUser(@NotNull ResultSet resultSet) throws SQLException {
         final long id = resultSet.getLong("id");
         final String name = resultSet.getString("name");
@@ -104,5 +138,20 @@ public class PostgresUserDao extends UserDao {
         final User.Status status = User.Status.valueOf(resultSet.getString("status"));
 
         return UserImpl.of(id, name, surname, login, phone, role, status);
+    }
+
+    private static final String SQL_COUNT_ALL = "SELECT id as id FROM users";
+
+    @Override
+    public long getUserCount() throws DBException {
+        try (var statement = connection.createStatement();
+             var resultSet = statement.executeQuery(SQL_COUNT_ALL)) {
+            if (resultSet.next()) {
+                return resultSet.getLong(1);
+            }
+        } catch (SQLException ex) {
+            throw new DBException(ex);
+        }
+        throw new DBException("Couldn't get users count");
     }
 }

@@ -110,6 +110,7 @@ CREATE TABLE user_accounts(
         CONSTRAINT positive_amount CHECK(amount >= 0),
     CONSTRAINT unique_user_id_currency UNIQUE(user_id, currency),
     FOREIGN KEY(user_id) REFERENCES users(id)
+        ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS user_account_transactions CASCADE;

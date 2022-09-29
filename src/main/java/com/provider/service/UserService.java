@@ -5,6 +5,7 @@ import com.provider.entity.user.User;
 import com.provider.entity.user.UserPassword;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -69,4 +70,20 @@ public interface UserService {
      * @return true is user has root rights
      */
     boolean hasRootRights(@NotNull User user);
+
+    /**
+     * Returns users of specified range sorted by id
+     * @param offset offset
+     * @param limit limit
+     * @return list of found users
+     * @throws DBException is db logic fail occurred
+     * @throws IllegalArgumentException if offset < 0 or limit <= 0
+     */
+    List<User> findUsersRange(long offset, int limit) throws DBException;
+
+    /**
+     * Returns count of users in db
+     * @return count of users
+     */
+    long getUsersCount() throws DBException;
 }

@@ -40,4 +40,12 @@ public class CommandUtil {
             throw new CommandParamException("Currency cannot be parsed - invalid currency: '" + currency + "'");
         }
     }
+
+    public static int parseIntParam(@NotNull String value) throws CommandParamException {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException ex) {
+            throw new CommandParamException("Invalid number format: " + value);
+        }
+    }
 }

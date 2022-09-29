@@ -125,4 +125,29 @@ public class UserServiceImpl extends AbstractService implements UserService {
     public boolean hasRootRights(@NotNull User user) {
         return user.getRole().equals(User.Role.ROOT);
     }
+
+    @Override
+    public List<User> findUsersRange(long offset, int limit) throws DBException {
+        if (offset < 0 || limit <= 0) {
+            throw new IllegalArgumentException("Invalid range: offset: " + offset + ", limit: " + limit);
+        }
+        try (var connection = connectionSupplier.get()) {
+            final UserDao userDao = daoFactory.newUserDao();
+            userDao.setConnection(connection);
+            return userDao.findRange(offset, limit);
+        } catch (SQLException ex) {
+            throw new DBException(ex);
+        }
+    }
+
+    @Override
+    public long getUsersCount() throws DBException {
+        try (var connection = connectionSupplier.get()) {
+            final UserDao userDao = daoFactory.newUserDao();
+            userDao.setConnection(connection);
+            return userDao.getUserCount();
+        } catch (SQLException ex) {
+            throw new DBException(ex);
+        }
+    }
 }

@@ -6,7 +6,18 @@ package com.provider.constants.attributes;
 public class RequestAttributes {
     private RequestAttributes() {}
 
+    /**
+     * User locale
+     */
     public static final String LOCALE = "locale";
 
+    /**
+     * User accounts
+     */
     public static final String USER_ACCOUNTS = "userAccounts";
+
+    /**
+     * Users attribute
+     */
+    public static final String USERS = "users";
 }

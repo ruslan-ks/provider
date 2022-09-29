@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -82,5 +83,21 @@ public abstract class FrontCommand {
             }
         }
         return paramMap;
+    }
+
+    // TODO: delete or refactor
+    protected final @NotNull Map<String, Optional<String>> getOptionalRequestParams() {
+        return Collections.list(request.getParameterNames()).stream()
+                .collect(Collectors.toMap(Function.identity(), request::getParameter))
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> Optional.ofNullable(e.getValue())));
+
+        /*
+        return request.getParameterMap().entrySet().stream()
+                .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), Optional.ofNullable(e.getValue())))
+                .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), e.getValue().map(arr -> arr[0])))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+         */
     }
 }
