@@ -24,7 +24,7 @@
         </div>
         <div class="col">
             <input type="number" step="0.01" name="${ReplenishParams.AMOUNT}" class="form-control" id="amountInputId"
-                   placeholder="${param[ReplenishParams.CURRENCY]}">
+                   min="0.1" placeholder="${param[ReplenishParams.CURRENCY]}">
         </div>
         <div class="col-md-3">
             <button type="submit" class="btn btn-success mb-3 w-100">Replenish</button>
@@ -35,4 +35,3 @@
 </fmt:bundle>
 </body>
 </html>
-
