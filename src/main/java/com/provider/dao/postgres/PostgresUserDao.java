@@ -140,7 +140,7 @@ public class PostgresUserDao extends UserDao {
         return UserImpl.of(id, name, surname, login, phone, role, status);
     }
 
-    private static final String SQL_COUNT_ALL = "SELECT id as id FROM users";
+    private static final String SQL_COUNT_ALL = "SELECT COUNT(id) FROM users";
 
     @Override
     public long getUserCount() throws DBException {

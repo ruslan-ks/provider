@@ -43,7 +43,7 @@ public class UsersManagementPageCommand extends AdminCommand {
         request.setAttribute(RequestAttributes.USERS, users);
 
         final int pageCount = (int) Math.ceil((double) userService.getUsersCount() / step);
-        request.setAttribute(UsersManagementParams.PAGE_COUNT, pageCount);
+        request.setAttribute(RequestAttributes.PAGE_COUNT, pageCount);
 
         return CommandResultImpl.of(Paths.USERS_MANAGEMENT_JSP);
     }

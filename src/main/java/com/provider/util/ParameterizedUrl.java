@@ -15,6 +15,6 @@ public interface ParameterizedUrl {
     @NotNull String getString();
 
     static ParameterizedUrl of(@NotNull String url, @NotNull Map<String, String> map) {
-        return MapBasedParameterizedUrl.of(url, map);
+        return AppendingParameterizedUrl.of(url, map);
     }
 }

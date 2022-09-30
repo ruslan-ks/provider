@@ -6,7 +6,6 @@
     <tlib-version>1.0</tlib-version>
     <short-name>proTags</short-name>
     <uri>http://provider.com</uri>
-
     <tag>
         <description>Unpacks attributes map to a single string</description>
         <name>attributes</name>
@@ -19,5 +18,42 @@
             <type>java.util.Map</type>
         </attribute>
         <dynamic-attributes>false</dynamic-attributes>
+    </tag>
+    <tag>
+        <description>Generates bootstrap pagination navbar</description>
+        <name>paginationNav</name>
+        <tag-class>com.provider.tags.PaginationNavTagHandler</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>pageNumber</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>int</type>
+        </attribute>
+        <attribute>
+            <name>pageCount</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>int</type>
+        </attribute>
+        <attribute>
+            <name>pageParam</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+        <attribute>
+            <name>href</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+        <attribute>
+            <name>itemsCount</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>int</type>
+        </attribute>
+        <dynamic-attributes>true</dynamic-attributes>
     </tag>
 </taglib>

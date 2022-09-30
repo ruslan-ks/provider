@@ -5,17 +5,20 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class MapBasedParameterizedUrl implements ParameterizedUrl {
+/**
+ * Only appends url parameters. Never replaces or removes them
+ */
+public class AppendingParameterizedUrl implements ParameterizedUrl {
     protected final Map<String, String> paramMap;
     protected final String url;
 
-    public MapBasedParameterizedUrl(@NotNull String url, @NotNull Map<String, String> paramMap) {
+    public AppendingParameterizedUrl(@NotNull String url, @NotNull Map<String, String> paramMap) {
         this.url = url;
         this.paramMap = Map.copyOf(paramMap);
     }
 
-    public static MapBasedParameterizedUrl of(@NotNull String url, @NotNull Map<String, String> paramMap) {
-        return new MapBasedParameterizedUrl(url, paramMap);
+    public static AppendingParameterizedUrl of(@NotNull String url, @NotNull Map<String, String> paramMap) {
+        return new AppendingParameterizedUrl(url, paramMap);
     }
 
     @Override
