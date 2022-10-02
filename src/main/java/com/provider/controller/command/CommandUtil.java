@@ -41,6 +41,7 @@ public class CommandUtil {
         }
     }
 
+    // TODO: javadoc
     public static int parseIntParam(@NotNull String value) throws CommandParamException {
         try {
             return Integer.parseInt(value);

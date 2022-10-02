@@ -7,6 +7,8 @@ import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
 import com.provider.service.ServiceFactory;
 import com.provider.service.ServiceFactoryImpl;
+import com.provider.validation.ValidatorFactory;
+import com.provider.validation.ValidatorFactoryImpl;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -36,7 +37,12 @@ public abstract class FrontCommand {
     /**
      * Service factory that should be used to obtain service objects
      */
-    protected ServiceFactory serviceFactory = ServiceFactoryImpl.newInstance();
+    protected final ServiceFactory serviceFactory = ServiceFactoryImpl.newInstance();
+
+    /**
+     * Validator factory that should be used to obtain validators
+     */
+    protected final ValidatorFactory validatorFactory = ValidatorFactoryImpl.newInstance();
 
     protected FrontCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
         this.request = request;
@@ -83,21 +89,5 @@ public abstract class FrontCommand {
             }
         }
         return paramMap;
-    }
-
-    // TODO: delete or refactor
-    protected final @NotNull Map<String, Optional<String>> getOptionalRequestParams() {
-        return Collections.list(request.getParameterNames()).stream()
-                .collect(Collectors.toMap(Function.identity(), request::getParameter))
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, e -> Optional.ofNullable(e.getValue())));
-
-        /*
-        return request.getParameterMap().entrySet().stream()
-                .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), Optional.ofNullable(e.getValue())))
-                .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), e.getValue().map(arr -> arr[0])))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-         */
     }
 }

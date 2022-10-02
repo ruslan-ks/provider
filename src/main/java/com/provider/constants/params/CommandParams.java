@@ -39,4 +39,14 @@ public class CommandParams {
      * User management page access command
      */
     public static final String USERS_MANAGEMENT_PAGE = "usersManagementPage";
+
+    /**
+     * Update user command
+     */
+    public static final String UPDATE_USER = "updateUser";
+
+    /**
+     * Add new user command
+     */
+    public static final String ADD_USER = "addUser";
 }
