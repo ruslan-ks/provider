@@ -34,4 +34,11 @@ public abstract class UserDao extends EntityDao<Long, User> {
      * @return count of users in db
      */
     public abstract long getUserCount() throws DBException;
+
+    /**
+     * Updates user data in db
+     * @param user user object that will be used to update db
+     * @return true if db changes were made
+     */
+    public abstract boolean update(@NotNull User user) throws DBException;
 }

@@ -5,8 +5,8 @@
 <%@ page import="com.provider.constants.Paths" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="pro" tagdir="/WEB-INF/tags" %>
-<%@ taglib prefix="prov" uri="http://provider.com" %>
+<%@ taglib prefix="pro" uri="http://provider.com" %>
+<%@ taglib prefix="func" uri="http://functions.provider.com" %>
 
 <html>
 <head>
@@ -87,6 +87,7 @@
                     <th><fmt:message key="user.surname"/></th>
                     <th><fmt:message key="user.phone"/></th>
                     <th><fmt:message key="user.status"/></th>
+                    <th></th>
                 </tr>
                 <c:forEach var="user" items="${users}" varStatus="status">
                     <tr>
@@ -95,31 +96,27 @@
                         <td>${user.name}</td>
                         <td>${user.surname}</td>
                         <td>${user.phone}</td>
+                        <td>${user.status}</td>
                         <td>
-                            <form action="">
-                                <div class="form-check form-switch">
-                                    <c:choose>
-                                        <c:when test="${user.status eq 'ACTIVE'}">
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" id="isActive${user.id}"
-                                                       title="${user.status}"
-                                                       checked>
-                                            </div>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" id="isActive${user.id}"
-                                                       title="${user.status}">
-                                            </div>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </div>
+                            <form method="post"
+                                  action="${pageContext.request.contextPath}/${Paths.UPDATE_USER_STATUS}">
+                                <input type="number" name="${UserParams.ID}" value="${user.id}" aria-label="id"
+                                       readonly hidden>
+                                <select onchange="this.form.submit()" name="${UserParams.STATUS}" class="form-select"
+                                        aria-label="User status">
+                                    <c:forEach var="status" items="${func:allUserStatuses()}">
+                                        <option value="${status}"
+                                                <c:if test="${status eq user.status}">selected</c:if>>
+                                                ${status}
+                                        </option>
+                                    </c:forEach>
+                                </select>
                             </form>
                         </td>
                     </tr>
                 </c:forEach>
             </table>
-            <prov:paginationNav pageNumber="${param[UsersManagementParams.PAGE_NUMBER]}"
+            <pro:paginationNav pageNumber="${param[UsersManagementParams.PAGE_NUMBER]}"
                                 pageCount="${requestScope[RequestAttributes.PAGE_COUNT]}"
                                 href="${pageContext.request.contextPath}/${Paths.USERS_MANAGEMENT_PAGE}"
                                 pageParam="${UsersManagementParams.PAGE_NUMBER}"/>

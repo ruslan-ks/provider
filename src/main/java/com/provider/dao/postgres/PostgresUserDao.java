@@ -154,4 +154,30 @@ public class PostgresUserDao extends UserDao {
         }
         throw new DBException("Couldn't get users count");
     }
+
+    private static final String SQL_UPDATE =
+            "UPDATE users " +
+            "SET " +
+                    "name = ?, " +
+                    "surname = ?, " +
+                    "phone = ?, " +
+                    "role = ?, " +
+                    "status = ? " +
+            "WHERE id = ?";
+
+    @Override
+    public boolean update(@NotNull User user) throws DBException {
+        try (var preparedStatement = connection.prepareStatement(SQL_UPDATE)) {
+            int i = 1;
+            preparedStatement.setString(i++, user.getName());
+            preparedStatement.setString(i++, user.getSurname());
+            preparedStatement.setString(i++, user.getPhone());
+            preparedStatement.setString(i++, user.getRole().name());
+            preparedStatement.setString(i++, user.getStatus().name());
+            preparedStatement.setLong(i, user.getId());
+            return preparedStatement.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            throw new DBException(ex);
+        }
+    }
 }

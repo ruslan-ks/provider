@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 /**
@@ -164,6 +165,22 @@ public class UserServiceImpl extends AbstractService implements UserService {
             final UserDao userDao = daoFactory.newUserDao();
             userDao.setConnection(connection);
             return userDao.getUserCount();
+        } catch (SQLException ex) {
+            throw new DBException(ex);
+        }
+    }
+
+    @Override
+    public boolean updateUserStatus(long userId, User.Status status) throws DBException{
+        try (var connection = connectionSupplier.get()) {
+            final UserDao userDao = daoFactory.newUserDao();
+            userDao.setConnection(connection);
+            final User user = findUserById(userId).orElseThrow(NoSuchElementException::new);
+            if (user.getStatus().equals(status)) {
+                return false;
+            }
+            user.setStatus(status);
+            return userDao.update(user);
         } catch (SQLException ex) {
             throw new DBException(ex);
         }

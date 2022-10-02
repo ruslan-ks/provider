@@ -45,6 +45,8 @@ public class FrontCommandFactoryImpl implements FrontCommandFactory {
                 return new UsersManagementPageCommand(request, response);
             case CommandParams.ADD_USER:
                 return new AddUserCommand(request, response);
+            case CommandParams.UPDATE_USER_STATUS:
+                return new UpdateUserStatusCommand(request, response);
             default:
                 throw new IllegalCommandException("Unknown command: " + paramCommand);
         }

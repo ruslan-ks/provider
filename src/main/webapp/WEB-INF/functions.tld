@@ -11,12 +11,22 @@
 
     <function>
         <name>isAdminOrHigher</name>
-        <function-class>com.provider.functions.RoleCheckingFunctions</function-class>
+        <function-class>com.provider.functions.UserCheckingFunctions</function-class>
         <function-signature>boolean hasAdminRights(com.provider.entity.user.User)</function-signature>
     </function>
     <function>
         <name>isRoot</name>
-        <function-class>com.provider.functions.RoleCheckingFunctions</function-class>
+        <function-class>com.provider.functions.UserCheckingFunctions</function-class>
         <function-signature>boolean hasRootRights(com.provider.entity.user.User)</function-signature>
+    </function>
+    <function>
+        <name>isActive</name>
+        <function-class>com.provider.functions.UserCheckingFunctions</function-class>
+        <function-signature>boolean isActive(com.provider.entity.user.User)</function-signature>
+    </function>
+    <function>
+        <name>allUserStatuses</name>
+        <function-class>com.provider.functions.EnumDataFunctions</function-class>
+        <function-signature>java.lang.Iterable allUserStatuses()</function-signature>
     </function>
 </taglib>

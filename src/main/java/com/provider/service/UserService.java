@@ -89,4 +89,14 @@ public interface UserService {
      * @return count of users
      */
     long getUsersCount() throws DBException;
+
+    /**
+     * Updates user status
+     * @param userId user id
+     * @param status new user status
+     * @return true if status was successfully updated, false otherwise
+     * @throws DBException if this UserDao throws this exception
+     * @throws java.util.NoSuchElementException if there is no user with id userId
+     */
+    boolean updateUserStatus(long userId, User.Status status) throws DBException;
 }

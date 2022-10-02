@@ -10,9 +10,9 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Used as EL functions configured in functions.tld for jsp user role checking
  */
-public class RoleCheckingFunctions {
+public class UserCheckingFunctions {
     private static final ServiceFactory serviceFactory = ServiceFactoryImpl.newInstance();
-    private RoleCheckingFunctions() {}
+    private UserCheckingFunctions() {}
 
     public static boolean hasAdminRights(@NotNull User user) {
         try {
@@ -27,6 +27,15 @@ public class RoleCheckingFunctions {
         try {
             final UserService userService = serviceFactory.getUserService();
             return userService.hasRootRights(user);
+        } catch (DBException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public static boolean isActive(@NotNull User user) {
+        try {
+            final UserService userService = serviceFactory.getUserService();
+            return userService.isActiveUser(user);
         } catch (DBException ex) {
             throw new RuntimeException(ex);
         }

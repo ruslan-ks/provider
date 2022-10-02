@@ -6,9 +6,11 @@ package com.provider.constants.params;
 public class UserParams {
     private UserParams() {}
 
-    public static final String LOGIN = "login";
-    public static final String PASSWORD = "pass";
-    public static final String NAME = "name";
-    public static final String SURNAME = "surname";
-    public static final String PHONE = "phone";
+    public static final String ID = "userId";
+    public static final String LOGIN = "userLogin";
+    public static final String PASSWORD = "userPass";
+    public static final String NAME = "userName";
+    public static final String SURNAME = "userSurname";
+    public static final String PHONE = "userPhone";
+    public static final String STATUS = "userStatus";
 }

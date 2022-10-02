@@ -3,6 +3,9 @@ package com.provider.entity.user;
 import com.provider.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * User entity
+ */
 public interface User extends Entity {
     enum Role {
         ROOT,
@@ -18,11 +21,6 @@ public interface User extends Entity {
 
     long getId();
 
-    /**
-     * Sets user id
-     * @param id new id
-     * @throws IllegalArgumentException if id <= 0
-     */
     void setId(long id);
 
     @NotNull String getName();
@@ -36,4 +34,6 @@ public interface User extends Entity {
     @NotNull Role getRole();
 
     @NotNull Status getStatus();
+
+    void setStatus(@NotNull Status status);
 }
