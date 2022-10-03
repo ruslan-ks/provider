@@ -2,8 +2,6 @@ package com.provider.util;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-
 /**
  * Url with url parameters
  */
@@ -14,7 +12,9 @@ public interface ParameterizedUrl {
      */
     @NotNull String getString();
 
-    static ParameterizedUrl of(@NotNull String url, @NotNull Map<String, String> map) {
-        return AppendingParameterizedUrl.of(url, map);
+    static ParameterizedUrl of(@NotNull String url) {
+        return AppendingParameterizedUrl.of(url);
     }
+
+    void addParam(@NotNull String paramName, @NotNull String paramValue);
 }

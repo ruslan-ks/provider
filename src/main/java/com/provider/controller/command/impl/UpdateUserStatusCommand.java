@@ -13,10 +13,14 @@ import com.provider.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
 public class UpdateUserStatusCommand extends AdminCommand {
+    private static final Logger logger = LoggerFactory.getLogger(UpdateUserStatusCommand.class);
+
     public UpdateUserStatusCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
         super(request, response);
     }
@@ -29,12 +33,14 @@ public class UpdateUserStatusCommand extends AdminCommand {
         final long userId = CommandUtil.parseLongParam(paramMap.get(UserParams.ID));
         final User.Status newStatus = CommandUtil.parseUserStatusParam(paramMap.get(UserParams.STATUS));
 
-        // TODO: add header messages
+        final CommandResult commandResult = CommandResultImpl.of(Paths.USERS_MANAGEMENT_PAGE);
         if (userService.updateUserStatus(userId, newStatus)) {
-            // success
+            logger.debug("Adding success message");
+            commandResult.addMessage(CommandResult.MessageType.SUCCESS, "User status changed successfully");
         } else {
-            // fail
+            logger.debug("Adding error message");
+            commandResult.addMessage(CommandResult.MessageType.FAIL, "Failed to change user status");
         }
-        return CommandResultImpl.of(Paths.USERS_MANAGEMENT_PAGE);
+        return commandResult;
     }
 }

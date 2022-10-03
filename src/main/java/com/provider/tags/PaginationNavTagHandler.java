@@ -74,8 +74,8 @@ public class PaginationNavTagHandler extends SimpleTagSupport implements Dynamic
     }
 
     private @NotNull String navItem(int pageNum, @NotNull String title, String... classes) {
-        final Map<String, String> paramMap = Map.of(pageParam, String.valueOf(pageNum));
-        final ParameterizedUrl parameterizedUrl = AppendingParameterizedUrl.of(href, paramMap);
+        final ParameterizedUrl parameterizedUrl = AppendingParameterizedUrl.of(href);
+        parameterizedUrl.addParam(pageParam, String.valueOf(pageNum));
         return navItemTag(parameterizedUrl.getString(), title, classes);
     }
 

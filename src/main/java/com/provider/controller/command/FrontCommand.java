@@ -7,8 +7,6 @@ import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
 import com.provider.service.ServiceFactory;
 import com.provider.service.ServiceFactoryImpl;
-import com.provider.validation.ValidatorFactory;
-import com.provider.validation.ValidatorFactoryImpl;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,11 +36,6 @@ public abstract class FrontCommand {
      * Service factory that should be used to obtain service objects
      */
     protected final ServiceFactory serviceFactory = ServiceFactoryImpl.newInstance();
-
-    /**
-     * Validator factory that should be used to obtain validators
-     */
-    protected final ValidatorFactory validatorFactory = ValidatorFactoryImpl.newInstance();
 
     protected FrontCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
         this.request = request;

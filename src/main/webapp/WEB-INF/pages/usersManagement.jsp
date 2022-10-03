@@ -16,24 +16,6 @@
     <pro:header/>
     <c:set var="users" value="${requestScope[RequestAttributes.USERS]}" scope="page"/>
     <fmt:bundle basename="LabelsBundle">
-        <c:if test="${not empty param[UsersManagementParams.USER_ADDED]}">
-            <div class="container">
-                <c:choose>
-                    <c:when test="${param[UsersManagementParams.USER_ADDED]}">
-                        <div class="alert alert-success alert-dismissible fade show my-sm-2" role="alert">
-                            <strong> User added successfully!</strong>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    </c:when>
-                    <c:otherwise>
-                        <div class="alert alert-danger alert-dismissible fade show my-sm-2" role="alert">
-                            <strong> Failed to add new user!</strong>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    </c:otherwise>
-                </c:choose>
-            </div>
-        </c:if>
         <div class="container-md x-md-auto my-md-3 p-sm-3 rounded rounded-1 shadow">
             <form method="post" action="${Paths.ADD_USER}">
                 <div class="mb-3 row">

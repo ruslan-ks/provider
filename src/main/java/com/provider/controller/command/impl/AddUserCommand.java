@@ -1,8 +1,8 @@
 package com.provider.controller.command.impl;
 
+import com.provider.constants.Messages;
 import com.provider.constants.Paths;
 import com.provider.constants.params.UserParams;
-import com.provider.constants.params.UsersManagementParams;
 import com.provider.controller.command.AdminCommand;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.controller.command.result.CommandResult;
@@ -12,7 +12,6 @@ import com.provider.entity.user.User;
 import com.provider.entity.user.impl.UserImpl;
 import com.provider.service.UserService;
 import com.provider.service.exception.InvalidPropertyException;
-import com.provider.util.ParameterizedUrl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
@@ -44,11 +43,14 @@ public class AddUserCommand extends AdminCommand {
         } catch (InvalidPropertyException ex) {
             throw new CommandParamException(ex);
         }
-        // TODO: refactor
-        final Map<String, String> resultUrlParams = userInserted
-                ? Map.of(UsersManagementParams.USER_ADDED, "true")
-                : Map.of(UsersManagementParams.USER_ADDED, "false");
-        final ParameterizedUrl url = ParameterizedUrl.of(Paths.USERS_MANAGEMENT_PAGE, resultUrlParams);
-        return CommandResultImpl.of(url.getString());
+
+        final CommandResult commandResult = CommandResultImpl.of(Paths.USERS_MANAGEMENT_PAGE);
+        if (userInserted) {
+            commandResult.addMessage(CommandResult.MessageType.SUCCESS, Messages.USER_INSERT_SUCCESS);
+        } else {
+            commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.USER_INSERT_FAIL);
+        }
+
+        return commandResult;
     }
 }
