@@ -6,7 +6,6 @@
     <tlib-version>1.0</tlib-version>
     <short-name>proTags</short-name>
     <uri>http://provider.com</uri>
-
     <tag>
         <description>Unpacks attributes map to a single string</description>
         <name>attributes</name>
@@ -20,4 +19,85 @@
         </attribute>
         <dynamic-attributes>false</dynamic-attributes>
     </tag>
+    <tag>
+        <description>Generates bootstrap pagination navbar</description>
+        <name>paginationNav</name>
+        <tag-class>com.provider.tags.PaginationNavTagHandler</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>pageNumber</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>int</type>
+        </attribute>
+        <attribute>
+            <name>pageCount</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>int</type>
+        </attribute>
+        <attribute>
+            <name>pageParam</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+        <attribute>
+            <name>href</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+        <attribute>
+            <name>itemsCount</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>int</type>
+        </attribute>
+        <dynamic-attributes>true</dynamic-attributes>
+    </tag>
+
+    <tag-file>
+        <name>header</name>
+        <path>/WEB-INF/tags/header.tag</path>
+    </tag-file>
+    <tag-file>
+        <name>userAccounts</name>
+        <path>/WEB-INF/tags/userAccounts.tag</path>
+    </tag-file>
+    <tag-file>
+        <name>userProfile</name>
+        <path>/WEB-INF/tags/userProfile.tag</path>
+    </tag-file>
+    <tag-file>
+        <name>messages</name>
+        <path>/WEB-INF/tags/messages.tag</path>
+    </tag-file>
+
+    <function>
+        <name>isAdminOrHigher</name>
+        <function-class>com.provider.functions.UserCheckingFunctions</function-class>
+        <function-signature>boolean hasAdminRights(com.provider.entity.user.User)</function-signature>
+    </function>
+    <function>
+        <name>isRoot</name>
+        <function-class>com.provider.functions.UserCheckingFunctions</function-class>
+        <function-signature>boolean hasRootRights(com.provider.entity.user.User)</function-signature>
+    </function>
+    <function>
+        <name>isActive</name>
+        <function-class>com.provider.functions.UserCheckingFunctions</function-class>
+        <function-signature>boolean isActive(com.provider.entity.user.User)</function-signature>
+    </function>
+    <function>
+        <name>allUserStatuses</name>
+        <function-class>com.provider.functions.EnumDataFunctions</function-class>
+        <function-signature>java.lang.Iterable allUserStatuses()</function-signature>
+    </function>
+    <function>
+        <name>rolesAllowedForCreation</name>
+        <function-class>com.provider.functions.EnumDataFunctions</function-class>
+        <function-signature>java.lang.Iterable rolesAllowedForCreation(com.provider.entity.user.User)
+        </function-signature>
+    </function>
 </taglib>

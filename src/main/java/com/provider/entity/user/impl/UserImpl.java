@@ -12,7 +12,7 @@ public class UserImpl implements User {
     private final String login;
     private final String phone;
     private final Role role;
-    private final Status status;
+    private Status status;
 
     private UserImpl(long id, @NotNull String name, @NotNull String surname, @NotNull String login,
                      @NotNull String phone, @NotNull Role role, @NotNull Status status) {
@@ -71,6 +71,11 @@ public class UserImpl implements User {
     @Override
     public @NotNull Status getStatus() {
         return status;
+    }
+
+    @Override
+    public void setStatus(@NotNull Status status) {
+        this.status = status;
     }
 
     @Override

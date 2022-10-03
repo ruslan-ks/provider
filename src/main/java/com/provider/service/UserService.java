@@ -3,9 +3,12 @@ package com.provider.service;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
 import com.provider.entity.user.UserPassword;
+import com.provider.service.exception.InvalidPropertyException;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Contains business logic and db access for User class data
@@ -33,12 +36,14 @@ public interface UserService {
     @NotNull Optional<UserPassword> findUserPassword(long userId) throws DBException;
 
     /**
-     * Inserts user to db
+     * Inserts user to db.
      * @param user new user to be saved
-     * @param userPassword new user password
+     * @param password new user password
      * @return true if db changes were mage
+     * @throws InvalidPropertyException if at least one of user properties or password is not valid according to
+     * UserValidator calls result.
      */
-    boolean insertUser(@NotNull User user, @NotNull UserPassword userPassword) throws DBException;
+    boolean insertUser(@NotNull User user, @NotNull String password) throws DBException, InvalidPropertyException;
 
     /**
      * Checks login and password and returns authenticated user object
@@ -69,4 +74,38 @@ public interface UserService {
      * @return true is user has root rights
      */
     boolean hasRootRights(@NotNull User user);
+
+    /**
+     * Returns users of specified range sorted by id
+     * @param offset offset
+     * @param limit limit
+     * @return list of found users
+     * @throws DBException is db logic fail occurred
+     * @throws IllegalArgumentException if offset < 0 or limit <= 0
+     */
+    List<User> findUsersRange(long offset, int limit) throws DBException;
+
+    /**
+     * Returns count of users in db
+     * @return count of users
+     */
+    long getUsersCount() throws DBException;
+
+    /**
+     * Updates user status
+     * @param userId user id
+     * @param status new user status
+     * @return true if status was successfully updated, false otherwise
+     * @throws DBException if this UserDao throws this exception
+     * @throws java.util.NoSuchElementException if there is no user with id userId
+     */
+    boolean updateUserStatus(long userId, User.Status status) throws DBException;
+
+    /**
+     * Returns set of roles that may be created by the user
+     * @param user user of role admin or higher
+     * @return set of roles that may be created by the user
+     * @throws IllegalArgumentException if user's role is neither ADMIN nor ROOT
+     */
+    @NotNull Set<User.Role> rolesAllowedForCreation(@NotNull User user);
 }

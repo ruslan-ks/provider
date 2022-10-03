@@ -4,10 +4,10 @@
 <%@ tag import="com.provider.constants.attributes.RequestAttributes" %>
 <%@ tag import="com.provider.constants.params.UserSettingsParams" %>
 <%@ tag import="com.provider.constants.Paths" %>
-<%@ taglib prefix="include" tagdir="/WEB-INF/tags/include" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="pro" uri="http://functions.provider.com" %>
+<%@ taglib prefix="include" tagdir="/WEB-INF/tags/include" %>
+<%@ taglib prefix="pro" uri="http://provider.com" %>
 
 <include:bootstrapStyles/>
 
@@ -84,6 +84,10 @@
         </fmt:bundle>
     </div>
 </header>
+
+<%-- Show request messages --%>
+<pro:messages hey="HEY" hello="HELLO"/>
+
 <include:bootstrapScripts/>
 
 <script type="text/javascript">

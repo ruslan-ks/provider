@@ -1,11 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.provider.constants.attributes.RequestAttributes" %>
 <%@ page import="com.provider.constants.params.SignInParams" %>
-<%@ page import="com.provider.constants.params.SignInMessageParams" %>
 <%@ page import="com.provider.constants.Paths" %>
-<%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="pro" uri="http://provider.com" %>
 <!doctype html>
 <html lang="en">
 <head>
@@ -15,7 +14,7 @@
     <title>Provider - Sign in</title>
 </head>
 <body>
-<tags:header/>
+<pro:header/>
 <fmt:setLocale value="${requestScope[RequestAttributes.LOCALE]}"/>
 <fmt:bundle basename="LabelsBundle">
     <div class="alert alert-primary mx-auto mt-5 mb-1 w-50"><fmt:message key="signIn.howToGetRegisteredMsg"/></div>
@@ -36,12 +35,6 @@
                 <input type="password" name="${SignInParams.PASSWORD}" class="form-control" id="passwordInput">
             </div>
         </div>
-        <c:if test="${not empty param[SignInMessageParams.INVALID_LOGIN_OR_PASS]}">
-            <div class="alert alert-danger py-1"><fmt:message key="signIn.invalidLoginOrPass"/></div>
-        </c:if>
-        <c:if test="${not empty param[SignInMessageParams.SUSPENDED]}">
-            <div class="alert alert-danger py-1"><fmt:message key="signIn.youWereSuspended"/></div>
-        </c:if>
         <div class="row">
             <div class="container-fluid">
                 <input type="submit" class="btn btn-outline-primary float-end w-25" value="Sign in!">

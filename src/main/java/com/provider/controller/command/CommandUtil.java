@@ -2,6 +2,7 @@ package com.provider.controller.command;
 
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.entity.Currency;
+import com.provider.entity.user.User;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
@@ -38,6 +39,40 @@ public class CommandUtil {
             return Currency.valueOf(currency);
         } catch(IllegalArgumentException ex) {
             throw new CommandParamException("Currency cannot be parsed - invalid currency: '" + currency + "'");
+        }
+    }
+
+    // TODO: javadoc
+    public static int parseIntParam(@NotNull String value) throws CommandParamException {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException ex) {
+            throw new CommandParamException("Invalid number format: " + value);
+        }
+    }
+
+    // TODO: javadoc
+    public static long parseLongParam(@NotNull String value) throws CommandParamException {
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException ex) {
+            throw new CommandParamException("Invalid number format: " + value);
+        }
+    }
+
+    public static @NotNull User.Status parseUserStatusParam(@NotNull String value) throws CommandParamException {
+        try {
+            return User.Status.valueOf(value);
+        } catch(IllegalArgumentException ex) {
+            throw new CommandParamException("User.Status cannot be parsed: invalid status: " + value);
+        }
+    }
+
+    public static @NotNull User.Role parseUserRoleParam(@NotNull String value) throws CommandParamException {
+        try {
+            return User.Role.valueOf(value);
+        } catch(IllegalArgumentException ex) {
+            throw new CommandParamException("User.Role cannot be parsed: invalid role: " + value);
         }
     }
 }

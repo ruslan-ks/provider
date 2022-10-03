@@ -3,9 +3,9 @@
 <%@ tag import="com.provider.constants.params.ReplenishParams" %>
 <%@ tag import="com.provider.constants.params.CommandParams" %>
 <%@ attribute name="accounts" type="java.lang.Iterable" required="true" %>
-<%@ taglib prefix="pro" uri="http://provider.com" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="pro" uri="http://provider.com" %>
 
 <fmt:bundle basename="LabelsBundle">
     <div class="accordion my-2 p-1" id="accordionExample" <pro:attributes map="${dynamicAttributes}"/> >

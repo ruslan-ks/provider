@@ -69,4 +69,16 @@ public class Paths {
      */
     public static final String USERS_MANAGEMENT_PAGE = CONTROLLER + "?" + CommandParams.COMMAND + "=" +
             CommandParams.USERS_MANAGEMENT_PAGE;
+
+    /**
+     * Add user action
+     */
+    public static final String ADD_USER = CONTROLLER + "?" + CommandParams.COMMAND + "=" +
+            CommandParams.ADD_USER;
+
+    /**
+     * Switch user status action
+     */
+    public static final String UPDATE_USER_STATUS = CONTROLLER + "?" + CommandParams.COMMAND + "=" +
+            CommandParams.UPDATE_USER_STATUS;
 }

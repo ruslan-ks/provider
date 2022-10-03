@@ -35,7 +35,7 @@ public abstract class FrontCommand {
     /**
      * Service factory that should be used to obtain service objects
      */
-    protected ServiceFactory serviceFactory = ServiceFactoryImpl.newInstance();
+    protected final ServiceFactory serviceFactory = ServiceFactoryImpl.newInstance();
 
     protected FrontCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
         this.request = request;
