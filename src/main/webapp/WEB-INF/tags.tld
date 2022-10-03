@@ -56,6 +56,7 @@
         </attribute>
         <dynamic-attributes>true</dynamic-attributes>
     </tag>
+
     <tag-file>
         <name>header</name>
         <path>/WEB-INF/tags/header.tag</path>
@@ -72,4 +73,31 @@
         <name>messages</name>
         <path>/WEB-INF/tags/messages.tag</path>
     </tag-file>
+
+    <function>
+        <name>isAdminOrHigher</name>
+        <function-class>com.provider.functions.UserCheckingFunctions</function-class>
+        <function-signature>boolean hasAdminRights(com.provider.entity.user.User)</function-signature>
+    </function>
+    <function>
+        <name>isRoot</name>
+        <function-class>com.provider.functions.UserCheckingFunctions</function-class>
+        <function-signature>boolean hasRootRights(com.provider.entity.user.User)</function-signature>
+    </function>
+    <function>
+        <name>isActive</name>
+        <function-class>com.provider.functions.UserCheckingFunctions</function-class>
+        <function-signature>boolean isActive(com.provider.entity.user.User)</function-signature>
+    </function>
+    <function>
+        <name>allUserStatuses</name>
+        <function-class>com.provider.functions.EnumDataFunctions</function-class>
+        <function-signature>java.lang.Iterable allUserStatuses()</function-signature>
+    </function>
+    <function>
+        <name>rolesAllowedForCreation</name>
+        <function-class>com.provider.functions.EnumDataFunctions</function-class>
+        <function-signature>java.lang.Iterable rolesAllowedForCreation(com.provider.entity.user.User)
+        </function-signature>
+    </function>
 </taglib>

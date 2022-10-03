@@ -2,9 +2,9 @@
 <%@ page import="com.provider.constants.attributes.RequestAttributes" %>
 <%@ page import="com.provider.constants.params.SignInParams" %>
 <%@ page import="com.provider.constants.Paths" %>
-<%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="pro" uri="http://provider.com" %>
 <!doctype html>
 <html lang="en">
 <head>
@@ -14,7 +14,7 @@
     <title>Provider - Sign in</title>
 </head>
 <body>
-<tags:header/>
+<pro:header/>
 <fmt:setLocale value="${requestScope[RequestAttributes.LOCALE]}"/>
 <fmt:bundle basename="LabelsBundle">
     <div class="alert alert-primary mx-auto mt-5 mb-1 w-50"><fmt:message key="signIn.howToGetRegisteredMsg"/></div>

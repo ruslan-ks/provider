@@ -7,7 +7,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="include" tagdir="/WEB-INF/tags/include" %>
-<%@ taglib prefix="func" uri="http://functions.provider.com" %>
 <%@ taglib prefix="pro" uri="http://provider.com" %>
 
 <include:bootstrapStyles/>
@@ -46,11 +45,11 @@
                                         ${sessionScope[SessionAttributes.SIGNED_USER].name}
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
-                                    <c:if test="${func:isAdminOrHigher(user)}">
+                                    <c:if test="${pro:isAdminOrHigher(user)}">
                                         <li><a href="${pageContext.request.contextPath}/${Paths.USERS_MANAGEMENT_PAGE}"
                                                class="dropdown-item"><fmt:message key="nav.manageUsers"/></a></li>
                                     </c:if>
-                                    <c:if test="${func:isRoot(user)}">
+                                    <c:if test="${pro:isRoot(user)}">
                                         <li><a href="#"
                                                class="dropdown-item">Root page placeholder</a></li>
                                     </c:if>

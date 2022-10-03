@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * User service implementation. Contains business logic and data access methods for User.
@@ -184,5 +185,16 @@ public class UserServiceImpl extends AbstractService implements UserService {
         } catch (SQLException ex) {
             throw new DBException(ex);
         }
+    }
+
+    @Override
+    public @NotNull Set<User.Role> rolesAllowedForCreation(@NotNull User user) {
+        switch (user.getRole()) {
+            case ROOT:
+                return Set.of(User.Role.ADMIN, User.Role.MEMBER);
+            case ADMIN:
+                return Set.of(User.Role.MEMBER);
+        }
+        throw new IllegalArgumentException();
     }
 }

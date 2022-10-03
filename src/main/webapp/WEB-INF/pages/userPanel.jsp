@@ -1,8 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.provider.constants.attributes.SessionAttributes" %>
 <%@ page import="com.provider.constants.attributes.RequestAttributes" %>
-<%@ taglib prefix="pro" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="pro" uri="http://provider.com" %>
 <html>
 <head>
     <title>User Panel - Provider</title>

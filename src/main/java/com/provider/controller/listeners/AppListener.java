@@ -100,7 +100,7 @@ public class AppListener implements ServletContextListener {
                 .map(i -> UserImpl.of(0, "name" + i, "surname" + i, "user" + i,
                         String.valueOf(i).repeat(10).substring(0, 10), User.Role.MEMBER, User.Status.ACTIVE))
                 .limit(10)
-                .collect(Collectors.toMap(Function.identity(), u -> "pass" + u.getId()));
+                .collect(Collectors.toMap(Function.identity(), u -> "pass"));
     }
 
     @Override

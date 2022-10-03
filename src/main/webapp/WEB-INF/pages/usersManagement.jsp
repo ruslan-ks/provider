@@ -1,12 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.provider.constants.attributes.RequestAttributes" %>
+<%@ page import="com.provider.constants.attributes.SessionAttributes" %>
 <%@ page import="com.provider.constants.params.UsersManagementParams" %>
 <%@ page import="com.provider.constants.params.UserParams" %>
 <%@ page import="com.provider.constants.Paths" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="pro" uri="http://provider.com" %>
-<%@ taglib prefix="func" uri="http://functions.provider.com" %>
 
 <html>
 <head>
@@ -14,6 +14,7 @@
 </head>
 <body>
     <pro:header/>
+    <c:set var="signedUser" value="${sessionScope[SessionAttributes.SIGNED_USER]}"/>
     <c:set var="users" value="${requestScope[RequestAttributes.USERS]}" scope="page"/>
     <fmt:bundle basename="LabelsBundle">
         <div class="container-md x-md-auto my-md-3 p-sm-3 rounded rounded-1 shadow">
@@ -54,6 +55,18 @@
                     </div>
                 </div>
                 <div class="mb-3 row">
+                    <label for="inputRole" class="col-md-2 col-form-label">Role</label>
+                    <div class="col-sm-10">
+                        <select name="${UserParams.ROLE}"
+                                class="form-select"
+                                id="inputRole">
+                            <c:forEach var="role" items="${pro:rolesAllowedForCreation(signedUser)}">
+                                <option value="${role}">${role}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3 row">
                     <div class="col text-center">
                         <input type="submit" class="btn btn-primary w-25" value="Add user">
                     </div>
@@ -68,8 +81,8 @@
                     <th><fmt:message key="user.name"/></th>
                     <th><fmt:message key="user.surname"/></th>
                     <th><fmt:message key="user.phone"/></th>
+                    <th><fmt:message key="user.role"/></th>
                     <th><fmt:message key="user.status"/></th>
-                    <th></th>
                 </tr>
                 <c:forEach var="user" items="${users}" varStatus="status">
                     <tr>
@@ -78,7 +91,7 @@
                         <td>${user.name}</td>
                         <td>${user.surname}</td>
                         <td>${user.phone}</td>
-                        <td>${user.status}</td>
+                        <td>${user.role}</td>
                         <td>
                             <form method="post"
                                   action="${pageContext.request.contextPath}/${Paths.UPDATE_USER_STATUS}">
@@ -86,7 +99,7 @@
                                        readonly hidden>
                                 <select onchange="this.form.submit()" name="${UserParams.STATUS}" class="form-select"
                                         aria-label="User status">
-                                    <c:forEach var="status" items="${func:allUserStatuses()}">
+                                    <c:forEach var="status" items="${pro:allUserStatuses()}">
                                         <option value="${status}"
                                                 <c:if test="${status eq user.status}">selected</c:if>>
                                                 ${status}

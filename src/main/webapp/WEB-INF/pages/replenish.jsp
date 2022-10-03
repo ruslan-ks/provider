@@ -1,10 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.provider.constants.params.ReplenishParams" %>
 <%@ page import="com.provider.constants.Paths" %>
-
-<%@ taglib prefix="pro" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="pro" tagdir="/WEB-INF/tags" %>
 <!doctype html>
 <html lang="en">
 <head>

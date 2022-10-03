@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Contains business logic and db access for User class data
@@ -99,4 +100,12 @@ public interface UserService {
      * @throws java.util.NoSuchElementException if there is no user with id userId
      */
     boolean updateUserStatus(long userId, User.Status status) throws DBException;
+
+    /**
+     * Returns set of roles that may be created by the user
+     * @param user user of role admin or higher
+     * @return set of roles that may be created by the user
+     * @throws IllegalArgumentException if user's role is neither ADMIN nor ROOT
+     */
+    @NotNull Set<User.Role> rolesAllowedForCreation(@NotNull User user);
 }

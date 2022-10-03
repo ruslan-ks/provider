@@ -67,4 +67,12 @@ public class CommandUtil {
             throw new CommandParamException("User.Status cannot be parsed: invalid status: " + value);
         }
     }
+
+    public static @NotNull User.Role parseUserRoleParam(@NotNull String value) throws CommandParamException {
+        try {
+            return User.Role.valueOf(value);
+        } catch(IllegalArgumentException ex) {
+            throw new CommandParamException("User.Role cannot be parsed: invalid role: " + value);
+        }
+    }
 }

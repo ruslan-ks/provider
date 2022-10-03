@@ -12,5 +12,6 @@ public class UserParams {
     public static final String NAME = "userName";
     public static final String SURNAME = "userSurname";
     public static final String PHONE = "userPhone";
+    public static final String ROLE = "userRole";
     public static final String STATUS = "userStatus";
 }
