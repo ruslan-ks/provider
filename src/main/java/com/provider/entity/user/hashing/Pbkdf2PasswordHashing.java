@@ -66,7 +66,7 @@ public class Pbkdf2PasswordHashing implements PasswordHashing {
         final SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance(ALGORITHM);
         final byte[] hash = secretKeyFactory.generateSecret(spec).getEncoded();
 
-        return UserPasswordImpl.newInstance(encoder.encodeToString(hash), encoder.encodeToString(saltBytes),
+        return UserPasswordImpl.of(encoder.encodeToString(hash), encoder.encodeToString(saltBytes),
                 HashMethod.PBKDF2_1);
     }
 }

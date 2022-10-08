@@ -115,7 +115,7 @@ public class PostgresUserAccountDao extends UserAccountDao {
         final long userId = resultSet.getLong("user_id");
         final String currencyString = resultSet.getString("currency");
         final BigDecimal amount = resultSet.getBigDecimal("amount");
-        return UserAccountImpl.newInstance(id, userId, Currency.valueOf(currencyString), amount);
+        return UserAccountImpl.of(id, userId, Currency.valueOf(currencyString), amount);
     }
 
     private static @NotNull List<UserAccount> fetchAllUserAccounts(@NotNull ResultSet resultSet) throws SQLException {

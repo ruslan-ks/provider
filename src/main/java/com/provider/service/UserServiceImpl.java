@@ -85,7 +85,7 @@ public class UserServiceImpl extends AbstractService implements UserService {
                 userPassword.setUserId(user.getId());
                 final boolean passwordInserted = userPasswordDao.insert(userPassword);
 
-                final UserAccount userAccount = UserAccountImpl.newInstance(0, user.getId(), Currency.USD);
+                final UserAccount userAccount = UserAccountImpl.of(0, user.getId(), Currency.USD);
                 final boolean accountInserted = userAccountDao.insert(userAccount);
 
                 transaction.commit();

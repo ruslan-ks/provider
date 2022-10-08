@@ -28,8 +28,8 @@ public class UserPasswordImpl implements UserPassword {
      * @param hashMethod method used to generate the hash
      * @return new UserPasswordImpl instance
      */
-    public static UserPasswordImpl newInstance(long userId, @NotNull String hash, @NotNull String salt,
-                                               @NotNull PasswordHashing.HashMethod hashMethod) {
+    public static UserPasswordImpl of(long userId, @NotNull String hash, @NotNull String salt,
+                                      @NotNull PasswordHashing.HashMethod hashMethod) {
         return new UserPasswordImpl(userId, hash, salt, hashMethod);
     }
 
@@ -40,8 +40,8 @@ public class UserPasswordImpl implements UserPassword {
      * @param hashMethod method used to generate the hash
      * @return new UserPasswordImpl instance
      */
-    public static UserPasswordImpl newInstance(@NotNull String hash, @NotNull String salt,
-                                               @NotNull PasswordHashing.HashMethod hashMethod) {
+    public static UserPasswordImpl of(@NotNull String hash, @NotNull String salt,
+                                      @NotNull PasswordHashing.HashMethod hashMethod) {
         return new UserPasswordImpl(0, hash, salt, hashMethod);
     }
 

@@ -24,12 +24,12 @@ public class UserAccountImpl implements UserAccount {
         this.amount = amount;
     }
 
-    public static @NotNull UserAccountImpl newInstance(long id, long userId, @NotNull Currency currency,
-                                                       @NotNull BigDecimal amount) {
+    public static @NotNull UserAccountImpl of(long id, long userId, @NotNull Currency currency,
+                                              @NotNull BigDecimal amount) {
         return new UserAccountImpl(id, userId, currency, amount);
     }
 
-    public static @NotNull UserAccountImpl newInstance(long id, long userId, @NotNull Currency currency) {
+    public static @NotNull UserAccountImpl of(long id, long userId, @NotNull Currency currency) {
         return new UserAccountImpl(id, userId, currency);
     }
 

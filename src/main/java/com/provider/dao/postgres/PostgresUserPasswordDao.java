@@ -71,7 +71,7 @@ public class PostgresUserPasswordDao extends UserPasswordDao {
                                                                  @NotNull String hash,
                                                                  @NotNull String salt,
                                                                  @NotNull PasswordHashing.HashMethod hashMethod) {
-        return UserPasswordImpl.newInstance(userId, hash, salt, hashMethod);
+        return UserPasswordImpl.of(userId, hash, salt, hashMethod);
     }
 }
 
