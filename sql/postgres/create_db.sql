@@ -10,7 +10,7 @@ BEGIN;
 
 \set regular_text_regex '''^[[:alpha:]- 0-9]+$'''
 \set latin_regex '''^[a-zA-Z0-9_]+$'''
-\set name_regex '''^[[:alpha:]\d-]+$'''
+\set name_regex '''^[[:alpha:]\\d-]+$'''
 
 DROP TABLE IF EXISTS users CASCADE;
 CREATE TABLE users(
@@ -25,7 +25,7 @@ CREATE TABLE users(
     surname TEXT NOT NULL
         CONSTRAINT valid_user_surname CHECK(surname ~* :name_regex),
     phone TEXT NOT NULL UNIQUE
-        CONSTRAINT valid_user_phone CHECK(phone ~* '^\+?([1-9][0-9])?[0-9]{6,10}$'),
+        CONSTRAINT valid_user_phone CHECK(phone ~* '^([1-9][0-9])?[0-9]{6,10}$'),
     status TEXT NOT NULL
         CONSTRAINT valid_user_status CHECK(status ~* :latin_regex)
 );
@@ -89,6 +89,7 @@ CREATE TABLE service_characteristics(
         ON DELETE CASCADE
 );
 
+DROP TABLE IF EXISTS service_characteristic_translations;
 CREATE TABLE service_characteristic_translations(
     service_id INT NOT NULL,
     language TEXT NOT NULL
