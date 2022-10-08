@@ -3,7 +3,6 @@ package com.provider.dao.postgres;
 import com.provider.dao.UserPasswordDao;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.UserPassword;
-import com.provider.entity.user.impl.UserPasswordImpl;
 import com.provider.entity.user.hashing.PasswordHashing;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,7 +58,7 @@ public class PostgresUserPasswordDao extends UserPasswordDao {
      * Extracts user password data from result set and returns an object.
      * @param resultSet ResultSet pointing to a row containing data.
      */
-    private static @NotNull UserPassword fetchUserPassword(ResultSet resultSet) throws SQLException {
+    private @NotNull UserPassword fetchUserPassword(ResultSet resultSet) throws SQLException {
         final long userId = resultSet.getLong("user_id");
         final String hash = resultSet.getString("hash");
         final String salt = resultSet.getString("salt");
@@ -67,11 +66,11 @@ public class PostgresUserPasswordDao extends UserPasswordDao {
         return newUserPasswordInstance(userId, hash, salt, PasswordHashing.HashMethod.valueOf(hashMethod));
     }
 
-    private static @NotNull UserPassword newUserPasswordInstance(long userId,
+    private @NotNull UserPassword newUserPasswordInstance(long userId,
                                                                  @NotNull String hash,
                                                                  @NotNull String salt,
                                                                  @NotNull PasswordHashing.HashMethod hashMethod) {
-        return UserPasswordImpl.of(userId, hash, salt, hashMethod);
+        return entityFactory.newUserPassword(userId, hash, salt, hashMethod);
     }
 }
 

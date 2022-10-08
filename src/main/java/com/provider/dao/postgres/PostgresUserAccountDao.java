@@ -4,7 +4,6 @@ import com.provider.dao.UserAccountDao;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.Currency;
 import com.provider.entity.user.UserAccount;
-import com.provider.entity.user.impl.UserAccountImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
@@ -110,15 +109,15 @@ public class PostgresUserAccountDao extends UserAccountDao {
         }
     }
 
-    private static @NotNull UserAccount fetchUserAccount(@NotNull ResultSet resultSet) throws SQLException {
+    private @NotNull UserAccount fetchUserAccount(@NotNull ResultSet resultSet) throws SQLException {
         final long id = resultSet.getLong("id");
         final long userId = resultSet.getLong("user_id");
         final String currencyString = resultSet.getString("currency");
         final BigDecimal amount = resultSet.getBigDecimal("amount");
-        return UserAccountImpl.of(id, userId, Currency.valueOf(currencyString), amount);
+        return entityFactory.newUserAccount(id, userId, Currency.valueOf(currencyString), amount);
     }
 
-    private static @NotNull List<UserAccount> fetchAllUserAccounts(@NotNull ResultSet resultSet) throws SQLException {
+    private @NotNull List<UserAccount> fetchAllUserAccounts(@NotNull ResultSet resultSet) throws SQLException {
         final List<UserAccount> list = new ArrayList<>();
         while (resultSet.next()) {
             list.add(fetchUserAccount(resultSet));

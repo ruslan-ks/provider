@@ -2,6 +2,8 @@ package com.provider.dao;
 
 import com.provider.dao.exception.DBException;
 import com.provider.entity.Entity;
+import com.provider.entity.EntityFactory;
+import com.provider.entity.SimpleEntityFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
@@ -15,7 +17,15 @@ import java.util.Optional;
  * @param <T> entity class
  */
 public abstract class EntityDao<K, T extends Entity> {
+    /**
+     * Connection used by DAOs
+     */
     protected Connection connection;
+
+    /**
+     * Entity factory used by DAOs
+     */
+    protected final EntityFactory entityFactory = SimpleEntityFactory.newInstance();
 
     /**
      * Sets jdbc connection

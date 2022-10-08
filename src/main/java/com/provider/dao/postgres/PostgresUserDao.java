@@ -3,7 +3,6 @@ package com.provider.dao.postgres;
 import com.provider.dao.UserDao;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
-import com.provider.entity.user.impl.UserImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
@@ -120,7 +119,7 @@ public class PostgresUserDao extends UserDao {
         }
     }
 
-    private static @NotNull List<User> fetchUsers(@NotNull ResultSet resultSet) throws SQLException {
+    private @NotNull List<User> fetchUsers(@NotNull ResultSet resultSet) throws SQLException {
         final List<User> userList = new ArrayList<>();
         while (resultSet.next()) {
             userList.add(fetchUser(resultSet));
@@ -128,7 +127,7 @@ public class PostgresUserDao extends UserDao {
         return userList;
     }
 
-    private static @NotNull User fetchUser(@NotNull ResultSet resultSet) throws SQLException {
+    private @NotNull User fetchUser(@NotNull ResultSet resultSet) throws SQLException {
         final long id = resultSet.getLong("id");
         final String name = resultSet.getString("name");
         final String surname = resultSet.getString("surname");
@@ -137,7 +136,7 @@ public class PostgresUserDao extends UserDao {
         final User.Role role = User.Role.valueOf(resultSet.getString("role"));
         final User.Status status = User.Status.valueOf(resultSet.getString("status"));
 
-        return UserImpl.of(id, name, surname, login, phone, role, status);
+        return entityFactory.newUser(id, name, surname, login, phone, role, status);
     }
 
     private static final String SQL_COUNT_ALL = "SELECT COUNT(id) FROM users";
