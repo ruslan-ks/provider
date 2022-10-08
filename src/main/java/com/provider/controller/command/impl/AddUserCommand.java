@@ -10,7 +10,6 @@ import com.provider.controller.command.result.CommandResult;
 import com.provider.controller.command.result.CommandResultImpl;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
-import com.provider.entity.user.impl.UserImpl;
 import com.provider.service.UserService;
 import com.provider.service.exception.InvalidPropertyException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,7 +45,7 @@ public class AddUserCommand extends AdminCommand {
             throw new CommandParamException();
         }
 
-        final User newUser = UserImpl.of(0, name, surname, login, phone, role, User.Status.ACTIVE);
+        final User newUser = entityFactory.newUser(0, name, surname, login, phone, role, User.Status.ACTIVE);
 
         boolean userInserted = false;
         try {

@@ -4,6 +4,8 @@ import com.provider.constants.attributes.SessionAttributes;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.controller.command.result.CommandResult;
 import com.provider.dao.exception.DBException;
+import com.provider.entity.EntityFactory;
+import com.provider.entity.SimpleEntityFactory;
 import com.provider.entity.user.User;
 import com.provider.service.ServiceFactory;
 import com.provider.service.ServiceFactoryImpl;
@@ -36,6 +38,11 @@ public abstract class FrontCommand {
      * Service factory that should be used to obtain service objects
      */
     protected final ServiceFactory serviceFactory = ServiceFactoryImpl.newInstance();
+
+    /**
+     * Entity factory that should be used to instantiate entities
+     */
+    protected final EntityFactory entityFactory = SimpleEntityFactory.newInstance();
 
     protected FrontCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
         this.request = request;
