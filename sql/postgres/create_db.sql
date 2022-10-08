@@ -54,8 +54,8 @@ CREATE TABLE user_accounts(
         ON DELETE CASCADE
 );
 
--- Service: has characteristics(key, value)
--- Tariff plan: has services, title, price, duration, description
+-- Service has characteristics(key, value)
+-- Tariff plan has services
 
 DROP TABLE IF EXISTS services CASCADE;
 CREATE TABLE services(
@@ -72,6 +72,32 @@ CREATE TABLE service_translations(
     CONSTRAINT unique_service_language UNIQUE(service_id, language),
     name TEXT NOT NULL
         CONSTRAINT valid_service_name_translation CHECK(name ~* :regular_text_regex),
+    FOREIGN KEY(service_id) REFERENCES services(id)
+        ON DELETE CASCADE
+);
+
+-- key-value pairs describing service characteristics
+DROP TABLE IF EXISTS service_characteristics CASCADE;
+CREATE TABLE service_characteristics(
+    service_id INT NOT NULL,
+    name TEXT NOT NULL
+        CONSTRAINT valid_tariff_service_characteristic_name CHECK(name ~* :regular_text_regex),
+    value TEXT NOT NULL
+        CONSTRAINT valid_tariff_service_characteristic_value CHECK(value ~* :regular_text_regex),
+    CONSTRAINT unique_service_characteristic UNIQUE(service_id, name, value),
+    FOREIGN KEY(service_id) REFERENCES services(id)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE service_characteristic_translations(
+    service_id INT NOT NULL,
+    language TEXT NOT NULL
+        CONSTRAINT valid_tariff_service_characteristic_language CHECK (language ~* :latin_regex),
+    name TEXT NOT NULL
+        CONSTRAINT valid_tariff_service_characteristic_name_translation CHECK(name ~* :regular_text_regex),
+    value TEXT NOT NULL
+        CONSTRAINT valid_tariff_service_characteristic_value_translation CHECK(value ~* :regular_text_regex),
+    CONSTRAINT unique_service_characteristic_translation UNIQUE(service_id, language, name, value),
     FOREIGN KEY(service_id) REFERENCES services(id)
         ON DELETE CASCADE
 );
@@ -115,42 +141,7 @@ DROP TABLE IF EXISTS tariff_services CASCADE;
 CREATE TABLE tariff_services(
     tariff_id INT NOT NULL,
     service_id INT NOT NULL,
-        -- It's unnamed, cause when rerunning the script I got 'constraint already exists' error
-    -- CONSTRAINT unique_tariff_service
-    UNIQUE(tariff_id, service_id),
-    FOREIGN KEY(tariff_id) REFERENCES tariffs(id)
-        ON DELETE CASCADE,
-    FOREIGN KEY(service_id) REFERENCES services(id)
-        ON DELETE CASCADE
-);
-
--- key-value pairs describing concrete service characteristics
-DROP TABLE IF EXISTS tariff_service_characteristics CASCADE;
-CREATE TABLE tariff_service_characteristics(
-    tariff_id INT NOT NULL,
-    service_id INT NOT NULL,
-    name TEXT NOT NULL
-        CONSTRAINT valid_tariff_service_characteristic_name CHECK(name ~* :regular_text_regex),
-    value TEXT NOT NULL
-        CONSTRAINT valid_tariff_service_characteristic_value CHECK(value ~* :regular_text_regex),
-        -- It's unnamed, cause when rerunning the script I got 'constraint already exists' error
-    -- CONSTRAINT unique_tariff_service
-    UNIQUE(tariff_id, service_id),
-    FOREIGN KEY(tariff_id) REFERENCES tariffs(id)
-        ON DELETE CASCADE,
-    FOREIGN KEY(service_id) REFERENCES services(id)
-        ON DELETE CASCADE
-);
-
-CREATE TABLE tariff_service_characteristic_translations(
-    tariff_id INT NOT NULL,
-    service_id INT NOT NULL,
-    language TEXT NOT NULL
-        CONSTRAINT valid_tariff_service_characteristic_language CHECK (language ~* :latin_regex),
-    name TEXT NOT NULL
-        CONSTRAINT valid_tariff_service_characteristic_name_translation CHECK(name ~* :regular_text_regex),
-    value TEXT NOT NULL
-        CONSTRAINT valid_tariff_service_characteristic_value_translation CHECK(value ~* :regular_text_regex),
+    CONSTRAINT unique_tariff_service UNIQUE(tariff_id, service_id),
     FOREIGN KEY(tariff_id) REFERENCES tariffs(id)
         ON DELETE CASCADE,
     FOREIGN KEY(service_id) REFERENCES services(id)
