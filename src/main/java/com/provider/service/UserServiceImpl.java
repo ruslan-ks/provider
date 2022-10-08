@@ -7,7 +7,6 @@ import com.provider.entity.Currency;
 import com.provider.entity.user.User;
 import com.provider.entity.user.UserAccount;
 import com.provider.entity.user.UserPassword;
-import com.provider.entity.user.impl.UserAccountImpl;
 import com.provider.entity.user.hashing.PasswordHashing;
 import com.provider.service.exception.InvalidPropertyException;
 import com.provider.validation.UserValidator;
@@ -85,7 +84,7 @@ public class UserServiceImpl extends AbstractService implements UserService {
                 userPassword.setUserId(user.getId());
                 final boolean passwordInserted = userPasswordDao.insert(userPassword);
 
-                final UserAccount userAccount = UserAccountImpl.of(0, user.getId(), Currency.USD);
+                final UserAccount userAccount = entityFactory.newUserAccount(0, user.getId(), Currency.USD);
                 final boolean accountInserted = userAccountDao.insert(userAccount);
 
                 transaction.commit();
@@ -117,7 +116,8 @@ public class UserServiceImpl extends AbstractService implements UserService {
         }
         final Optional<UserPassword> foundPasswordOptional = findUserPassword(foundUser.get().getId());
         if (foundPasswordOptional.isEmpty()) {
-            return Optional.empty();
+            logger.error("Password not found! User: {}", foundUser.get());
+            throw new RuntimeException("Password not found! User: " + foundUser.get());
         }
         final UserPassword foundPassword = foundPasswordOptional.get();
         final PasswordHashing passwordHashing = PasswordHashing.getInstance(foundPassword.getHashMethod());
