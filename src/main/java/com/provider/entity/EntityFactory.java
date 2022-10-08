@@ -1,5 +1,6 @@
 package com.provider.entity;
 
+import com.provider.entity.product.*;
 import com.provider.entity.user.User;
 import com.provider.entity.user.UserAccount;
 import com.provider.entity.user.UserPassword;
@@ -47,7 +48,7 @@ public interface EntityFactory {
     @NotNull UserAccount newUserAccount(long id, long userId, @NotNull Currency currency, @NotNull BigDecimal amount);
 
     /**
-
+     * Creates UserPassword instance
      * @param userId user id
      * @param hash hashed password
      * @param salt salt used when hashing the password
@@ -66,4 +67,50 @@ public interface EntityFactory {
      */
     @NotNull UserPassword newUserPassword(@NotNull String hash, @NotNull String salt,
                                           @NotNull PasswordHashing.HashMethod hashMethod);
+
+    /**
+     * Creates new ServiceCharacteristic instance
+     * @param serviceId service id
+     * @param name characteristic name
+     * @param value characteristic value
+     * @return new ServiceCharacteristic instance
+     */
+    @NotNull ServiceCharacteristic newServiceCharacteristic(int serviceId, @NotNull String name,
+                                                            @NotNull String value);
+
+    /**
+     * Creates new Service instance
+     * @param id service id
+     * @param name service name
+     * @return new Service instance
+     */
+    @NotNull Service newService(int id, @NotNull String name);
+
+    /**
+     * Creates new TariffDuration instance
+     * @param tariffId tariff id
+     * @param months months count
+     * @param minutes minutes count
+     * @return new TariffDuration instance
+     */
+    @NotNull TariffDuration newTariffDuration(int tariffId, int months, long minutes);
+
+    /**
+     * Creates new Tariff instance
+     * @param id tariff id
+     * @param title tariff title
+     * @param status tariff status
+     * @param usdPrice tariff usd price
+     * @return new Tariff instance
+     */
+    @NotNull Tariff newTariff(int id, @NotNull String title, @NotNull Tariff.Status status,
+                              @NotNull BigDecimal usdPrice);
+
+    /**
+     * Creates new TariffService instance
+     * @param tariffId tariff id
+     * @param serviceId service id
+     * @return new TariffService instance
+     */
+    @NotNull TariffService newTariffService(int tariffId, int serviceId);
 }

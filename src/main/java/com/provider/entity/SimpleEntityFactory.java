@@ -1,5 +1,7 @@
 package com.provider.entity;
 
+import com.provider.entity.product.*;
+import com.provider.entity.product.impl.*;
 import com.provider.entity.user.User;
 import com.provider.entity.user.UserAccount;
 import com.provider.entity.user.UserPassword;
@@ -45,5 +47,32 @@ public class SimpleEntityFactory implements EntityFactory {
     public @NotNull UserPassword newUserPassword(@NotNull String hash, @NotNull String salt,
                                                  @NotNull PasswordHashing.HashMethod hashMethod) {
         return UserPasswordImpl.of(hash, salt, hashMethod);
+    }
+
+    @Override
+    public @NotNull ServiceCharacteristic newServiceCharacteristic(int serviceId, @NotNull String name,
+                                                                   @NotNull String value) {
+        return ServiceCharacteristicImpl.of(serviceId, name, value);
+    }
+
+    @Override
+    public @NotNull Service newService(int id, @NotNull String name) {
+        return ServiceImpl.of(id, name);
+    }
+
+    @Override
+    public @NotNull TariffDuration newTariffDuration(int tariffId, int months, long minutes) {
+        return TariffDurationImpl.of(tariffId, months, minutes);
+    }
+
+    @Override
+    public @NotNull Tariff newTariff(int id, @NotNull String title, Tariff.@NotNull Status status,
+                                     @NotNull BigDecimal usdPrice) {
+        return TariffImpl.of(id, title, status, usdPrice);
+    }
+
+    @Override
+    public @NotNull TariffService newTariffService(int tariffId, int serviceId) {
+        return TariffServiceImpl.of(tariffId, serviceId);
     }
 }
