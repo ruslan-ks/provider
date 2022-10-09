@@ -31,16 +31,7 @@ public class PostgresUserDao extends UserDao {
 
     @Override
     public @NotNull Optional<User> findByKey(@NotNull Long key) throws DBException {
-        try (var preparedStatement = connection.prepareStatement(SQL_FIND_BY_ID)) {
-            preparedStatement.setLong(1, key);
-            final ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                return Optional.of(fetchUser(resultSet));
-            }
-        } catch (SQLException ex) {
-            throw new DBException(ex);
-        }
-        return Optional.empty();
+        return findByKey(SQL_FIND_BY_ID, key);
     }
 
     private static final String SQL_INSERT = "INSERT INTO users(login, role, name, surname, phone, status) VALUES" +
@@ -85,7 +76,7 @@ public class PostgresUserDao extends UserDao {
             statement.setString(1, login);
             final ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return Optional.of(fetchUser(resultSet));
+                return Optional.of(fetchOne(resultSet));
             }
         } catch (SQLException ex) {
 
@@ -112,30 +103,10 @@ public class PostgresUserDao extends UserDao {
             preparedStatement.setLong(i++, offset);
             preparedStatement.setInt(i, limit);
             final ResultSet resultSet = preparedStatement.executeQuery();
-            return fetchUsers(resultSet);
+            return fetchAll(resultSet);
         } catch (SQLException ex) {
             throw new DBException(ex);
         }
-    }
-
-    private @NotNull List<User> fetchUsers(@NotNull ResultSet resultSet) throws SQLException {
-        final List<User> userList = new ArrayList<>();
-        while (resultSet.next()) {
-            userList.add(fetchUser(resultSet));
-        }
-        return userList;
-    }
-
-    private @NotNull User fetchUser(@NotNull ResultSet resultSet) throws SQLException {
-        final long id = resultSet.getLong("id");
-        final String name = resultSet.getString("name");
-        final String surname = resultSet.getString("surname");
-        final String login = resultSet.getString("login");
-        final String phone = resultSet.getString("phone");
-        final User.Role role = User.Role.valueOf(resultSet.getString("role"));
-        final User.Status status = User.Status.valueOf(resultSet.getString("status"));
-
-        return entityFactory.newUser(id, name, surname, login, phone, role, status);
     }
 
     private static final String SQL_COUNT_ALL = "SELECT COUNT(id) FROM users";
@@ -177,5 +148,33 @@ public class PostgresUserDao extends UserDao {
         } catch (SQLException ex) {
             throw new DBException(ex);
         }
+    }
+
+    @Override
+    protected @NotNull User fetchOne(@NotNull ResultSet resultSet) throws DBException {
+        try {
+            final long id = resultSet.getLong("id");
+            final String name = resultSet.getString("name");
+            final String surname = resultSet.getString("surname");
+            final String login = resultSet.getString("login");
+            final String phone = resultSet.getString("phone");
+            final User.Role role = User.Role.valueOf(resultSet.getString("role"));
+            final User.Status status = User.Status.valueOf(resultSet.getString("status"));
+            return entityFactory.newUser(id, name, surname, login, phone, role, status);
+        } catch (SQLException ex) {
+            throw new DBException(ex);
+        }
+    }
+
+    private @NotNull List<User> fetchAll(@NotNull ResultSet resultSet) throws DBException {
+        final List<User> userList = new ArrayList<>();
+        try {
+            while (resultSet.next()) {
+                userList.add(fetchOne(resultSet));
+            }
+        } catch (SQLException ex) {
+            throw new DBException(ex);
+        }
+        return userList;
     }
 }

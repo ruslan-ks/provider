@@ -42,34 +42,26 @@ public class PostgresUserPasswordDao extends UserPasswordDao {
 
     @Override
     public @NotNull Optional<UserPassword> findByKey(@NotNull Long userId) throws DBException {
-        try (var preparedStatement = connection.prepareStatement(SQL_FIND_BY_USER_ID)) {
-            preparedStatement.setLong(1, userId);
-            final ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                return Optional.of(fetchUserPassword(resultSet));
-            }
+        return findByKey(SQL_FIND_BY_USER_ID, userId);
+    }
+
+    @Override
+    protected @NotNull UserPassword fetchOne(@NotNull ResultSet resultSet) throws DBException {
+        try {
+            final long userId = resultSet.getLong("user_id");
+            final String hash = resultSet.getString("hash");
+            final String salt = resultSet.getString("salt");
+            final String hashMethod = resultSet.getString("hash_method");
+            return newUserPasswordInstance(userId, hash, salt, PasswordHashing.HashMethod.valueOf(hashMethod));
         } catch (SQLException ex) {
             throw new DBException(ex);
         }
-        return Optional.empty();
-    }
-
-    /**
-     * Extracts user password data from result set and returns an object.
-     * @param resultSet ResultSet pointing to a row containing data.
-     */
-    private @NotNull UserPassword fetchUserPassword(ResultSet resultSet) throws SQLException {
-        final long userId = resultSet.getLong("user_id");
-        final String hash = resultSet.getString("hash");
-        final String salt = resultSet.getString("salt");
-        final String hashMethod = resultSet.getString("hash_method");
-        return newUserPasswordInstance(userId, hash, salt, PasswordHashing.HashMethod.valueOf(hashMethod));
     }
 
     private @NotNull UserPassword newUserPasswordInstance(long userId,
-                                                                 @NotNull String hash,
-                                                                 @NotNull String salt,
-                                                                 @NotNull PasswordHashing.HashMethod hashMethod) {
+                                                          @NotNull String hash,
+                                                          @NotNull String salt,
+                                                          @NotNull PasswordHashing.HashMethod hashMethod) {
         return entityFactory.newUserPassword(userId, hash, salt, hashMethod);
     }
 }

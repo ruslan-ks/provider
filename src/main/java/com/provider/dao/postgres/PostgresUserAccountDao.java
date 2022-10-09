@@ -28,19 +28,7 @@ public class PostgresUserAccountDao extends UserAccountDao {
 
     @Override
     public @NotNull Optional<UserAccount> findByKey(@NotNull Long id) throws DBException {
-        if (id == 0) {
-            throw new IllegalArgumentException("id == 0");
-        }
-        try (var preparedStatement = connection.prepareStatement(SQL_FIND_BY_ID)) {
-            preparedStatement.setLong(1, id);
-            final ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                return Optional.of(fetchUserAccount(resultSet));
-            }
-        } catch (SQLException ex) {
-            throw new DBException(ex);
-        }
-        return Optional.empty();
+        return findByKey(SQL_FIND_BY_ID, id);
     }
 
     private static final String SQL_INSERT = "INSERT INTO user_accounts(user_id, currency, amount) VALUES (?, ?, ?)";
@@ -81,12 +69,12 @@ public class PostgresUserAccountDao extends UserAccountDao {
     @Override
     public @NotNull List<UserAccount> findAll(long userId) throws DBException {
         if (userId == 0) {
-            throw new IllegalArgumentException("userId == 0");
+            throw new IllegalArgumentException("Illegal userId: userId == 0");
         }
         try (var preparedStatement = connection.prepareStatement(SQL_FIND_BY_USER_ID)) {
             preparedStatement.setLong(1, userId);
             final ResultSet resultSet = preparedStatement.executeQuery();
-            return fetchAllUserAccounts(resultSet);
+            return fetchAll(resultSet);
         } catch (SQLException ex) {
             throw new DBException(ex);
         }
@@ -109,19 +97,29 @@ public class PostgresUserAccountDao extends UserAccountDao {
         }
     }
 
-    private @NotNull UserAccount fetchUserAccount(@NotNull ResultSet resultSet) throws SQLException {
-        final long id = resultSet.getLong("id");
-        final long userId = resultSet.getLong("user_id");
-        final String currencyString = resultSet.getString("currency");
-        final BigDecimal amount = resultSet.getBigDecimal("amount");
-        return entityFactory.newUserAccount(id, userId, Currency.valueOf(currencyString), amount);
+    @Override
+    protected UserAccount fetchOne(@NotNull ResultSet resultSet) throws DBException {
+        try {
+            final long id = resultSet.getLong("id");
+            final long userId = resultSet.getLong("user_id");
+            final String currencyString = resultSet.getString("currency");
+            final BigDecimal amount = resultSet.getBigDecimal("amount");
+            return entityFactory.newUserAccount(id, userId, Currency.valueOf(currencyString), amount);
+        } catch (SQLException ex) {
+            throw new DBException(ex);
+        }
     }
 
-    private @NotNull List<UserAccount> fetchAllUserAccounts(@NotNull ResultSet resultSet) throws SQLException {
+    private @NotNull List<UserAccount> fetchAll(@NotNull ResultSet resultSet) throws DBException {
         final List<UserAccount> list = new ArrayList<>();
-        while (resultSet.next()) {
-            list.add(fetchUserAccount(resultSet));
+        try {
+            while (resultSet.next()) {
+                list.add(fetchOne(resultSet));
+            }
+        } catch (SQLException ex) {
+            throw new DBException(ex);
         }
+
         return list;
     }
 }

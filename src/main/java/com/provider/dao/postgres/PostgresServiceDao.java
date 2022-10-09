@@ -17,11 +17,25 @@ public class PostgresServiceDao extends ServiceDao {
 
     @Override
     public @NotNull Optional<Service> findByKey(@NotNull Integer key) throws DBException {
-        try (var preparedStatement = connection.prepareStatement(SQL_FIND_BY_ID)) {
-            preparedStatement.setInt(1, key);
+        return findByKey(SQL_FIND_BY_ID, key);
+    }
+
+    private static final String SQL_FIND_BY_ID_LOCALIZED =
+            "SELECT " +
+                    "s.id AS id, " +
+                    "COALESCE(st.name, s.name) AS name " +
+            "FROM services s " +
+                    "LEFT JOIN service_translations st ON st.service_id = s.id AND st.language = ? " +
+            "WHERE s.id = ?";
+
+    public @NotNull Optional<Service> findTranslationByKey(@NotNull Integer key, @NotNull String language)
+            throws DBException {
+        try (var preparedStatement = connection.prepareStatement(SQL_FIND_BY_ID_LOCALIZED)) {
+            preparedStatement.setString(1, language);
+            preparedStatement.setInt(2, key);
             final ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                return Optional.of(fetchService(resultSet));
+                return Optional.of(fetchOne(resultSet));
             }
         } catch (SQLException ex) {
             throw new DBException(ex);
@@ -51,29 +65,54 @@ public class PostgresServiceDao extends ServiceDao {
         return false;
     }
 
-    private static final String SQL_SELECT_ALL = "SELECT id AS id, name AS name FROM services";
+    private static final String SQL_INSERT_TRANSLATION =
+            "INSERT INTO service_translations(service_id, name, language) VALUES (?, ?, ?)";
 
     @Override
-    public @NotNull List<Service> findAll() throws DBException {
-        try (var statement = connection.createStatement();
-             var resultSet = statement.executeQuery(SQL_SELECT_ALL)) {
-            return fetchAllServices(resultSet);
+    public boolean insertTranslation(@NotNull Service service, @NotNull String language) throws DBException {
+        try (var preparedStatement = connection.prepareStatement(SQL_INSERT_TRANSLATION)) {
+            int i = 1;
+            preparedStatement.setInt(i++, service.getId());
+            preparedStatement.setString(i++, service.getName());
+            preparedStatement.setString(i, language);
+            return preparedStatement.executeUpdate() > 0;
         } catch (SQLException ex) {
             throw new DBException(ex);
         }
     }
 
-    private @NotNull List<Service> fetchAllServices(@NotNull ResultSet resultSet) throws SQLException {
-        final List<Service> serviceList = new ArrayList<>();
-        while (resultSet.next()) {
-            serviceList.add(fetchService(resultSet));
+    private static final String SQL_FIND_ALL = "SELECT id AS id, name AS name FROM services";
+
+    @Override
+    public @NotNull List<Service> findAll() throws DBException {
+        try (var statement = connection.createStatement();
+             var resultSet = statement.executeQuery(SQL_FIND_ALL)) {
+            return fetchAll(resultSet);
+        } catch (SQLException ex) {
+            throw new DBException(ex);
         }
-        return serviceList;
     }
 
-    private @NotNull Service fetchService(@NotNull ResultSet resultSet) throws SQLException {
-        final int id = resultSet.getInt("id");
-        final String name = resultSet.getString("name");
-        return entityFactory.newService(id, name);
+    @Override
+    protected Service fetchOne(@NotNull ResultSet resultSet) throws DBException {
+        try {
+            final int id = resultSet.getInt("id");
+            final String name = resultSet.getString("name");
+            return entityFactory.newService(id, name);
+        } catch (SQLException ex) {
+            throw new DBException(ex);
+        }
+    }
+
+    private @NotNull List<Service> fetchAll(@NotNull ResultSet resultSet) throws DBException {
+        final List<Service> serviceList = new ArrayList<>();
+        try {
+            while (resultSet.next()) {
+                serviceList.add(fetchOne(resultSet));
+            }
+        } catch (SQLException ex) {
+            throw new DBException(ex);
+        }
+        return serviceList;
     }
 }
