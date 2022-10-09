@@ -28,4 +28,9 @@ public class PostgresDaoFactory implements DaoFactory {
     public @NotNull UserAccountDao newUserAccountDao() {
         return new PostgresUserAccountDao();
     }
+
+    @Override
+    public @NotNull ServiceDao newServiceDao() {
+        return new PostgresServiceDao();
+    }
 }

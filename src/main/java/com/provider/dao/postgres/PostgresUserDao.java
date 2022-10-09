@@ -58,20 +58,19 @@ public class PostgresUserDao extends UserDao {
             statement.setString(i++, user.getPhone());
             statement.setString(i, user.getStatus().name());
 
-            final int affectedRows = statement.executeUpdate();
-            if (affectedRows > 0) {
+            final int rowsUpdated = statement.executeUpdate();
+            if (rowsUpdated > 0) {
                 final ResultSet generatedKeys = statement.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     user.setId(generatedKeys.getLong(1));
-                } else {
-                    throw new DBException("Table users has been updated, but no generated keys returned");
+                    return true;
                 }
-                return true;
+                throw new DBException("Table users has been updated, but no generated keys returned");
             }
-            return false;
         } catch (SQLException ex) {
             throw new DBException(ex);
         }
+        return false;
     }
 
     private static final String SQL_FIND_BY_LOGIN =

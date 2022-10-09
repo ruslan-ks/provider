@@ -8,7 +8,7 @@ BEGIN;
 
 ------------------------------ main schema(public) --------------------------------------------
 
-\set regular_text_regex '''^[[:alpha:]- 0-9]+$'''
+\set regular_text_regex '''^[[:alpha:]0-9 ]+$'''
 \set latin_regex '''^[a-zA-Z0-9_]+$'''
 \set name_regex '''^[[:alpha:]\\d-]+$'''
 
