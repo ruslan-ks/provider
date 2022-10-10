@@ -85,7 +85,7 @@ public class PostgresUserDao extends UserDao {
         return Optional.empty();
     }
 
-    private static final String SQL_FIND_RANGE =
+    private static final String SQL_FIND_PAGE =
             "SELECT " +
                     SQL_USER_FIELDS +
             "FROM users " +
@@ -94,11 +94,11 @@ public class PostgresUserDao extends UserDao {
             "LIMIT ? ";
 
     @Override
-    public List<User> findRange(long offset, int limit) throws DBException {
+    public List<User> findPage(long offset, int limit) throws DBException {
         if (offset < 0 || limit <= 0) {
             throw new IllegalArgumentException("Invalid range: offset: " + offset + ", limit: " + limit);
         }
-        try (var preparedStatement = connection.prepareStatement(SQL_FIND_RANGE)) {
+        try (var preparedStatement = connection.prepareStatement(SQL_FIND_PAGE)) {
             int i = 1;
             preparedStatement.setLong(i++, offset);
             preparedStatement.setInt(i, limit);
