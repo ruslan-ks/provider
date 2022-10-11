@@ -13,7 +13,12 @@ import java.util.*;
 public class PostgresServiceDao extends ServiceDao {
     PostgresServiceDao() {}
 
-    private static final String SQL_FIND_BY_ID = "SELECT id AS id, name AS name FROM services WHERE id = ?";
+    private static final String SQL_FIND_BY_ID =
+            "SELECT " +
+                    "id AS service_id, " +
+                    "name AS service_name " +
+            "FROM services " +
+            "WHERE id = ?";
 
     @Override
     public @NotNull Optional<Service> findByKey(@NotNull Integer key) throws DBException {
@@ -22,8 +27,8 @@ public class PostgresServiceDao extends ServiceDao {
 
     private static final String SQL_FIND_BY_ID_LOCALIZED =
             "SELECT " +
-                    "s.id AS id, " +
-                    "COALESCE(st.name, s.name) AS name " +
+                    "s.id AS service_id, " +
+                    "COALESCE(st.name, s.name) AS service_name " +
             "FROM services s " +
                     "LEFT JOIN service_translations st ON st.service_id = s.id AND st.language = ? " +
             "WHERE s.id = ?";
@@ -81,7 +86,7 @@ public class PostgresServiceDao extends ServiceDao {
         }
     }
 
-    private static final String SQL_FIND_ALL = "SELECT id AS id, name AS name FROM services";
+    private static final String SQL_FIND_ALL = "SELECT id AS service_id, name AS service_name FROM services";
 
     @Override
     public @NotNull List<Service> findAll() throws DBException {
@@ -96,8 +101,8 @@ public class PostgresServiceDao extends ServiceDao {
     @Override
     protected Service fetchOne(@NotNull ResultSet resultSet) throws DBException {
         try {
-            final int id = resultSet.getInt("id");
-            final String name = resultSet.getString("name");
+            final int id = resultSet.getInt("service_id");
+            final String name = resultSet.getString("service_name");
             return entityFactory.newService(id, name);
         } catch (SQLException ex) {
             throw new DBException(ex);
