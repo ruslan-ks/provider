@@ -25,12 +25,6 @@
         <tag-class>com.provider.tags.PaginationNavTagHandler</tag-class>
         <body-content>empty</body-content>
         <attribute>
-            <name>pageNumber</name>
-            <required>true</required>
-            <rtexprvalue>true</rtexprvalue>
-            <type>int</type>
-        </attribute>
-        <attribute>
             <name>pageCount</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
@@ -38,6 +32,13 @@
         </attribute>
         <attribute>
             <name>href</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+        <attribute>
+            <!-- Page parameter name - request parameter that will contain page number -->
+            <name>pageParam</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
             <type>java.lang.String</type>

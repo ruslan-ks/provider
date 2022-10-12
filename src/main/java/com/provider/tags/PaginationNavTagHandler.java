@@ -1,9 +1,9 @@
 package com.provider.tags;
 
-import com.provider.constants.params.PaginationParams;
 import com.provider.util.AppendingParameterizedUrl;
 import com.provider.util.ParameterizedUrl;
 import jakarta.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.PageContext;
 import jakarta.servlet.jsp.tagext.DynamicAttributes;
 import jakarta.servlet.jsp.tagext.SimpleTagSupport;
 import org.apache.logging.log4j.util.Strings;
@@ -15,13 +15,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PaginationNavTagHandler extends SimpleTagSupport implements DynamicAttributes {
-    // Starts from 1
-    private int pageNumber = 1;
-
     private int pageCount;
 
     // href that will be added to pagination buttons with pageParam appended
     private String href;
+
+    // page parameter used to add page number to the url params
+    private String pageParam;
 
     // how many nav items there are displayed simultaneously
     private int itemsCount = 5;
@@ -39,6 +39,7 @@ public class PaginationNavTagHandler extends SimpleTagSupport implements Dynamic
 
     @Override
     public void doTag() throws IOException {
+        final int pageNumber = getPageNumber();
         final JspWriter writer = getJspContext().getOut();
 
         writer.write("<nav aria-label='Page navigation example' ");
@@ -66,6 +67,14 @@ public class PaginationNavTagHandler extends SimpleTagSupport implements Dynamic
         writer.write("</nav>");
     }
 
+    private int getPageNumber() {
+        final String pageNumberString = ((PageContext) getJspContext()).getRequest().getParameter(pageParam);
+        if (pageNumberString != null) {
+            return Math.max(1, Integer.parseInt(pageNumberString));
+        }
+        return 1;
+    }
+
     @Override
     public void setDynamicAttribute(String uri, String localName, Object value) {
         dynamicAttributeMap.put(localName, value);
@@ -73,7 +82,7 @@ public class PaginationNavTagHandler extends SimpleTagSupport implements Dynamic
 
     private @NotNull String navItem(int pageNum, @NotNull String title, String... classes) {
         final ParameterizedUrl parameterizedUrl = AppendingParameterizedUrl.of(href);
-        parameterizedUrl.addParam(PaginationParams.PAGE_NUMBER, String.valueOf(pageNum));
+        parameterizedUrl.addParam(pageParam, String.valueOf(pageNum));
         return navItemTag(parameterizedUrl.getString(), title, classes);
     }
 
@@ -87,13 +96,6 @@ public class PaginationNavTagHandler extends SimpleTagSupport implements Dynamic
     }
 
     @SuppressWarnings("unused")
-    public void setPageNumber(int pageNumber) {
-        if (pageNumber >= 1) {
-            this.pageNumber = pageNumber;
-        }
-    }
-
-    @SuppressWarnings("unused")
     public void setPageCount(int pageCount) {
         this.pageCount = pageCount;
     }
@@ -101,6 +103,11 @@ public class PaginationNavTagHandler extends SimpleTagSupport implements Dynamic
     @SuppressWarnings("unused")
     public void setHref(String href) {
         this.href = href;
+    }
+
+    @SuppressWarnings("unused")
+    public void setPageParam(String pageParam) {
+        this.pageParam = pageParam;
     }
 
     @SuppressWarnings("unused")

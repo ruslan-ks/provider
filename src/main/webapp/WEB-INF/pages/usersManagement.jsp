@@ -111,9 +111,9 @@
                     </tr>
                 </c:forEach>
             </table>
-            <pro:paginationNav pageNumber="${param[PaginationParams.PAGE_NUMBER]}"
-                                pageCount="${requestScope[RequestAttributes.PAGE_COUNT]}"
-                                href="${pageContext.request.contextPath}/${Paths.USERS_MANAGEMENT_PAGE}"/>
+            <pro:paginationNav pageCount="${requestScope[RequestAttributes.PAGE_COUNT]}"
+                               href="${pageContext.request.contextPath}/${Paths.USERS_MANAGEMENT_PAGE}"
+                               pageParam="${PaginationParams.PAGE_NUMBER}"/>
         </div>
     </fmt:bundle>
 </body>
