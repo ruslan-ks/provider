@@ -15,4 +15,6 @@ public interface Service extends Entity {
     int getId();
 
     @NotNull String getName();
+
+    @NotNull String getDescription();
 }

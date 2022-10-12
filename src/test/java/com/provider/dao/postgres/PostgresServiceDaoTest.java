@@ -18,7 +18,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -63,7 +62,7 @@ class PostgresServiceDaoTest {
         final ServiceDao serviceDao = getServiceDao();
         serviceDao.setConnection(getConnectionSupplier().get());
 
-        final List<Service> serviceList = DaoTestData.getServiceStream().collect(Collectors.toList());
+        final List<Service> serviceList = DaoTestData.getServiceStream().toList();
         for (var service : serviceList) {
             serviceDao.insert(service);
         }
@@ -80,9 +79,10 @@ class PostgresServiceDaoTest {
         final ServiceDao serviceDao = getServiceDao();
         serviceDao.setConnection(getConnectionSupplier().get());
 
-        final Service service = entityFactory.newService(0, serviceName);
+        final Service service = entityFactory.newService(0, serviceName, serviceName + " description");
         serviceDao.insert(service);
-        final Service serviceTranslation = entityFactory.newService(service.getId(), translatedServiceName);
+        final Service serviceTranslation = entityFactory.newService(service.getId(), translatedServiceName,
+                translatedServiceName + " переклад");
 
         final boolean inserted = serviceDao.insertTranslation(serviceTranslation, lang);
         assertTrue(inserted);

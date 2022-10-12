@@ -16,7 +16,8 @@ public class PostgresServiceDao extends ServiceDao {
     private static final String SQL_FIND_BY_ID =
             "SELECT " +
                     "id AS service_id, " +
-                    "name AS service_name " +
+                    "name AS service_name, " +
+                    "description AS service_description " +
             "FROM services " +
             "WHERE id = ?";
 
@@ -28,7 +29,8 @@ public class PostgresServiceDao extends ServiceDao {
     private static final String SQL_FIND_BY_ID_LOCALIZED =
             "SELECT " +
                     "s.id AS service_id, " +
-                    "COALESCE(st.name, s.name) AS service_name " +
+                    "COALESCE(st.name, s.name) AS service_name, " +
+                    "COALESCE(st.description, s.description) AS service_description " +
             "FROM services s " +
                     "LEFT JOIN service_translations st ON st.service_id = s.id AND st.language = ? " +
             "WHERE s.id = ?";
@@ -48,13 +50,15 @@ public class PostgresServiceDao extends ServiceDao {
         return Optional.empty();
     }
 
-    private static final String SQL_INSERT = "INSERT INTO services(name) VALUES (?)";
+    private static final String SQL_INSERT = "INSERT INTO services(name, description) VALUES (?, ?)";
 
     @Override
     public boolean insert(@NotNull Service service) throws DBException {
         try (var preparedStatement = connection.prepareStatement(SQL_INSERT,
                 Statement.RETURN_GENERATED_KEYS)) {
-            preparedStatement.setString(1, service.getName());
+            int i = 1;
+            preparedStatement.setString(i++, service.getName());
+            preparedStatement.setString(i, service.getDescription());
             final int rowsUpdated = preparedStatement.executeUpdate();
             if (rowsUpdated > 0) {
                 final ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
@@ -71,7 +75,7 @@ public class PostgresServiceDao extends ServiceDao {
     }
 
     private static final String SQL_INSERT_TRANSLATION =
-            "INSERT INTO service_translations(service_id, name, language) VALUES (?, ?, ?)";
+            "INSERT INTO service_translations(service_id, name, description, language) VALUES (?, ?, ?, ?)";
 
     @Override
     public boolean insertTranslation(@NotNull Service service, @NotNull String language) throws DBException {
@@ -79,6 +83,7 @@ public class PostgresServiceDao extends ServiceDao {
             int i = 1;
             preparedStatement.setInt(i++, service.getId());
             preparedStatement.setString(i++, service.getName());
+            preparedStatement.setString(i++, service.getDescription());
             preparedStatement.setString(i, language);
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException ex) {
@@ -86,7 +91,12 @@ public class PostgresServiceDao extends ServiceDao {
         }
     }
 
-    private static final String SQL_FIND_ALL = "SELECT id AS service_id, name AS service_name FROM services";
+    private static final String SQL_FIND_ALL =
+            "SELECT " +
+                    "id AS service_id, " +
+                    "name AS service_name, " +
+                    "description AS description " +
+            "FROM services";
 
     @Override
     public @NotNull List<Service> findAll() throws DBException {
@@ -99,11 +109,12 @@ public class PostgresServiceDao extends ServiceDao {
     }
 
     @Override
-    protected Service fetchOne(@NotNull ResultSet resultSet) throws DBException {
+    public @NotNull Service fetchOne(@NotNull ResultSet resultSet) throws DBException {
         try {
             final int id = resultSet.getInt("service_id");
             final String name = resultSet.getString("service_name");
-            return entityFactory.newService(id, name);
+            final String description = resultSet.getString("service_description");
+            return entityFactory.newService(id, name, description);
         } catch (SQLException ex) {
             throw new DBException(ex);
         }

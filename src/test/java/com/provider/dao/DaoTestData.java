@@ -3,12 +3,17 @@ package com.provider.dao;
 import com.provider.entity.EntityFactory;
 import com.provider.entity.SimpleEntityFactory;
 import com.provider.entity.product.Service;
+import com.provider.entity.product.Tariff;
 import com.provider.entity.user.User;
 import com.provider.entity.user.impl.UserImpl;
 
+import java.math.BigDecimal;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+/**
+ * Test data class. Provides data for parameterized tests
+ */
 public class DaoTestData {
     private DaoTestData() {}
 
@@ -19,8 +24,8 @@ public class DaoTestData {
      * @return list of services
      */
     public static Stream<Service> getServiceStream() {
-        return Stream.of("Internet", "TV", "Telephone", "Mobile network", "Radio", "Satellite TV")
-                .map(s -> entityFactory.newService(0, s));
+        return Stream.of("Internet", "TV", "Telephone", "Mobile network", "Satellite TV")
+                .map(s -> entityFactory.newService(0, s, s + " is the best choice!"));
     }
 
     /**
@@ -31,6 +36,20 @@ public class DaoTestData {
         return IntStream.iterate(0, i -> ++i)
                 .limit(8)
                 .mapToObj(DaoTestData::getTestUser);
+    }
+
+    /**
+     * Returns stream of test Tariff objects
+     * @return stream of test Tariff objects
+     */
+    public static Stream<Tariff> getTariffStream() {
+        return Stream.of(
+                entityFactory.newTariff(0, "Meganet", Tariff.Status.ACTIVE, BigDecimal.valueOf(100)),
+                entityFactory.newTariff(0, "Supernet", Tariff.Status.ACTIVE, BigDecimal.valueOf(50)),
+                entityFactory.newTariff(0, "Coll tariff", Tariff.Status.ACTIVE, BigDecimal.valueOf(200)),
+                entityFactory.newTariff(0, "Mobile pack", Tariff.Status.ACTIVE, BigDecimal.valueOf(100)),
+                entityFactory.newTariff(0, "Magic tariff", Tariff.Status.ACTIVE, BigDecimal.valueOf(200))
+        );
     }
 
     private static User getTestUser(int i) {
