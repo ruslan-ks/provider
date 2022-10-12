@@ -9,16 +9,34 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 
-// TODO: implement all methods
 public class PostgresTariffDurationDao extends TariffDurationDao {
-    @Override
-    public @NotNull Optional<TariffDuration> findByKey(@NotNull Integer key) throws DBException {
-        throw new UnsupportedOperationException();
-    }
+
+    private static final String SQL_FIND_BY_ID =
+            "SELECT " +
+                    "tariff_id AS tariff_id, " +
+                    "months AS tariff_duration_months, " +
+                    "minutes AS tariff_duration_minutes " +
+            "FROM tariff_durations WHERE id = ?";
 
     @Override
-    public boolean insert(@NotNull TariffDuration entity) throws DBException {
-        throw new UnsupportedOperationException();
+    public @NotNull Optional<TariffDuration> findByKey(@NotNull Integer key) throws DBException {
+        return findByKey(SQL_FIND_BY_ID, key);
+    }
+
+    private static final String SQL_INSERT = "INSERT INTO tariff_durations(tariff_id, months, minutes) " +
+            "VALUES (?, ?, ?)";
+
+    @Override
+    public boolean insert(@NotNull TariffDuration tariffDuration) throws DBException {
+        try (var preparedStatement = connection.prepareStatement(SQL_INSERT)) {
+            int i = 1;
+            preparedStatement.setInt(i++, tariffDuration.getTariffId());
+            preparedStatement.setInt(i++, tariffDuration.getMonths());
+            preparedStatement.setLong(i, tariffDuration.getMinutes());
+            return preparedStatement.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            throw new DBException(ex);
+        }
     }
 
     @Override
