@@ -69,22 +69,12 @@ public interface EntityFactory {
                                           @NotNull PasswordHashing.HashMethod hashMethod);
 
     /**
-     * Creates new ServiceCharacteristic instance
-     * @param serviceId service id
-     * @param name characteristic name
-     * @param value characteristic value
-     * @return new ServiceCharacteristic instance
-     */
-    @NotNull ServiceCharacteristic newServiceCharacteristic(int serviceId, @NotNull String name,
-                                                            @NotNull String value);
-
-    /**
      * Creates new Service instance
      * @param id service id
      * @param name service name
      * @return new Service instance
      */
-    @NotNull Service newService(int id, @NotNull String name);
+    @NotNull Service newService(int id, @NotNull String name, @NotNull String description);
 
     /**
      * Creates new TariffDuration instance
@@ -106,6 +96,7 @@ public interface EntityFactory {
     @NotNull Tariff newTariff(int id, @NotNull String title, @NotNull Tariff.Status status,
                               @NotNull BigDecimal usdPrice);
 
+    // TODO: delete if still unused
     /**
      * Creates new TariffService instance
      * @param tariffId tariff id

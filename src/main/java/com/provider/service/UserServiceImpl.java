@@ -154,7 +154,7 @@ public class UserServiceImpl extends AbstractService implements UserService {
         try (var connection = connectionSupplier.get()) {
             final UserDao userDao = daoFactory.newUserDao();
             userDao.setConnection(connection);
-            return userDao.findRange(offset, limit);
+            return userDao.findPage(offset, limit);
         } catch (SQLException ex) {
             throw new DBException(ex);
         }

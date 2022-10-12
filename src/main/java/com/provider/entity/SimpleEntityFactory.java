@@ -50,14 +50,8 @@ public class SimpleEntityFactory implements EntityFactory {
     }
 
     @Override
-    public @NotNull ServiceCharacteristic newServiceCharacteristic(int serviceId, @NotNull String name,
-                                                                   @NotNull String value) {
-        return ServiceCharacteristicImpl.of(serviceId, name, value);
-    }
-
-    @Override
-    public @NotNull Service newService(int id, @NotNull String name) {
-        return ServiceImpl.of(id, name);
+    public @NotNull Service newService(int id, @NotNull String name, @NotNull String description) {
+        return ServiceImpl.of(id, name, description);
     }
 
     @Override

@@ -27,7 +27,7 @@ public abstract class UserDao extends EntityDao<Long, User> {
      * @throws DBException is db logic fail occurred
      * @throws IllegalArgumentException if offset < 0 or limit <= 0
      */
-    public abstract List<User> findRange(long offset, int limit) throws DBException;
+    public abstract List<User> findPage(long offset, int limit) throws DBException;
 
     /**
      * Returns count of user records in db

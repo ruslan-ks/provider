@@ -31,16 +31,7 @@ public class PostgresUserDao extends UserDao {
 
     @Override
     public @NotNull Optional<User> findByKey(@NotNull Long key) throws DBException {
-        try (var preparedStatement = connection.prepareStatement(SQL_FIND_BY_ID)) {
-            preparedStatement.setLong(1, key);
-            final ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                return Optional.of(fetchUser(resultSet));
-            }
-        } catch (SQLException ex) {
-            throw new DBException(ex);
-        }
-        return Optional.empty();
+        return findByKey(SQL_FIND_BY_ID, key);
     }
 
     private static final String SQL_INSERT = "INSERT INTO users(login, role, name, surname, phone, status) VALUES" +
@@ -58,20 +49,19 @@ public class PostgresUserDao extends UserDao {
             statement.setString(i++, user.getPhone());
             statement.setString(i, user.getStatus().name());
 
-            final int affectedRows = statement.executeUpdate();
-            if (affectedRows > 0) {
+            final int rowsUpdated = statement.executeUpdate();
+            if (rowsUpdated > 0) {
                 final ResultSet generatedKeys = statement.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     user.setId(generatedKeys.getLong(1));
-                } else {
-                    throw new DBException("Table users has been updated, but no generated keys returned");
+                    return true;
                 }
-                return true;
+                throw new DBException("Table users has been updated, but no generated keys returned");
             }
-            return false;
         } catch (SQLException ex) {
             throw new DBException(ex);
         }
+        return false;
     }
 
     private static final String SQL_FIND_BY_LOGIN =
@@ -86,7 +76,7 @@ public class PostgresUserDao extends UserDao {
             statement.setString(1, login);
             final ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return Optional.of(fetchUser(resultSet));
+                return Optional.of(fetchOne(resultSet));
             }
         } catch (SQLException ex) {
 
@@ -95,7 +85,7 @@ public class PostgresUserDao extends UserDao {
         return Optional.empty();
     }
 
-    private static final String SQL_FIND_RANGE =
+    private static final String SQL_FIND_PAGE =
             "SELECT " +
                     SQL_USER_FIELDS +
             "FROM users " +
@@ -104,39 +94,19 @@ public class PostgresUserDao extends UserDao {
             "LIMIT ? ";
 
     @Override
-    public List<User> findRange(long offset, int limit) throws DBException {
+    public List<User> findPage(long offset, int limit) throws DBException {
         if (offset < 0 || limit <= 0) {
             throw new IllegalArgumentException("Invalid range: offset: " + offset + ", limit: " + limit);
         }
-        try (var preparedStatement = connection.prepareStatement(SQL_FIND_RANGE)) {
+        try (var preparedStatement = connection.prepareStatement(SQL_FIND_PAGE)) {
             int i = 1;
             preparedStatement.setLong(i++, offset);
             preparedStatement.setInt(i, limit);
             final ResultSet resultSet = preparedStatement.executeQuery();
-            return fetchUsers(resultSet);
+            return fetchAll(resultSet);
         } catch (SQLException ex) {
             throw new DBException(ex);
         }
-    }
-
-    private @NotNull List<User> fetchUsers(@NotNull ResultSet resultSet) throws SQLException {
-        final List<User> userList = new ArrayList<>();
-        while (resultSet.next()) {
-            userList.add(fetchUser(resultSet));
-        }
-        return userList;
-    }
-
-    private @NotNull User fetchUser(@NotNull ResultSet resultSet) throws SQLException {
-        final long id = resultSet.getLong("id");
-        final String name = resultSet.getString("name");
-        final String surname = resultSet.getString("surname");
-        final String login = resultSet.getString("login");
-        final String phone = resultSet.getString("phone");
-        final User.Role role = User.Role.valueOf(resultSet.getString("role"));
-        final User.Status status = User.Status.valueOf(resultSet.getString("status"));
-
-        return entityFactory.newUser(id, name, surname, login, phone, role, status);
     }
 
     private static final String SQL_COUNT_ALL = "SELECT COUNT(id) FROM users";
@@ -178,5 +148,33 @@ public class PostgresUserDao extends UserDao {
         } catch (SQLException ex) {
             throw new DBException(ex);
         }
+    }
+
+    @Override
+    protected @NotNull User fetchOne(@NotNull ResultSet resultSet) throws DBException {
+        try {
+            final long id = resultSet.getLong("id");
+            final String name = resultSet.getString("name");
+            final String surname = resultSet.getString("surname");
+            final String login = resultSet.getString("login");
+            final String phone = resultSet.getString("phone");
+            final User.Role role = User.Role.valueOf(resultSet.getString("role"));
+            final User.Status status = User.Status.valueOf(resultSet.getString("status"));
+            return entityFactory.newUser(id, name, surname, login, phone, role, status);
+        } catch (SQLException ex) {
+            throw new DBException(ex);
+        }
+    }
+
+    private @NotNull List<User> fetchAll(@NotNull ResultSet resultSet) throws DBException {
+        final List<User> userList = new ArrayList<>();
+        try {
+            while (resultSet.next()) {
+                userList.add(fetchOne(resultSet));
+            }
+        } catch (SQLException ex) {
+            throw new DBException(ex);
+        }
+        return userList;
     }
 }

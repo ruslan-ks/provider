@@ -8,14 +8,16 @@ import java.util.Objects;
 public class ServiceImpl implements Service {
     private int id;
     private final String name;
+    private final String description;
 
-    protected ServiceImpl(int id, @NotNull String name) {
+    protected ServiceImpl(int id, @NotNull String name, @NotNull String description) {
         this.id = id;
         this.name = name;
+        this.description = description;
     }
 
-    public static ServiceImpl of(int id, @NotNull String name) {
-        return new ServiceImpl(id, name);
+    public static ServiceImpl of(int id, @NotNull String name, @NotNull String description) {
+        return new ServiceImpl(id, name, description);
     }
 
     @Override
@@ -37,10 +39,16 @@ public class ServiceImpl implements Service {
     }
 
     @Override
+    public @NotNull String getDescription() {
+        return description;
+    }
+
+    @Override
     public String toString() {
         return "ServiceImpl{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
                 '}';
     }
 
@@ -49,11 +57,13 @@ public class ServiceImpl implements Service {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ServiceImpl service = (ServiceImpl) o;
-        return id == service.id && Objects.equals(name, service.name);
+        return id == service.id
+                && Objects.equals(name, service.name)
+                && Objects.equals(description, service.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(id, name, description);
     }
 }

@@ -26,4 +26,6 @@ public interface DaoFactory {
     @NotNull UserPasswordDao newUserPasswordDao();
 
     @NotNull UserAccountDao newUserAccountDao();
+
+    @NotNull ServiceDao newServiceDao();
 }
