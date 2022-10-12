@@ -13,23 +13,19 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class PostgresTariffDao extends TariffDao {
     PostgresTariffDao() {}
 
     // TODO: add addService(s) method
 
-    private static final String SQL_FIELDS = "id AS tariff_id, " +
-            "title AS tariff_title, " +
-            "status AS tariff_status, " +
-            "usd_price AS tariff_usd_price ";
-
     private static final String SQL_FIND_BY_ID =
             "SELECT " +
-                    SQL_FIELDS +
+                    "id AS tariff_id, " +
+                    "title AS tariff_title, " +
+                    "status AS tariff_status, " +
+                    "usd_price AS tariff_usd_price " +
             "FROM tariffs WHERE id = ?";
 
     @Override
@@ -69,7 +65,6 @@ public class PostgresTariffDao extends TariffDao {
             preparedStatement.setString(i++, language);
             preparedStatement.setInt(i, id);
             final ResultSet resultSet = preparedStatement.executeQuery();
-
             if (resultSet.next()) {
                 final Tariff tariff = fetchOne(resultSet);
 
@@ -84,7 +79,6 @@ public class PostgresTariffDao extends TariffDao {
                 }
                 return Optional.of(SimpleTariffDto.of(tariff, tariffDuration, serviceList));
             }
-
         } catch (SQLException ex) {
             throw new DBException(ex);
         }
@@ -115,6 +109,23 @@ public class PostgresTariffDao extends TariffDao {
             throw new DBException(ex);
         }
         return false;
+    }
+
+    private static final String SQL_ADD_SERVICE = "INSERT INTO tariff_services(tariff_id, service_id) VALUES (?, ?)";
+
+    public boolean addServices(@NotNull Tariff tariff, @NotNull Set<Service> services) throws DBException {
+        try (var preparedStatement = connection.prepareStatement(SQL_ADD_SERVICE)) {
+            for (var service : services) {
+                int i = 1;
+                preparedStatement.setInt(i++, tariff.getId());
+                preparedStatement.setInt(i, service.getId());
+                preparedStatement.addBatch();
+            }
+            int[] updatedRows = preparedStatement.executeBatch();
+            return Arrays.stream(updatedRows).sum() == services.size();
+        } catch (SQLException ex) {
+            throw new DBException(ex);
+        }
     }
 
     private static @NotNull String orderRuleToQuery(@NotNull OrderRule orderRule) {
