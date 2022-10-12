@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.provider.constants.attributes.RequestAttributes" %>
 <%@ page import="com.provider.constants.attributes.SessionAttributes" %>
-<%@ page import="com.provider.constants.params.UsersManagementParams" %>
+<%@ page import="com.provider.constants.params.PaginationParams" %>
 <%@ page import="com.provider.constants.params.UserParams" %>
 <%@ page import="com.provider.constants.Paths" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -111,10 +111,9 @@
                     </tr>
                 </c:forEach>
             </table>
-            <pro:paginationNav pageNumber="${param[UsersManagementParams.PAGE_NUMBER]}"
+            <pro:paginationNav pageNumber="${param[PaginationParams.PAGE_NUMBER]}"
                                 pageCount="${requestScope[RequestAttributes.PAGE_COUNT]}"
-                                href="${pageContext.request.contextPath}/${Paths.USERS_MANAGEMENT_PAGE}"
-                                pageParam="${UsersManagementParams.PAGE_NUMBER}"/>
+                                href="${pageContext.request.contextPath}/${Paths.USERS_MANAGEMENT_PAGE}"/>
         </div>
     </fmt:bundle>
 </body>

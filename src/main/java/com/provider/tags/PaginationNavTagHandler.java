@@ -1,5 +1,6 @@
 package com.provider.tags;
 
+import com.provider.constants.params.PaginationParams;
 import com.provider.util.AppendingParameterizedUrl;
 import com.provider.util.ParameterizedUrl;
 import jakarta.servlet.jsp.JspWriter;
@@ -19,9 +20,6 @@ public class PaginationNavTagHandler extends SimpleTagSupport implements Dynamic
 
     private int pageCount;
 
-    // Page parameter name - will be added to url
-    private String pageParam;
-
     // href that will be added to pagination buttons with pageParam appended
     private String href;
 
@@ -31,13 +29,13 @@ public class PaginationNavTagHandler extends SimpleTagSupport implements Dynamic
     private final Map<String, Object> dynamicAttributeMap = new HashMap<>();
 
     // previous page btn title
-    final static private String PREVIOUS = "<";
+    private static final String PREVIOUS = "<";
 
     // next page btn title
-    final static private String NEXT = ">";
+    private static final String NEXT = ">";
 
-    final static private String ACTIVE_STYLE_CLASS = "active";
-    final static private String DISABLED_STYLE_CLASS = "disabled";
+    private static final String ACTIVE_STYLE_CLASS = "active";
+    private static final String DISABLED_STYLE_CLASS = "disabled";
 
     @Override
     public void doTag() throws IOException {
@@ -75,7 +73,7 @@ public class PaginationNavTagHandler extends SimpleTagSupport implements Dynamic
 
     private @NotNull String navItem(int pageNum, @NotNull String title, String... classes) {
         final ParameterizedUrl parameterizedUrl = AppendingParameterizedUrl.of(href);
-        parameterizedUrl.addParam(pageParam, String.valueOf(pageNum));
+        parameterizedUrl.addParam(PaginationParams.PAGE_NUMBER, String.valueOf(pageNum));
         return navItemTag(parameterizedUrl.getString(), title, classes);
     }
 
@@ -98,11 +96,6 @@ public class PaginationNavTagHandler extends SimpleTagSupport implements Dynamic
     @SuppressWarnings("unused")
     public void setPageCount(int pageCount) {
         this.pageCount = pageCount;
-    }
-
-    @SuppressWarnings("unused")
-    public void setPageParam(String pageParam) {
-        this.pageParam = pageParam;
     }
 
     @SuppressWarnings("unused")
