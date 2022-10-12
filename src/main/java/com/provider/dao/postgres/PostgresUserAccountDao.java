@@ -98,7 +98,7 @@ public class PostgresUserAccountDao extends UserAccountDao {
     }
 
     @Override
-    protected UserAccount fetchOne(@NotNull ResultSet resultSet) throws DBException {
+    protected @NotNull UserAccount fetchOne(@NotNull ResultSet resultSet) throws DBException {
         try {
             final long id = resultSet.getLong("id");
             final long userId = resultSet.getLong("user_id");

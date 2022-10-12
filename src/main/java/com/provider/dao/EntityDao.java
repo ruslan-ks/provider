@@ -113,5 +113,5 @@ public abstract class EntityDao<K, T extends Entity> {
      * @return extracted entity
      * @throws DBException if SQLException is thrown
      */
-    protected abstract T fetchOne(@NotNull ResultSet resultSet) throws DBException;
+    protected abstract @NotNull T fetchOne(@NotNull ResultSet resultSet) throws DBException;
 }
