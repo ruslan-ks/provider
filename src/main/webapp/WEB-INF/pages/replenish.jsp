@@ -15,22 +15,20 @@
 </head>
 <body>
 <pro:header/>
-<fmt:bundle basename="LabelsBundle">
-    <form method="post" action="${pageContext.request.contextPath}/${Paths.REPLENISH}"
-          class="row g-3 w-50 my-5 p-sm-2 mx-auto border border-0 shadow rounded rounded-3">
-        <div class="col-md-3">
-            <label for="amountInputId" class="col-form-label"><fmt:message key="account.replenish"/></label>
-        </div>
-        <div class="col">
-            <input type="number" step="0.01" name="${ReplenishParams.AMOUNT}" class="form-control" id="amountInputId"
-                   min="0.1" placeholder="${param[ReplenishParams.CURRENCY]}">
-        </div>
-        <div class="col-md-3">
-            <button type="submit" class="btn btn-success mb-3 w-100">Replenish</button>
-        </div>
-        <input type="text" name="${ReplenishParams.CURRENCY}" value="${param[ReplenishParams.CURRENCY]}"
-               readonly hidden aria-label="">
-    </form>
-</fmt:bundle>
+<form method="post" action="${pageContext.request.contextPath}/${Paths.REPLENISH}"
+      class="row g-3 w-50 my-5 p-sm-2 mx-auto border border-0 shadow rounded rounded-3">
+    <div class="col-md-3">
+        <label for="amountInputId" class="col-form-label"><fmt:message key="account.replenish"/></label>
+    </div>
+    <div class="col">
+        <input type="number" step="0.01" name="${ReplenishParams.AMOUNT}" class="form-control" id="amountInputId"
+               min="0.1" placeholder="${param[ReplenishParams.CURRENCY]}">
+    </div>
+    <div class="col-md-3">
+        <button type="submit" class="btn btn-success mb-3 w-100">Replenish</button>
+    </div>
+    <input type="text" name="${ReplenishParams.CURRENCY}" value="${param[ReplenishParams.CURRENCY]}"
+           readonly hidden aria-label="">
+</form>
 </body>
 </html>

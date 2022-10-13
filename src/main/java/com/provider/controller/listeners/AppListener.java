@@ -7,8 +7,6 @@ import com.provider.service.UserService;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
 import com.provider.entity.user.impl.UserImpl;
-import com.provider.localization.LanguageInfo;
-import com.provider.localization.MapBasedLanguageInfo;
 import com.provider.service.exception.InvalidPropertyException;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.*;
@@ -16,38 +14,39 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * Sets application initial attributes used by its parts
- */
 @WebListener
 public class AppListener implements ServletContextListener {
     private static final Logger logger = LoggerFactory.getLogger(AppListener.class);
 
-    public AppListener() {}
-
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        setAppScopeAttributes(servletContextEvent.getServletContext());
-        logger.info("Application context initialized successfully");
-
+        setAppLocales(servletContextEvent.getServletContext());
         tryCreateRootUser();
         tryCreateTestUsers();
+        logger.info("Application context initialized");
     }
 
-    private void setAppScopeAttributes(@NotNull ServletContext servletContext) {
-        setAppLanguageInfoAttribute(servletContext);
-    }
+    private void setAppLocales(@NotNull ServletContext servletContext) {
+        final String localesPropertiesFilePath = servletContext.getInitParameter("localesPropertiesFilePath");
+        logger.info("Loading locales properties file {}", localesPropertiesFilePath);
 
-    private void setAppLanguageInfoAttribute(@NotNull ServletContext servletContext) {
-        final Map<String, Locale> languageLocaleMap = Map.of("en", Locale.ENGLISH,
-                "uk", new Locale("uk", "UA"));
-        final LanguageInfo languageInfo = MapBasedLanguageInfo.newInstance(languageLocaleMap);
-        servletContext.setAttribute(AppAttributes.LANGUAGE_INFO, languageInfo);
+        final Properties localeProperties = new Properties();
+        try (var inputStream = servletContext.getResourceAsStream(localesPropertiesFilePath);
+             var inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
+            localeProperties.load(inputStreamReader);
+            servletContext.setAttribute(AppAttributes.LOCALE_LANG_MAP, localeProperties);
+        } catch (IOException ex) {
+            logger.error("Failed to load locales properties file", ex);
+            throw new RuntimeException(ex);
+        }
     }
 
     public void tryCreateRootUser() {
@@ -101,10 +100,5 @@ public class AppListener implements ServletContextListener {
                         String.valueOf(i).repeat(10).substring(0, 10), User.Role.MEMBER, User.Status.ACTIVE))
                 .limit(10)
                 .collect(Collectors.toMap(Function.identity(), u -> "pass"));
-    }
-
-    @Override
-    public void contextDestroyed(ServletContextEvent sce) {
-        /* This method is called when the servlet Context is undeployed or Application Server shuts down. */
     }
 }

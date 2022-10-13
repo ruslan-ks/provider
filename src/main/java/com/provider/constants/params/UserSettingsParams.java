@@ -6,5 +6,5 @@ package com.provider.constants.params;
 public class UserSettingsParams {
     private UserSettingsParams() {}
 
-    public static final String LANGUAGE = "lang";
+    public static final String LOCALE = "locale";
 }

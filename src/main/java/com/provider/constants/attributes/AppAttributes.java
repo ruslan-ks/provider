@@ -6,8 +6,5 @@ package com.provider.constants.attributes;
 public class AppAttributes {
     private AppAttributes() {}
 
-    /**
-     * Something implementing com.provider.localization.LanguageInfo interface
-     */
-    public static final String LANGUAGE_INFO = "languageInfo";
+    public static final String LOCALE_LANG_MAP = "localeLangMap";
 }

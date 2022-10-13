@@ -2,10 +2,8 @@ package com.provider.entity.settings;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
-
 public class UserSettingsImpl implements UserSettings {
-    private String language;
+    private String locale;
 
     private UserSettingsImpl() {}
 
@@ -14,17 +12,17 @@ public class UserSettingsImpl implements UserSettings {
     }
 
     @Override
-    public void setLanguage(@NotNull String language) {
-        this.language = language;
+    public void setLocale(@NotNull String locale) {
+        this.locale = locale;
     }
 
     @Override
-    public @NotNull Optional<String> getLanguage() {
-        return Optional.ofNullable(language);
+    public @NotNull String getLocale() {
+        return locale;
     }
 
     @Override
     public String toString() {
-        return "SimpleUserSettings{language='" + language + "'}";
+        return "SimpleUserSettings{locale='" + locale + "'}";
     }
 }
