@@ -34,7 +34,7 @@
     <div class="row">
         <div class="container-fluid">
             <input type="submit" class="btn btn-outline-primary float-end w-25"
-                   value="<fmt:message key="signIn.signIn"/>">
+                   value="<fmt:message key="signIn.signInBtn"/>">
         </div>
     </div>
 </form>

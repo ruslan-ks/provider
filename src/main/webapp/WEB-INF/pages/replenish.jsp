@@ -25,7 +25,7 @@
                min="0.1" placeholder="${param[ReplenishParams.CURRENCY]}">
     </div>
     <div class="col-md-3">
-        <button type="submit" class="btn btn-success mb-3 w-100">Replenish</button>
+        <button type="submit" class="btn btn-success mb-3 w-100"><fmt:message key="account.replenishBtn"/></button>
     </div>
     <input type="text" name="${ReplenishParams.CURRENCY}" value="${param[ReplenishParams.CURRENCY]}"
            readonly hidden aria-label="">
