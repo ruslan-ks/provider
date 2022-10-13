@@ -40,6 +40,8 @@
                                 <c:if test="${pro:isAdminOrHigher(user)}">
                                     <li><a href="${pageContext.request.contextPath}/${Paths.USERS_MANAGEMENT_PAGE}"
                                            class="dropdown-item"><fmt:message key="nav.manageUsers"/></a></li>
+                                    <li><a href="${pageContext.request.contextPath}/${Paths.TARIFFS_MANAGEMENT_PAGE}"
+                                           class="dropdown-item"><fmt:message key="nav.manageTariffs"/></a></li>
                                 </c:if>
                                 <li><a href="${pageContext.request.contextPath}/${Paths.USER_PANEL_PAGE}"
                                        class="dropdown-item"><fmt:message key="nav.userPanel"/></a></li>

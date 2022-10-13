@@ -28,9 +28,14 @@ public class Paths {
     public static final String REPLENISH_JSP = "/WEB-INF/pages/replenish.jsp";
 
     /**
-     * User management jsp
+     * Users management jsp
      */
     public static final String USERS_MANAGEMENT_JSP = "/WEB-INF/pages/usersManagement.jsp";
+
+    /**
+     * Tariffs management jsp
+     */
+    public static final String TARIFFS_MANAGEMENT_JSP = "/WEB-INF/pages/tariffsManagement.jsp";
 
     /**
      * Front controller servlet
@@ -81,4 +86,10 @@ public class Paths {
      */
     public static final String UPDATE_USER_STATUS = CONTROLLER + "?" + CommandParams.COMMAND + "=" +
             CommandParams.UPDATE_USER_STATUS;
+
+    /**
+     * Open tariffs management page command
+     */
+    public static final String TARIFFS_MANAGEMENT_PAGE = CONTROLLER + "?" + CommandParams.COMMAND + "="
+            + CommandParams.TARIFFS_MANAGEMENT_PAGE;
 }

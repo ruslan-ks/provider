@@ -18,4 +18,10 @@ public interface ServiceFactory {
      * @return AccountService object
      */
     @NotNull AccountService getAccountService() throws DBException;
+
+    /**
+     * Return TariffService object
+     * @return TariffService object
+     */
+    @NotNull TariffService getTariffService() throws DBException;
 }

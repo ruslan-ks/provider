@@ -6,6 +6,7 @@ import com.provider.controller.command.result.CommandResult;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.EntityFactory;
 import com.provider.entity.SimpleEntityFactory;
+import com.provider.entity.settings.UserSettings;
 import com.provider.entity.user.User;
 import com.provider.service.ServiceFactory;
 import com.provider.service.ServiceFactoryImpl;
@@ -70,6 +71,17 @@ public abstract class FrontCommand {
      */
     protected final @NotNull Optional<User> getSessionUser() {
         return getSession().map(s -> (User) s.getAttribute(SessionAttributes.SIGNED_USER));
+    }
+
+    /**
+     * Returns optional containing locale obtained from UserSettings object that resides in the session scope
+     * @return optional containing locale obtained from UserSettings object that resides in the session scope
+     */
+    protected final @NotNull Optional<String> getUserSettingsLocale() {
+        return getSession()
+                .map(s -> s.getAttribute(SessionAttributes.USER_SETTINGS))
+                .map(obj -> (UserSettings) obj)
+                .map(UserSettings::getLocale);
     }
 
     /**

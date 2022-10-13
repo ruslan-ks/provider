@@ -30,25 +30,17 @@ public class FrontCommandFactoryImpl implements FrontCommandFactory {
         if (paramCommand == null) {
             throw new IllegalCommandException("Parameter '" + CommandParams.COMMAND + "' is null");
         }
-        switch (paramCommand) {
-            case CommandParams.SIGN_IN:
-                return new SignInCommand(request, response);
-            case CommandParams.SIGN_OUT:
-                return new SignOutCommand(request, response);
-            case CommandParams.USER_PANEL:
-                return new UserPanelPageCommand(request, response);
-            case CommandParams.REPLENISH_PAGE:
-                return new ReplenishPageCommand(request, response);
-            case CommandParams.REPLENISH:
-                return new ReplenishCommand(request, response);
-            case CommandParams.USERS_MANAGEMENT_PAGE:
-                return new UsersManagementPageCommand(request, response);
-            case CommandParams.ADD_USER:
-                return new AddUserCommand(request, response);
-            case CommandParams.UPDATE_USER_STATUS:
-                return new UpdateUserStatusCommand(request, response);
-            default:
-                throw new IllegalCommandException("Unknown command: " + paramCommand);
-        }
+        return switch (paramCommand) {
+            case CommandParams.SIGN_IN -> new SignInCommand(request, response);
+            case CommandParams.SIGN_OUT -> new SignOutCommand(request, response);
+            case CommandParams.USER_PANEL -> new UserPanelPageCommand(request, response);
+            case CommandParams.REPLENISH_PAGE -> new ReplenishPageCommand(request, response);
+            case CommandParams.REPLENISH -> new ReplenishCommand(request, response);
+            case CommandParams.USERS_MANAGEMENT_PAGE -> new UsersManagementPageCommand(request, response);
+            case CommandParams.ADD_USER -> new AddUserCommand(request, response);
+            case CommandParams.UPDATE_USER_STATUS -> new UpdateUserStatusCommand(request, response);
+            case CommandParams.TARIFFS_MANAGEMENT_PAGE -> new TariffsManagementPageCommand(request, response);
+            default -> throw new IllegalCommandException("Unknown command: " + paramCommand);
+        };
     }
 }

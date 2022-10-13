@@ -36,7 +36,7 @@ public class CommandParams {
     public static final String REPLENISH = "replenish";
 
     /**
-     * User management page access command
+     * Users management page access command
      */
     public static final String USERS_MANAGEMENT_PAGE = "usersManagementPage";
 
@@ -49,4 +49,9 @@ public class CommandParams {
      * Switch user status(active/suspended) command
      */
     public static final String UPDATE_USER_STATUS = "updateUserStatus";
+
+    /**
+     * Tariffs management page access command
+     */
+    public static final String TARIFFS_MANAGEMENT_PAGE = "tariffsManagementPage";
 }

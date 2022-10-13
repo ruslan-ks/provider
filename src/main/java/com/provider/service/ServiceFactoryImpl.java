@@ -20,5 +20,8 @@ public class ServiceFactoryImpl implements ServiceFactory {
         return new AccountServiceImpl();
     }
 
-
+    @Override
+    public @NotNull TariffService getTariffService() throws DBException {
+        return new TariffServiceImpl();
+    }
 }
