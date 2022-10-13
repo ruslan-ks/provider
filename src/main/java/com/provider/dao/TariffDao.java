@@ -68,6 +68,6 @@ public abstract class TariffDao extends EntityDao<Integer, Tariff> {
         }
     }
 
-    public abstract @NotNull Optional<TariffDto> findFullInfoByKey(int id, @NotNull String language)
+    public abstract @NotNull Optional<TariffDto> findFullInfoByKey(int id, @NotNull String locale)
             throws DBException;
 }

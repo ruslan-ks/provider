@@ -26,19 +26,40 @@ public class PostgresServiceDao extends ServiceDao {
         return findByKey(SQL_FIND_BY_ID, key);
     }
 
+    private static final String SQL_FIND_ALL_LOCALIZED =
+            "SELECT " +
+                    "s.id AS service_id, " +
+                    "COALESCE(st.name, s.name) AS service_name, " +
+                    "COALESCE(st.description, s.description) AS service_description " +
+            "FROM services s " +
+            "LEFT JOIN service_translations st " +
+                    "ON st.service_id = s.id AND st.locale = ? " +
+            "ORDER BY s.id";
+
+    @Override
+    public @NotNull List<Service> findAll(@NotNull String locale) throws DBException {
+        try (var preparedStatement = connection.prepareStatement(SQL_FIND_ALL_LOCALIZED)) {
+            preparedStatement.setString(1, locale);
+            final ResultSet resultSet = preparedStatement.executeQuery();
+            return fetchAll(resultSet);
+        } catch (SQLException ex) {
+            throw new DBException(ex);
+        }
+    }
+
     private static final String SQL_FIND_BY_ID_LOCALIZED =
             "SELECT " +
                     "s.id AS service_id, " +
                     "COALESCE(st.name, s.name) AS service_name, " +
                     "COALESCE(st.description, s.description) AS service_description " +
             "FROM services s " +
-                    "LEFT JOIN service_translations st ON st.service_id = s.id AND st.language = ? " +
+                    "LEFT JOIN service_translations st ON st.service_id = s.id AND st.locale = ? " +
             "WHERE s.id = ?";
 
-    public @NotNull Optional<Service> findTranslationByKey(@NotNull Integer key, @NotNull String language)
+    public @NotNull Optional<Service> findByKey(@NotNull Integer key, @NotNull String locale)
             throws DBException {
         try (var preparedStatement = connection.prepareStatement(SQL_FIND_BY_ID_LOCALIZED)) {
-            preparedStatement.setString(1, language);
+            preparedStatement.setString(1, locale);
             preparedStatement.setInt(2, key);
             final ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -75,16 +96,16 @@ public class PostgresServiceDao extends ServiceDao {
     }
 
     private static final String SQL_INSERT_TRANSLATION =
-            "INSERT INTO service_translations(service_id, name, description, language) VALUES (?, ?, ?, ?)";
+            "INSERT INTO service_translations(service_id, name, description, locale) VALUES (?, ?, ?, ?)";
 
     @Override
-    public boolean insertTranslation(@NotNull Service service, @NotNull String language) throws DBException {
+    public boolean insertTranslation(@NotNull Service service, @NotNull String locale) throws DBException {
         try (var preparedStatement = connection.prepareStatement(SQL_INSERT_TRANSLATION)) {
             int i = 1;
             preparedStatement.setInt(i++, service.getId());
             preparedStatement.setString(i++, service.getName());
             preparedStatement.setString(i++, service.getDescription());
-            preparedStatement.setString(i, language);
+            preparedStatement.setString(i, locale);
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException ex) {
             throw new DBException(ex);

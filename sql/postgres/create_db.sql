@@ -69,9 +69,9 @@ CREATE TABLE services(
 DROP TABLE IF EXISTS service_translations;
 CREATE TABLE service_translations(
     service_id INT NOT NULL,
-    language TEXT NOT NULL
-        CONSTRAINT valid_service_translation_language CHECK (language ~* :latin_regex),
-    CONSTRAINT unique_service_language UNIQUE(service_id, language),
+    locale TEXT NOT NULL
+        CONSTRAINT valid_service_translation_locale CHECK (locale ~* :latin_regex),
+    CONSTRAINT unique_service_locale UNIQUE(service_id, locale),
     name TEXT NOT NULL
         CONSTRAINT valid_service_name_translation CHECK(name ~* :regular_text_regex),
     description TEXT NOT NULL
@@ -94,9 +94,9 @@ CREATE TABLE tariffs(
 DROP TABLE IF EXISTS tariff_translations;
 CREATE TABLE tariff_translations(
     tariff_id INT NOT NULL,
-    language TEXT NOT NULL
-        CONSTRAINT valid_tariff_translation_language CHECK (language ~* :latin_regex),
-    CONSTRAINT unique_tariff_language UNIQUE(tariff_id, language),
+    locale TEXT NOT NULL
+        CONSTRAINT valid_tariff_translation_locale CHECK (locale ~* :latin_regex),
+    CONSTRAINT unique_tariff_locale UNIQUE(tariff_id, locale),
     title TEXT NOT NULL
         CONSTRAINT valid_tariff_title_translation CHECK(title ~* :regular_text_regex),
     FOREIGN KEY(tariff_id) REFERENCES tariffs(id)

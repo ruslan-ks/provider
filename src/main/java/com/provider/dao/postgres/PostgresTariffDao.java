@@ -52,17 +52,17 @@ public class PostgresTariffDao extends TariffDao {
             "LEFT JOIN services s " +
                     "ON s.id = ts.service_id " +
             "LEFT JOIN tariff_translations tt " +
-                    "ON tt.tariff_id = t.id AND tt.language = ? " +
+                    "ON tt.tariff_id = t.id AND tt.locale = ? " +
             "LEFT JOIN service_translations st " +
-                    "ON st.service_id = s.id AND st.language = ? " +
+                    "ON st.service_id = s.id AND st.locale = ? " +
             "WHERE t.id = ?";
 
     @Override
-    public @NotNull Optional<TariffDto> findFullInfoByKey(int id, @NotNull String language) throws DBException {
+    public @NotNull Optional<TariffDto> findFullInfoByKey(int id, @NotNull String locale) throws DBException {
         try (var preparedStatement = connection.prepareStatement(SQL_FIND_FULL_INFO_BY_ID)) {
             int i = 1;
-            preparedStatement.setString(i++, language);
-            preparedStatement.setString(i++, language);
+            preparedStatement.setString(i++, locale);
+            preparedStatement.setString(i++, locale);
             preparedStatement.setInt(i, id);
             final ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {

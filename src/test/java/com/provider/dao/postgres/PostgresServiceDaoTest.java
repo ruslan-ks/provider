@@ -87,7 +87,7 @@ class PostgresServiceDaoTest {
         final boolean inserted = serviceDao.insertTranslation(serviceTranslation, lang);
         assertTrue(inserted);
 
-        final Optional<Service> foundTranslation = serviceDao.findTranslationByKey(service.getId(), lang);
+        final Optional<Service> foundTranslation = serviceDao.findByKey(service.getId(), lang);
         assertTrue(foundTranslation.isPresent());
 
         assertEquals(serviceTranslation, foundTranslation.get());
@@ -110,7 +110,7 @@ class PostgresServiceDaoTest {
 
         serviceDao.insert(service);
 
-        Optional<Service> found = serviceDao.findTranslationByKey(service.getId(), "not a language");
+        Optional<Service> found = serviceDao.findByKey(service.getId(), "not a language");
         assertTrue(found.isPresent());
         assertEquals(service, found.get());
     }
