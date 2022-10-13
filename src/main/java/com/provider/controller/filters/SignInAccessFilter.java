@@ -10,15 +10,16 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+// TODO: replace this filter with command
 @WebFilter(filterName = "SignInAccessFilter", urlPatterns = {"/signIn"})
 public class SignInAccessFilter implements Filter {
     private static final Logger logger = LoggerFactory.getLogger(SignInAccessFilter.class);
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws ServletException, IOException {
         logger.debug("doFilter: filter: {}", this);
-        if (request instanceof HttpServletRequest) {
-            final var httpServletRequest = (HttpServletRequest) request;
+        if (request instanceof final HttpServletRequest httpServletRequest) {
             if (isSomeoneSignedIn(httpServletRequest)) {
                 request.getRequestDispatcher(Paths.USER_PANEL_PAGE).forward(request, response);
                 return;
@@ -26,7 +27,6 @@ public class SignInAccessFilter implements Filter {
         } else {
             logger.error("Request object {} cannot be cast to HttServletRequest", request);
         }
-
         chain.doFilter(request, response);
     }
 
