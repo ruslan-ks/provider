@@ -17,4 +17,10 @@ public class Messages {
 
     public static final String SESSIONS_NOT_ALLOWED = "Sessions are not allowed. " +
             "Please turn on the cookies and try again";
+
+    public static final String SERVICE_INSERT_SUCCESS = "Service inserted successfully";
+
+    public static final String SERVICE_INSERT_FAIL = "Failed to insert service";
+
+    public static final String INVALID_SERVICE_PARAMETERS = "Invalid service parameters";
 }

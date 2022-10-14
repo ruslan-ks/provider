@@ -21,7 +21,7 @@ import java.util.Map;
 public class UpdateUserStatusCommand extends AdminCommand {
     private static final Logger logger = LoggerFactory.getLogger(UpdateUserStatusCommand.class);
 
-    public UpdateUserStatusCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
+    UpdateUserStatusCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
         super(request, response);
     }
 

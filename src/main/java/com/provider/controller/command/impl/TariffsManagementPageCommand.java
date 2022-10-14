@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class TariffsManagementPageCommand extends AdminCommand {
-    public TariffsManagementPageCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
+    TariffsManagementPageCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
         super(request, response);
     }
 

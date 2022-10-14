@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 public class UsersManagementPageCommand extends AdminCommand {
-    public UsersManagementPageCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
+    UsersManagementPageCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
         super(request, response);
     }
 

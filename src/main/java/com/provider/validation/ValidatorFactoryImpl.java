@@ -13,4 +13,9 @@ public class ValidatorFactoryImpl implements ValidatorFactory {
     public @NotNull UserValidator getUserValidator() {
         return new UserValidatorImpl();
     }
+
+    @Override
+    public @NotNull ServiceValidator getServiceValidator() {
+        return new ServiceValidatorImpl();
+    }
 }

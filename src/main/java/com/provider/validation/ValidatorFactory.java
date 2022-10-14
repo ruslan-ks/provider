@@ -11,4 +11,10 @@ public interface ValidatorFactory {
      * @return UserValidator
      */
     @NotNull UserValidator getUserValidator();
+
+    /**
+     * Returns ServiceValidator object
+     * @return ServiceValidator object
+     */
+    @NotNull ServiceValidator getServiceValidator();
 }

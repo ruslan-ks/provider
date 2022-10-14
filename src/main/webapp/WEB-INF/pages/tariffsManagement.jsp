@@ -1,6 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.provider.constants.attributes.RequestAttributes" %>
-<%@ page import="com.provider.constants.HtmlRegex" %>
+<%@ page import="com.provider.constants.params.ServiceParams" %>
+<%@ page import="com.provider.constants.Regex" %>
+<%@ page import="com.provider.constants.Paths" %>
 <%@ taglib prefix="pro" uri="http://provider.com" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -12,23 +14,24 @@
     <pro:header/>
     <div class="container-md my-5 p-sm-3">
         <div class="row">
-            <form class="col p-3 border-0 shadow">
+            <form method="post" action="${pageContext.request.contextPath}/${Paths.ADD_SERVICE}"
+                  class="col p-3 border-0 shadow">
                 <h5><fmt:message key="service.addService"/></h5>
                 <hr>
                 <div class="mb-3 row">
                     <label for="serviceNameIn" class="col-sm-3 col-form-label">
                         <fmt:message key="service.name"/></label>
                     <div class="col-sm-9">
-                        <input type="text" pattern="${HtmlRegex.REGULAR_TEXT}" class="form-control" id="serviceNameIn"
-                               required>
+                        <input type="text" pattern="${Regex.REGULAR_TEXT}" name="${ServiceParams.NAME}"
+                               class="form-control" id="serviceNameIn" required>
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="serviceDescriptionIn" class="col-sm-3 col-form-label">
                         <fmt:message key="service.description"/></label>
                     <div class="col-sm-9">
-                        <input type="text" pattern="${HtmlRegex.REGULAR_TEXT}" class="form-control"
-                               id="serviceDescriptionIn" required>
+                        <input type="text" pattern="${Regex.REGULAR_TEXT}" name="${ServiceParams.DESCRIPTION}"
+                               class="form-control" id="serviceDescriptionIn" required>
                     </div>
                 </div>
                 <div class="mb-3 row">

@@ -54,4 +54,9 @@ public class CommandParams {
      * Tariffs management page access command
      */
     public static final String TARIFFS_MANAGEMENT_PAGE = "tariffsManagementPage";
+
+    /**
+     * Add service action command
+     */
+    public static final String ADD_SERVICE = "addService";
 }

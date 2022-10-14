@@ -92,4 +92,10 @@ public class Paths {
      */
     public static final String TARIFFS_MANAGEMENT_PAGE = CONTROLLER + "?" + CommandParams.COMMAND + "="
             + CommandParams.TARIFFS_MANAGEMENT_PAGE;
+
+    /**
+     * Add service command
+     */
+    public static final String ADD_SERVICE = CONTROLLER + "?" + CommandParams.COMMAND + "="
+            + CommandParams.ADD_SERVICE;
 }
