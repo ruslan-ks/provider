@@ -60,9 +60,9 @@ public class SimpleEntityFactory implements EntityFactory {
     }
 
     @Override
-    public @NotNull Tariff newTariff(int id, @NotNull String title, Tariff.@NotNull Status status,
-                                     @NotNull BigDecimal usdPrice) {
-        return TariffImpl.of(id, title, status, usdPrice);
+    public @NotNull Tariff newTariff(int id, @NotNull String title, @NotNull String description,
+                                     @NotNull Tariff.Status status, @NotNull BigDecimal usdPrice) {
+        return TariffImpl.of(id, title, description, status, usdPrice);
     }
 
     @Override

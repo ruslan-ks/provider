@@ -36,6 +36,8 @@ public interface Tariff extends Entity {
 
     @NotNull String getTitle();
 
+    @NotNull String getDescription();
+
     @NotNull Status getStatus();
 
     /**

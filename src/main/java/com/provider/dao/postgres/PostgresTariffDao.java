@@ -24,6 +24,7 @@ public class PostgresTariffDao extends TariffDao {
             "SELECT " +
                     "id AS tariff_id, " +
                     "title AS tariff_title, " +
+                    "description AS tariff_description, " +
                     "status AS tariff_status, " +
                     "usd_price AS tariff_usd_price " +
             "FROM tariffs WHERE id = ?";
@@ -36,7 +37,8 @@ public class PostgresTariffDao extends TariffDao {
     private static final String SQL_FIND_FULL_INFO_BY_ID =
             "SELECT " +
                     "t.id AS tariff_id, " +
-                    "coalesce(tt.title, t.title) AS tariff_title, " +
+                    "COALESCE(tt.title, t.title) AS tariff_title, " +
+                    "COALESCE(tt.description, t.description) AS tariff_description, " +
                     "t.status AS tariff_status, " +
                     "t.usd_price AS tariff_usd_price, " +
                     "td.months AS tariff_duration_months, " +
@@ -85,7 +87,8 @@ public class PostgresTariffDao extends TariffDao {
         return Optional.empty();
     }
 
-    private static final String SQL_INSERT = "INSERT INTO tariffs(title, status, usd_price) VALUES (?, ?, ?)";
+    private static final String SQL_INSERT = "INSERT INTO tariffs(title, description, status, usd_price) " +
+            "VALUES (?, ?, ?, ?)";
 
     @Override
     public boolean insert(@NotNull Tariff tariff) throws DBException {
@@ -93,6 +96,7 @@ public class PostgresTariffDao extends TariffDao {
                 Statement.RETURN_GENERATED_KEYS)) {
             int i = 1;
             preparedStatement.setString(i++, tariff.getTitle());
+            preparedStatement.setString(i++, tariff.getDescription());
             preparedStatement.setString(i++, tariff.getStatus().name());
             preparedStatement.setBigDecimal(i, tariff.getUsdPrice());
 
@@ -143,9 +147,10 @@ public class PostgresTariffDao extends TariffDao {
         try {
             final int id = resultSet.getInt("tariff_id");
             final String title = resultSet.getString("tariff_title");
+            final String description = resultSet.getString("tariff_description");
             final Tariff.Status status = Tariff.Status.valueOf(resultSet.getString("tariff_status"));
             final BigDecimal usdPrice = resultSet.getBigDecimal("tariff_usd_price");
-            return entityFactory.newTariff(id, title, status, usdPrice);
+            return entityFactory.newTariff(id, title, description, status, usdPrice);
         } catch (SQLException ex) {
             throw new DBException(ex);
         }

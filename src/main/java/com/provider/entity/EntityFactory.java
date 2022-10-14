@@ -93,7 +93,7 @@ public interface EntityFactory {
      * @param usdPrice tariff usd price
      * @return new Tariff instance
      */
-    @NotNull Tariff newTariff(int id, @NotNull String title, @NotNull Tariff.Status status,
+    @NotNull Tariff newTariff(int id, @NotNull String title, @NotNull String description, @NotNull Tariff.Status status,
                               @NotNull BigDecimal usdPrice);
 
     // TODO: delete if still unused

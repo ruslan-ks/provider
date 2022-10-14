@@ -44,11 +44,16 @@ public class DaoTestData {
      */
     public static Stream<Tariff> getTariffStream() {
         return Stream.of(
-                entityFactory.newTariff(0, "Meganet", Tariff.Status.ACTIVE, BigDecimal.valueOf(100)),
-                entityFactory.newTariff(0, "Supernet", Tariff.Status.ACTIVE, BigDecimal.valueOf(50)),
-                entityFactory.newTariff(0, "Coll tariff", Tariff.Status.ACTIVE, BigDecimal.valueOf(200)),
-                entityFactory.newTariff(0, "Mobile pack", Tariff.Status.ACTIVE, BigDecimal.valueOf(100)),
-                entityFactory.newTariff(0, "Magic tariff", Tariff.Status.ACTIVE, BigDecimal.valueOf(200))
+                entityFactory.newTariff(0, "Meganet", "Meganet description",
+                        Tariff.Status.ACTIVE, BigDecimal.valueOf(100)),
+                entityFactory.newTariff(0, "Supernet", "Supernet description",
+                        Tariff.Status.ACTIVE, BigDecimal.valueOf(50)),
+                entityFactory.newTariff(0, "Cool tariff", "Cool tariff description",
+                        Tariff.Status.ACTIVE, BigDecimal.valueOf(200)),
+                entityFactory.newTariff(0, "Mobile pack", "Mobile pack description",
+                        Tariff.Status.ACTIVE, BigDecimal.valueOf(100)),
+                entityFactory.newTariff(0, "Magic tariff", "Magic tariff description",
+                        Tariff.Status.ACTIVE, BigDecimal.valueOf(200))
         );
     }
 

@@ -10,21 +10,25 @@ import java.util.Objects;
 public class TariffImpl implements Tariff {
     private int id;
     private final String title;
+    private final String description;
     private Status status;
     private final BigDecimal usdPrice;
 
-    protected TariffImpl(int id, @NotNull String title, @NotNull Status status, @NotNull BigDecimal usdPrice) {
+    protected TariffImpl(int id, @NotNull String title, @NotNull String description, @NotNull Status status,
+                         @NotNull BigDecimal usdPrice) {
         if (usdPrice.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("usdPrice(" + usdPrice + ") < 0");
         }
         this.id = id;
         this.title = title;
+        this.description = description;
         this.status = status;
         this.usdPrice = usdPrice;
     }
 
-    public static TariffImpl of(int id, @NotNull String title, @NotNull Status status, @NotNull BigDecimal usdPrice) {
-        return new TariffImpl(id, title, status, usdPrice);
+    public static TariffImpl of(int id, @NotNull String title, @NotNull String description, @NotNull Status status,
+                                @NotNull BigDecimal usdPrice) {
+        return new TariffImpl(id, title, description, status, usdPrice);
     }
 
     @Override
@@ -43,6 +47,11 @@ public class TariffImpl implements Tariff {
     @Override
     public @NotNull String getTitle() {
         return title;
+    }
+
+    @Override
+    public @NotNull String getDescription() {
+        return description;
     }
 
     @Override
