@@ -141,7 +141,7 @@ public class PostgresServiceDao extends ServiceDao {
         }
     }
 
-    private @NotNull List<Service> fetchAll(@NotNull ResultSet resultSet) throws DBException {
+    @NotNull List<Service> fetchAll(@NotNull ResultSet resultSet) throws DBException {
         final List<Service> serviceList = new ArrayList<>();
         try {
             while (resultSet.next()) {

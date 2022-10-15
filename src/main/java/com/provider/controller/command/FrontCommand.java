@@ -102,4 +102,13 @@ public abstract class FrontCommand {
         }
         return paramMap;
     }
+
+    /**
+     * Returns Optional containing request parameter value
+     * @param name request parameter name
+     * @return Optional containing request parameter value if one is present, empty optional otherwise
+     */
+    protected final @NotNull Optional<String> getParam(@NotNull String name) {
+        return Optional.ofNullable(request.getParameter(name));
+    }
 }

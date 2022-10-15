@@ -31,12 +31,12 @@ public class SimpleTariffDto implements TariffDto {
     }
 
     @Override
-    public @NotNull TariffDuration getTariffDuration() {
+    public @NotNull TariffDuration getDuration() {
         return tariffDuration;
     }
 
     @Override
-    public @NotNull List<Service> getTariffServices() {
+    public @NotNull List<Service> getServices() {
         return serviceList;
     }
 

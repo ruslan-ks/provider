@@ -2,6 +2,7 @@ package com.provider.dao.postgres;
 
 import com.provider.dao.TariffDao;
 import com.provider.dao.exception.DBException;
+import com.provider.dao.postgres.util.PostgresQueryBuilder;
 import com.provider.entity.dto.SimpleTariffDto;
 import com.provider.entity.dto.TariffDto;
 import com.provider.entity.product.Service;
@@ -87,6 +88,47 @@ public class PostgresTariffDao extends TariffDao {
         return Optional.empty();
     }
 
+    private static final List<String> TARIFF_AND_DURATION_FIELDS = List.of(
+            "t.id AS tariff_id",
+            "COALESCE(tt.title, t.title) AS tariff_title",
+            "COALESCE(tt.description, t.description) AS tariff_description",
+            "t.status AS tariff_status",
+            "t.usd_price AS tariff_usd_price",
+            "td.months AS tariff_duration_months",
+            "td.minutes AS tariff_duration_minutes"
+    );
+
+    @Override
+    public @NotNull List<TariffDto> findFullInfoPage(long offset, int limit, @NotNull String locale) throws DBException {
+        final PostgresQueryBuilder queryBuilder = PostgresQueryBuilder.of("tariffs t")
+                .addSelect(TARIFF_AND_DURATION_FIELDS)
+                .addLeftJoin("tariff_durations td", "td.tariff_id = t.id")
+                .addLeftJoin("tariff_translations tt", "tt.tariff_id = t.id AND tt.locale = ?")
+                .addOrderBy("t.id")
+                .setOffsetArg(true)
+                .setLimitArg(true);
+        final String query = queryBuilder.getQuery();
+        try (var preparedStatement = connection.prepareStatement(query)) {
+            int i = 1;
+            preparedStatement.setString(i++, locale);
+            preparedStatement.setLong(i++, offset);
+            preparedStatement.setInt(i, limit);
+            final ResultSet resultSet = preparedStatement.executeQuery();
+
+            final var tariffDurationDao = new PostgresTariffDurationDao();
+            final List<TariffDto> tariffDtoList = new ArrayList<>();
+            while (resultSet.next()) {
+                final Tariff tariff = fetchOne(resultSet);
+                final TariffDuration tariffDuration = tariffDurationDao.fetchOne(resultSet);
+                final List<Service> tariffServices = findTariffServices(tariff.getId(), locale);
+                tariffDtoList.add(SimpleTariffDto.of(tariff, tariffDuration, tariffServices));
+            }
+            return tariffDtoList;
+        } catch (SQLException ex) {
+            throw new DBException(ex);
+        }
+    }
+
     private static final String SQL_INSERT = "INSERT INTO tariffs(title, description, status, usd_price) " +
             "VALUES (?, ?, ?, ?)";
 
@@ -107,7 +149,7 @@ public class PostgresTariffDao extends TariffDao {
                     tariff.setId(generatedKeys.getInt(1));
                     return true;
                 }
-                throw new DBException("Couldn't obtain generated keys after inserting a row " + tariff);
+                throw new DBException("Failed to obtain generated keys after inserting a row " + tariff);
             }
         } catch (SQLException ex) {
             throw new DBException(ex);
@@ -117,16 +159,65 @@ public class PostgresTariffDao extends TariffDao {
 
     private static final String SQL_ADD_SERVICE = "INSERT INTO tariff_services(tariff_id, service_id) VALUES (?, ?)";
 
-    public boolean addServices(@NotNull Tariff tariff, @NotNull Set<Service> services) throws DBException {
+    @Override
+    public boolean addServices(int tariffId, @NotNull Set<Service> services) throws DBException {
+        if (tariffId <= 0) {
+            throw new IllegalArgumentException("tariffId <= 0: tariffId = " + tariffId);
+        }
         try (var preparedStatement = connection.prepareStatement(SQL_ADD_SERVICE)) {
             for (var service : services) {
                 int i = 1;
-                preparedStatement.setInt(i++, tariff.getId());
+                preparedStatement.setInt(i++, tariffId);
                 preparedStatement.setInt(i, service.getId());
                 preparedStatement.addBatch();
             }
             int[] updatedRows = preparedStatement.executeBatch();
             return Arrays.stream(updatedRows).sum() == services.size();
+        } catch (SQLException ex) {
+            throw new DBException(ex);
+        }
+    }
+
+    private static final String SQL_FIND_TARIFF_SERVICES =
+            "SELECT " +
+                    "s.id AS service_id, " +
+                    "COALESCE(st.name, s.name) AS service_name, " +
+                    "COALESCE(st.description, s.description) AS service_description " +
+            "FROM tariff_services ts " +
+            "LEFT JOIN services s " +
+                    "ON s.id = ts.service_id " +
+            "LEFT JOIN service_translations st " +
+                    "ON st.service_id = s.id AND st.locale = ? " +
+            "WHERE ts.tariff_id = ? " +
+            "ORDER BY s.id";
+
+    @Override
+    public List<Service> findTariffServices(int tariffId, @NotNull String locale) throws DBException {
+        if (tariffId <= 0) {
+            throw new IllegalArgumentException();
+        }
+        try (var preparedStatement = connection.prepareStatement(SQL_FIND_TARIFF_SERVICES)) {
+            int i = 1;
+            preparedStatement.setString(i++, locale);
+            preparedStatement.setInt(i, tariffId);
+            final ResultSet resultSet = preparedStatement.executeQuery();
+            final PostgresServiceDao serviceDao = new PostgresServiceDao();
+            return serviceDao.fetchAll(resultSet);
+        } catch (SQLException ex) {
+            throw new DBException(ex);
+        }
+    }
+
+    private static final String SQL_COUNT_ALL = "SELECT COUNT(*) FROM tariffs";
+
+    @Override
+    public int countAll() throws DBException {
+        try (var statement = connection.createStatement()) {
+            final ResultSet resultSet = statement.executeQuery(SQL_COUNT_ALL);
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+            throw new DBException("Failed to get tariffs count from db. Query: " + SQL_COUNT_ALL);
         } catch (SQLException ex) {
             throw new DBException(ex);
         }
@@ -156,7 +247,7 @@ public class PostgresTariffDao extends TariffDao {
         }
     }
 
-    private List<Tariff> fetchAll(@NotNull ResultSet resultSet) throws SQLException, DBException {
+    private @NotNull List<Tariff> fetchAll(@NotNull ResultSet resultSet) throws SQLException, DBException {
         final List<Tariff> tariffList = new ArrayList<>();
         while (resultSet.next()) {
             tariffList.add(fetchOne(resultSet));

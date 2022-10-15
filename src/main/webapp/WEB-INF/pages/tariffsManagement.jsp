@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.provider.constants.attributes.RequestAttributes" %>
 <%@ page import="com.provider.constants.params.ServiceParams" %>
+<%@ page import="com.provider.constants.params.PaginationParams" %>
 <%@ page import="com.provider.constants.Regex" %>
 <%@ page import="com.provider.constants.Paths" %>
 <%@ taglib prefix="pro" uri="http://provider.com" %>
@@ -58,6 +59,36 @@
                 </table>
             </div>
         </div>
+
+        <table class="table table-striped my-sm-2">
+            <tr>
+                <th>id</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th>Duration</th>
+                <th>Services</th>
+            </tr>
+            <c:forEach var="tariffDto" items="${requestScope[RequestAttributes.TARIFFS]}">
+                <tr>
+                    <td>${tariffDto.tariff.id}</td>
+                    <td>${tariffDto.tariff.title}</td>
+                    <td>${tariffDto.tariff.description}</td>
+                    <td>${tariffDto.tariff.usdPrice}</td>
+                    <td>${tariffDto.tariff.status}</td>
+                    <td>${tariffDto.duration.months} months ${tariffDto.duration.minutes} min</td>
+                    <td>
+                        <c:forEach var="service" items="${tariffDto.services}">
+                            [${service.id}] ${service.name}<br>
+                        </c:forEach>
+                    </td>
+                </tr>
+            </c:forEach>
+        </table>
+        <pro:paginationNav pageCount="${requestScope[RequestAttributes.PAGE_COUNT]}"
+                           href="${pageContext.request.contextPath}/${Paths.TARIFFS_MANAGEMENT_PAGE}"
+                           pageParam="${PaginationParams.PAGE_NUMBER}"/>
     </div>
 </body>
 </html>

@@ -14,7 +14,7 @@ import java.util.List;
 public interface TariffDto extends Entity {
     @NotNull Tariff getTariff();
 
-    @NotNull TariffDuration getTariffDuration();
+    @NotNull TariffDuration getDuration();
 
-    @NotNull List<Service> getTariffServices();
+    @NotNull List<Service> getServices();
 }
