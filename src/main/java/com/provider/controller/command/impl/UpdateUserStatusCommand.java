@@ -26,7 +26,7 @@ public class UpdateUserStatusCommand extends AdminCommand {
     }
 
     @Override
-    protected CommandResult executeAccessed(@NotNull User user)
+    protected @NotNull CommandResult executeAccessed(@NotNull User user)
             throws DBException, CommandParamException {
         final Map<String, String> paramMap = getRequestParams(UserParams.ID, UserParams.STATUS);
         final UserService userService = serviceFactory.getUserService();

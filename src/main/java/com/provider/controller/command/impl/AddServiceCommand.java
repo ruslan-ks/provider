@@ -26,7 +26,7 @@ public class AddServiceCommand extends AdminCommand {
     }
 
     @Override
-    protected CommandResult executeAccessed(@NotNull User user)
+    protected @NotNull CommandResult executeAccessed(@NotNull User user)
             throws DBException, ServletException, IOException, CommandParamException {
         final Map<String, String> params = getRequestParams(ServiceParams.NAME, ServiceParams.DESCRIPTION);
         final Service service = entityFactory.newService(0, params.get(ServiceParams.NAME),

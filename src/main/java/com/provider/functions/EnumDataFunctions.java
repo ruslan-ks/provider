@@ -1,6 +1,7 @@
 package com.provider.functions;
 
 import com.provider.dao.exception.DBException;
+import com.provider.entity.product.Tariff;
 import com.provider.entity.user.User;
 import com.provider.service.ServiceFactory;
 import com.provider.service.ServiceFactoryImpl;
@@ -29,5 +30,13 @@ public class EnumDataFunctions {
         } catch (DBException ex) {
             throw new RuntimeException();
         }
+    }
+
+    /**
+     * Returns Iterable containing all possible {@code Tariff.Status} values
+     * @return {@code Iterable<Tariff.Status> } containing all possible values
+     */
+    public static Iterable<Tariff.Status> allTariffStatuses() {
+        return Arrays.asList(Tariff.Status.values());
     }
 }

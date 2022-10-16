@@ -95,4 +95,9 @@
         <function-signature>java.lang.Iterable rolesAllowedForCreation(com.provider.entity.user.User)
         </function-signature>
     </function>
+    <function>
+        <name>allTariffStatuses</name>
+        <function-class>com.provider.functions.EnumDataFunctions</function-class>
+        <function-signature>java.lang.Iterable allTariffStatuses()</function-signature>
+    </function>
 </taglib>

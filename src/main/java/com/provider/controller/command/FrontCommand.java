@@ -55,7 +55,8 @@ public abstract class FrontCommand {
      * Returns result via calling forward or redirect.
      * @return CommandResult - object containing result data - page location for redirect/forward and so on
      */
-    public abstract CommandResult execute() throws DBException, ServletException, IOException, CommandParamException;
+    public abstract @NotNull CommandResult execute()
+            throws DBException, ServletException, IOException, CommandParamException;
 
     /**
      * Returns current session

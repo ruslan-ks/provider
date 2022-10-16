@@ -26,7 +26,7 @@ public class ReplenishCommand extends MemberCommand {
     }
 
     @Override
-    protected CommandResult executeAccessed(@NotNull User user) throws DBException, CommandParamException {
+    protected @NotNull CommandResult executeAccessed(@NotNull User user) throws DBException, CommandParamException {
         final Map<String, String> paramMap = getRequestParams(ReplenishParams.CURRENCY, ReplenishParams.AMOUNT);
 
         final Currency accountCurrency = CommandUtil.parseCurrencyParam(paramMap.get(ReplenishParams.CURRENCY));

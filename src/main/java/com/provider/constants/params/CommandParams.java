@@ -59,4 +59,9 @@ public class CommandParams {
      * Add service action command
      */
     public static final String ADD_SERVICE = "addService";
+
+    /**
+     * Add tariff action command
+     */
+    public static final String ADD_TARIFF = "addTariff";
 }

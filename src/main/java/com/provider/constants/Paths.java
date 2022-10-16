@@ -98,4 +98,10 @@ public class Paths {
      */
     public static final String ADD_SERVICE = CONTROLLER + "?" + CommandParams.COMMAND + "="
             + CommandParams.ADD_SERVICE;
+
+    /**
+     * Add tariff command
+     */
+    public static final String ADD_TARIFF = CONTROLLER + "?" + CommandParams.COMMAND + "="
+            + CommandParams.ADD_TARIFF;
 }

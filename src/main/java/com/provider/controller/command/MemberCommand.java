@@ -37,7 +37,7 @@ public abstract class MemberCommand extends UserAccessCommand {
     }
 
     @Override
-    protected CommandResult executeDenied() {
+    protected @NotNull CommandResult executeDenied() {
         if (isMember) {
             getSession().orElseThrow().removeAttribute(SessionAttributes.SIGNED_USER);
 

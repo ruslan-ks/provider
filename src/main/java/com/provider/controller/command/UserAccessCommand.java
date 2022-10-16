@@ -21,7 +21,8 @@ public abstract class UserAccessCommand extends FrontCommand {
     }
 
     @Override
-    public final CommandResult execute() throws DBException, ServletException, IOException, CommandParamException {
+    public final @NotNull CommandResult execute()
+            throws DBException, ServletException, IOException, CommandParamException {
         final Optional<User> user = getSessionUser();
         if (user.isPresent() && hasAccessRights(user.get())) {
             return executeAccessed(user.get());
@@ -42,12 +43,12 @@ public abstract class UserAccessCommand extends FrontCommand {
      * Guarantees that <code>getSignedInUser()</code> returns not empty optional when called from inside this method
      * @param user signed-in user guaranteed to be existing user
      */
-    protected abstract CommandResult executeAccessed(@NotNull User user)
+    protected abstract @NotNull CommandResult executeAccessed(@NotNull User user)
             throws DBException, ServletException, IOException, CommandParamException;
 
     /**
      * Called if access is denied.
      * Sends redirect to the sign-in page by default
      */
-    protected abstract CommandResult executeDenied();
+    protected abstract @NotNull CommandResult executeDenied();
 }

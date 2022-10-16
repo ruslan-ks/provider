@@ -20,19 +20,21 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class TariffsManagementPageCommand extends AdminCommand {
+    private static final int PAGE_SIZE = 5;
+
     TariffsManagementPageCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
         super(request, response);
     }
 
     @Override
-    protected CommandResult executeAccessed(@NotNull User user) throws DBException, CommandParamException {
+    protected @NotNull CommandResult executeAccessed(@NotNull User user) throws DBException, CommandParamException {
         final String pageNumberParam = getParam(PaginationParams.PAGE_NUMBER).orElse("1");
         final int pageNumber = CommandUtil.parseIntParam(pageNumberParam);
         if (pageNumber < 0) {
             throw new CommandParamException("Invalid parameter:" + PaginationParams.PAGE_NUMBER + "(" + pageNumber +
                     ") < 0");
         }
-        final String pageSizeParam = getParam(PaginationParams.PAGE_SIZE).orElse("1");
+        final String pageSizeParam = getParam(PaginationParams.PAGE_SIZE).orElse(String.valueOf(PAGE_SIZE));
         final int pageSize = CommandUtil.parseIntParam(pageSizeParam);
         if (pageSize < 1) {
             throw new CommandParamException("Invalid parameter:" + PaginationParams.PAGE_SIZE + "(" + pageSize +
