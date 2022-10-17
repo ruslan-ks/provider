@@ -23,7 +23,7 @@ public class UsersManagementPageCommand extends AdminCommand {
     }
 
     @Override
-    protected @NotNull CommandResult executeAccessed(@NotNull User user) throws DBException, CommandParamException {
+    protected @NotNull CommandResult executeAuthorized(@NotNull User user) throws DBException, CommandParamException {
         // Extract page number parameter
         final Optional<String> pageIndexParam = Optional.ofNullable(request.getParameter(PaginationParams.PAGE_NUMBER));
         final String pageIndexString = pageIndexParam.orElse("1");

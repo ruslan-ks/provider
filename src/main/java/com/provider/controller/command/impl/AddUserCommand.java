@@ -28,7 +28,7 @@ public class AddUserCommand extends AdminCommand {
     }
 
     @Override
-    protected @NotNull CommandResult executeAccessed(@NotNull User user)
+    protected @NotNull CommandResult executeAuthorized(@NotNull User user)
             throws DBException, CommandParamException {
         final Map<String, String> params = getRequiredParams(UserParams.LOGIN, UserParams.PASSWORD,
                 UserParams.NAME, UserParams.SURNAME, UserParams.PHONE, UserParams.ROLE);

@@ -27,7 +27,7 @@ public class TariffsManagementPageCommand extends AdminCommand {
     }
 
     @Override
-    protected @NotNull CommandResult executeAccessed(@NotNull User user) throws DBException, CommandParamException {
+    protected @NotNull CommandResult executeAuthorized(@NotNull User user) throws DBException, CommandParamException {
         final String pageNumberParam = getParam(PaginationParams.PAGE_NUMBER).orElse("1");
         final int pageNumber = CommandUtil.parseIntParam(pageNumberParam);
         if (pageNumber < 0) {

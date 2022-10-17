@@ -21,7 +21,7 @@ public class UserPanelPageCommand extends MemberCommand {
     }
 
     @Override
-    protected @NotNull CommandResult executeAccessed(@NotNull User user) throws DBException {
+    protected @NotNull CommandResult executeAuthorized(@NotNull User user) throws DBException {
         final AccountService accountService = serviceFactory.getAccountService();
         final List<UserAccount> userAccountList = accountService.findUserAccounts(user.getId());
         request.setAttribute(RequestAttributes.USER_ACCOUNTS, userAccountList);

@@ -29,7 +29,7 @@ public class ReplenishPageCommand extends MemberCommand {
     }
 
     @Override
-    protected @NotNull CommandResult executeAccessed(@NotNull User user) throws DBException, CommandParamException {
+    protected @NotNull CommandResult executeAuthorized(@NotNull User user) throws DBException, CommandParamException {
         final Map<String, String> paramMap = getRequiredParams(ReplenishParams.CURRENCY);
         final Currency accountCurrency = CommandUtil.parseCurrencyParam(paramMap.get(ReplenishParams.CURRENCY));
 

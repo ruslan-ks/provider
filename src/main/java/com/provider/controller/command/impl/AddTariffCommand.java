@@ -33,7 +33,7 @@ public class AddTariffCommand extends AdminCommand {
     }
 
     @Override
-    protected @NotNull CommandResult executeAccessed(@NotNull User user)
+    protected @NotNull CommandResult executeAuthorized(@NotNull User user)
             throws DBException, ServletException, IOException, CommandParamException {
         final Map<String, String> params = getRequiredParams(TITLE, DESCRIPTION, USD_PRICE, STATUS, DURATION_MONTHS,
                 DURATION_MINUTES);
