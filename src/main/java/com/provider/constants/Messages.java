@@ -22,5 +22,11 @@ public class Messages {
 
     public static final String SERVICE_INSERT_FAIL = "Failed to insert service";
 
-    public static final String INVALID_SERVICE_PARAMETERS = "Invalid service parameters";
+    public static final String INVALID_SERVICE_PARAMS = "Invalid service parameters";
+
+    public static final String TARIFF_INSERT_SUCCESS = "Tariff inserted successfully";
+
+    public static final String TARIFF_INSERT_FAIL = "Failed to insert tariff";
+
+    public static final String INVALID_TARIFF_PARAMS = "Invalid tariff parameters";
 }

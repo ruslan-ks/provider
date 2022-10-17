@@ -97,12 +97,12 @@ public abstract class TariffDao extends EntityDao<Integer, Tariff> {
     /**
      * Adds tariff service link
      * @param tariffId tariff id
-     * @param services services to be added to the tariff
+     * @param serviceIds service ids to be added to the tariff
      * @return true if db changes were made successfully
      * @throws DBException if SQLException occurred
      * @throws IllegalArgumentException if {@code tariffId <= 0}
      */
-    public abstract boolean addServices(int tariffId, @NotNull Set<Service> services) throws DBException;
+    public abstract boolean addServices(int tariffId, @NotNull Set<Integer> serviceIds) throws DBException;
 
     /**
      * Returns list of tariff services

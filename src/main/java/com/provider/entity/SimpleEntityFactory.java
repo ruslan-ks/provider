@@ -64,9 +64,4 @@ public class SimpleEntityFactory implements EntityFactory {
                                      @NotNull Tariff.Status status, @NotNull BigDecimal usdPrice) {
         return TariffImpl.of(id, title, description, status, usdPrice);
     }
-
-    @Override
-    public @NotNull TariffService newTariffService(int tariffId, int serviceId) {
-        return TariffServiceImpl.of(tariffId, serviceId);
-    }
 }

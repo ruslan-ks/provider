@@ -160,19 +160,19 @@ public class PostgresTariffDao extends TariffDao {
     private static final String SQL_ADD_SERVICE = "INSERT INTO tariff_services(tariff_id, service_id) VALUES (?, ?)";
 
     @Override
-    public boolean addServices(int tariffId, @NotNull Set<Service> services) throws DBException {
+    public boolean addServices(int tariffId, @NotNull Set<Integer> serviceIds) throws DBException {
         if (tariffId <= 0) {
             throw new IllegalArgumentException("tariffId <= 0: tariffId = " + tariffId);
         }
         try (var preparedStatement = connection.prepareStatement(SQL_ADD_SERVICE)) {
-            for (var service : services) {
+            for (var serviceId : serviceIds) {
                 int i = 1;
                 preparedStatement.setInt(i++, tariffId);
-                preparedStatement.setInt(i, service.getId());
+                preparedStatement.setInt(i, serviceId);
                 preparedStatement.addBatch();
             }
             int[] updatedRows = preparedStatement.executeBatch();
-            return Arrays.stream(updatedRows).sum() == services.size();
+            return Arrays.stream(updatedRows).sum() == serviceIds.size();
         } catch (SQLException ex) {
             throw new DBException(ex);
         }

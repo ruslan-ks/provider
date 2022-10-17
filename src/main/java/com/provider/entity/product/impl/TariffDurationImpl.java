@@ -5,7 +5,7 @@ import com.provider.entity.product.TariffDuration;
 import java.util.Objects;
 
 public class TariffDurationImpl implements TariffDuration {
-    private final int tariffId;
+    private int tariffId;
     private final int months;
     private final long minutes;
 
@@ -22,6 +22,14 @@ public class TariffDurationImpl implements TariffDuration {
     @Override
     public int getTariffId() {
         return tariffId;
+    }
+
+    @Override
+    public void setTariffId(int tariffId) {
+        if (tariffId <= 0) {
+            throw new IllegalArgumentException("tariffId <= 0: tariffId = " + tariffId);
+        }
+        this.tariffId = tariffId;
     }
 
     @Override

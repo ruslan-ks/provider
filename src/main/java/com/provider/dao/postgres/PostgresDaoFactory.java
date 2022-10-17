@@ -38,4 +38,9 @@ public class PostgresDaoFactory implements DaoFactory {
     public @NotNull TariffDao newTariffDao() {
         return new PostgresTariffDao();
     }
+
+    @Override
+    public @NotNull TariffDurationDao newTariffDurationDao() {
+        return new PostgresTariffDurationDao();
+    }
 }

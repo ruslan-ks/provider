@@ -17,4 +17,10 @@ public interface ValidatorFactory {
      * @return ServiceValidator object
      */
     @NotNull ServiceValidator getServiceValidator();
+
+    /**
+     * Returns TariffValidator object
+     * @return TariffValidator object
+     */
+    @NotNull TariffValidator getTariffValidator();
 }

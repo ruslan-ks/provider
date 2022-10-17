@@ -30,4 +30,6 @@ public interface DaoFactory {
     @NotNull ServiceDao newServiceDao();
 
     @NotNull TariffDao newTariffDao();
+
+    @NotNull TariffDurationDao newTariffDurationDao();
 }

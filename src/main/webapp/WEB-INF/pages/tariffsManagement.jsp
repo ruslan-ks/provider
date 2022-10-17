@@ -172,7 +172,12 @@
         const tariffServiceChecks = document.querySelectorAll('.tariff-service-check');
         function handleSubmit(event) {
             let checkedFound = false;
-            tariffServiceChecks.forEach(check => checkedFound = (checkedFound || check.checked));
+            for (let check of tariffServiceChecks) {
+                if (check.checked) {
+                    checkedFound = true;
+                    break;
+                }
+            }
             if (checkedFound) {
                 return true;
             }

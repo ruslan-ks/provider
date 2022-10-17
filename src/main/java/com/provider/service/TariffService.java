@@ -3,10 +3,13 @@ package com.provider.service;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.dto.TariffDto;
 import com.provider.entity.product.Service;
-import com.provider.service.exception.InvalidPropertyException;
+import com.provider.entity.product.Tariff;
+import com.provider.entity.product.TariffDuration;
+import com.provider.service.exception.ValidationException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Service layer class for tariffs and services
@@ -29,7 +32,7 @@ public interface TariffService {
      * @return true if service was inserted successfully, false otherwise
      * @throws DBException if {@link com.provider.dao.ServiceDao} throws DBException
      */
-    boolean insertService(@NotNull Service service) throws DBException, InvalidPropertyException;
+    boolean insertService(@NotNull Service service) throws DBException, ValidationException;
 
     /**
      * Returns page of TariffDto objects
@@ -46,4 +49,17 @@ public interface TariffService {
      * @throws DBException if {@link com.provider.dao.TariffDao} throws DBException
      */
     int countAllTariffs() throws DBException;
+
+    /**
+     * Inserts tariff, tariff_duration and service ids to the corresponding tables. Returns true if successfully inserted.
+     * Changes tariff id and tariffDuration's tariffId setting the db-generated value
+     * @param tariff tariff to be inserted
+     * @param tariffDuration tariff duration to be inserted
+     * @param serviceIds tariff service ids to be added to the new tariff
+     * @return true in case of success, false if insertion failed, for example if one of services does not exist
+     * @throws ValidationException if tariff or tariffDuration has invalid property values
+     * @throws IllegalArgumentException if {@code serviceIds.isEmpty() == true}
+     */
+    boolean insertTariff(@NotNull Tariff tariff, @NotNull TariffDuration tariffDuration, @NotNull Set<Integer> serviceIds)
+            throws ValidationException, DBException;
 }
