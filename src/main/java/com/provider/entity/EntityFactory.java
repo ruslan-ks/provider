@@ -95,13 +95,4 @@ public interface EntityFactory {
      */
     @NotNull Tariff newTariff(int id, @NotNull String title, @NotNull String description, @NotNull Tariff.Status status,
                               @NotNull BigDecimal usdPrice);
-
-    // TODO: delete if still unused
-    /**
-     * Creates new TariffService instance
-     * @param tariffId tariff id
-     * @param serviceId service id
-     * @return new TariffService instance
-     */
-    @NotNull TariffService newTariffService(int tariffId, int serviceId);
 }

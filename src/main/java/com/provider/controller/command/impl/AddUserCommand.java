@@ -11,7 +11,7 @@ import com.provider.controller.command.result.CommandResultImpl;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
 import com.provider.service.UserService;
-import com.provider.service.exception.InvalidPropertyException;
+import com.provider.service.exception.ValidationException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +30,7 @@ public class AddUserCommand extends AdminCommand {
     @Override
     protected @NotNull CommandResult executeAccessed(@NotNull User user)
             throws DBException, CommandParamException {
-        final Map<String, String> params = getRequestParams(UserParams.LOGIN, UserParams.PASSWORD,
+        final Map<String, String> params = getRequiredParams(UserParams.LOGIN, UserParams.PASSWORD,
                 UserParams.NAME, UserParams.SURNAME, UserParams.PHONE, UserParams.ROLE);
 
         final UserService userService = serviceFactory.getUserService();
@@ -50,7 +50,7 @@ public class AddUserCommand extends AdminCommand {
         boolean userInserted = false;
         try {
             userInserted = userService.insertUser(newUser, password);
-        } catch (InvalidPropertyException ex) {
+        } catch (ValidationException ex) {
             throw new CommandParamException(ex);
         } catch (DBException ex) {
             // TODO: add unique constraint violation handling

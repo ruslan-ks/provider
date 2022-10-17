@@ -2,10 +2,12 @@ package com.provider.controller.command;
 
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.entity.Currency;
+import com.provider.entity.product.Tariff;
 import com.provider.entity.user.User;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Utility class
@@ -16,10 +18,11 @@ public class CommandUtil {
     /**
      * Parse BigDecimal parameter
      * @param value value to be parsed
-     * @return extracted BigDecimal valud
+     * @return extracted BigDecimal valid
      * @throws CommandParamException if NumberFormatException occurred
      */
-    public static @NotNull BigDecimal parseBigDecimalParam(@NotNull String value) throws CommandParamException {
+    public static @NotNull BigDecimal parseBigDecimalParam(@NotNull String value)
+            throws CommandParamException {
         try {
             return new BigDecimal(value);
         } catch (NumberFormatException ex) {
@@ -51,6 +54,14 @@ public class CommandUtil {
         }
     }
 
+    public static List<Integer> parseIntParams(@NotNull List<String> values) throws CommandParamException {
+        try {
+            return values.stream().map(Integer::parseInt).toList();
+        } catch (NumberFormatException ex) {
+            throw new CommandParamException("Failed to parse int parameter list: invalid number format: " + values);
+        }
+    }
+
     // TODO: javadoc
     public static long parseLongParam(@NotNull String value) throws CommandParamException {
         try {
@@ -73,6 +84,14 @@ public class CommandUtil {
             return User.Role.valueOf(value);
         } catch(IllegalArgumentException ex) {
             throw new CommandParamException("User.Role cannot be parsed: invalid role: " + value);
+        }
+    }
+
+    public static @NotNull Tariff.Status parseTariffStatusParam(@NotNull String value) throws CommandParamException {
+        try {
+            return Tariff.Status.valueOf(value);
+        } catch (IllegalArgumentException ex) {
+            throw new CommandParamException("Tariff.Status cannot be parsed: invalid status: " + value);
         }
     }
 }

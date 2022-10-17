@@ -28,7 +28,7 @@ public class SignInCommand extends FrontCommand {
 
     @Override
     public @NotNull CommandResult execute() throws ServletException, IOException, DBException, CommandParamException {
-        final Map<String, String> paramMap = getRequestParams(SignInParams.LOGIN, SignInParams.PASSWORD);
+        final Map<String, String> paramMap = getRequiredParams(SignInParams.LOGIN, SignInParams.PASSWORD);
         final String login = paramMap.get(SignInParams.LOGIN);
         final String password = paramMap.get(SignInParams.PASSWORD);
 

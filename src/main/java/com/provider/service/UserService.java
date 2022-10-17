@@ -3,7 +3,7 @@ package com.provider.service;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
 import com.provider.entity.user.UserPassword;
-import com.provider.service.exception.InvalidPropertyException;
+import com.provider.service.exception.ValidationException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -40,10 +40,10 @@ public interface UserService {
      * @param user new user to be saved
      * @param password new user password
      * @return true if db changes were mage
-     * @throws InvalidPropertyException if at least one of user properties or password is not valid according to
+     * @throws ValidationException if at least one of user properties or password is not valid according to
      * UserValidator calls result.
      */
-    boolean insertUser(@NotNull User user, @NotNull String password) throws DBException, InvalidPropertyException;
+    boolean insertUser(@NotNull User user, @NotNull String password) throws DBException, ValidationException;
 
     /**
      * Checks login and password and returns authenticated user object

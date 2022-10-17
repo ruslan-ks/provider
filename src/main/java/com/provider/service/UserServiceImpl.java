@@ -8,7 +8,7 @@ import com.provider.entity.user.User;
 import com.provider.entity.user.UserAccount;
 import com.provider.entity.user.UserPassword;
 import com.provider.entity.user.hashing.PasswordHashing;
-import com.provider.service.exception.InvalidPropertyException;
+import com.provider.service.exception.ValidationException;
 import com.provider.validation.UserValidator;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -69,7 +69,7 @@ public class UserServiceImpl extends AbstractService implements UserService {
 
     @Override
     public boolean insertUser(@NotNull User user, @NotNull String password)
-            throws DBException, InvalidPropertyException {
+            throws DBException, ValidationException {
         throwIfAnyIsInvalid(user, password);
 
         final UserDao userDao = daoFactory.newUserDao();
@@ -87,23 +87,27 @@ public class UserServiceImpl extends AbstractService implements UserService {
                 final UserAccount userAccount = entityFactory.newUserAccount(0, user.getId(), Currency.USD);
                 final boolean accountInserted = userAccountDao.insert(userAccount);
 
-                transaction.commit();
-                return userInserted && passwordInserted && accountInserted;
+                if (userInserted && passwordInserted && accountInserted) {
+                    transaction.commit();
+                    return true;
+                }
             } catch (Throwable ex) {
                 transaction.rollback();
                 logger.error("Couldn't execute transaction {}", transaction, ex);
                 throw ex;
             }
+            transaction.rollback();
         }
+        return false;
     }
 
-    private void throwIfAnyIsInvalid(@NotNull User user, @NotNull String password) throws InvalidPropertyException {
+    private void throwIfAnyIsInvalid(@NotNull User user, @NotNull String password) throws ValidationException {
         if (!userValidator.isValidLogin(user.getLogin())
                 || !userValidator.isValidPassword(password)
                 || !userValidator.isValidName(user.getName())
                 || !userValidator.isValidSurname(user.getSurname())
                 || !userValidator.isValidPhone(user.getPhone())) {
-            throw new InvalidPropertyException();
+            throw new ValidationException();
         }
     }
 

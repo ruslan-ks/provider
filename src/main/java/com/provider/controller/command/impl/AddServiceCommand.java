@@ -11,7 +11,7 @@ import com.provider.dao.exception.DBException;
 import com.provider.entity.product.Service;
 import com.provider.entity.user.User;
 import com.provider.service.TariffService;
-import com.provider.service.exception.InvalidPropertyException;
+import com.provider.service.exception.ValidationException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,7 +28,7 @@ public class AddServiceCommand extends AdminCommand {
     @Override
     protected @NotNull CommandResult executeAccessed(@NotNull User user)
             throws DBException, ServletException, IOException, CommandParamException {
-        final Map<String, String> params = getRequestParams(ServiceParams.NAME, ServiceParams.DESCRIPTION);
+        final Map<String, String> params = getRequiredParams(ServiceParams.NAME, ServiceParams.DESCRIPTION);
         final Service service = entityFactory.newService(0, params.get(ServiceParams.NAME),
                 params.get(ServiceParams.DESCRIPTION));
         final TariffService tariffService = serviceFactory.getTariffService();
@@ -40,9 +40,9 @@ public class AddServiceCommand extends AdminCommand {
             } else {
                 commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.SERVICE_INSERT_FAIL);
             }
-        } catch (InvalidPropertyException ex) {
+        } catch (ValidationException ex) {
             commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.SERVICE_INSERT_FAIL);
-            commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.INVALID_SERVICE_PARAMETERS);
+            commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.INVALID_SERVICE_PARAMS);
         }
         return commandResult;
     }

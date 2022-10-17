@@ -7,7 +7,7 @@ import com.provider.service.UserService;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
 import com.provider.entity.user.impl.UserImpl;
-import com.provider.service.exception.InvalidPropertyException;
+import com.provider.service.exception.ValidationException;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.*;
 import org.jetbrains.annotations.NotNull;
@@ -64,7 +64,7 @@ public class AppListener implements ServletContextListener {
             }
         } catch (DBException ex) {
             logger.error("Failed to create root user", ex);
-        } catch (InvalidPropertyException e) {
+        } catch (ValidationException e) {
             throw new RuntimeException(e);
         }
     }
@@ -88,7 +88,7 @@ public class AppListener implements ServletContextListener {
                 logger.info("Inserted test user: {}", entry.getKey());
             } catch (DBException ex) {
                 logger.error("Failed to create test user: " + entry.getKey(), ex);
-            } catch (InvalidPropertyException e) {
+            } catch (ValidationException e) {
                 throw new RuntimeException(e);
             }
         }
