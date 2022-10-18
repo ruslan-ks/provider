@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.provider.constants.attributes.RequestAttributes" %>
+<%@ page import="com.provider.constants.attributes.AppAttributes" %>
 <%@ page import="com.provider.constants.params.ServiceParams" %>
 <%@ page import="com.provider.constants.params.PaginationParams" %>
 <%@ page import="com.provider.constants.params.TariffParams" %>
@@ -62,7 +63,7 @@
 
         <div class="border border-0 shadow p-sm-4">
             <form method="post" action="${pageContext.request.contextPath}/${Paths.ADD_TARIFF}"
-                  onsubmit="handleSubmit(event)" class="row" id="addTariffForm">
+                  enctype="multipart/form-data" onsubmit="handleSubmit(event)" class="row" id="addTariffForm">
                 <div class="row">
                     <h5>Add tariff</h5>
                     <hr>
@@ -110,6 +111,10 @@
                                    class="form-control" aria-label="Duration minutes" required>
                         </div>
                     </div>
+                    <div class="mb-3 row">
+                        <label for="formFile" class="form-label">Pick an image</label>
+                        <input type="file" name="${TariffParams.IMAGE}" class="form-control" id="formFile" required>
+                    </div>
                 </div>
                 <div class="col">
                     <div class="row">
@@ -140,6 +145,7 @@
         <table class="table table-striped my-sm-2">
             <tr>
                 <th>id</th>
+                <th>Image</th>
                 <th>Title</th>
                 <th>Description</th>
                 <th>Price</th>
@@ -150,6 +156,8 @@
             <c:forEach var="tariffDto" items="${requestScope[RequestAttributes.TARIFFS]}">
                 <tr>
                     <td>${tariffDto.tariff.id}</td>
+                    <td><img src="${pro:tariffImagePath(tariffDto.tariff.imageFileName, pageContext.servletContext)}"
+                             alt="Image" style="width: 100px; height: 80px;"></td>
                     <td>${tariffDto.tariff.title}</td>
                     <td>${tariffDto.tariff.description}</td>
                     <td>${tariffDto.tariff.usdPrice}</td>

@@ -10,4 +10,5 @@ public class TariffParams {
     public static final String DURATION_MONTHS = "tariffDurationMonths";
     public static final String DURATION_MINUTES = "tariffDurationMinutes";
     public static final String SERVICE_IDS = "tariffServiceIds";
+    public static final String IMAGE = "tariffImage";
 }

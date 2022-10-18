@@ -49,4 +49,6 @@ public interface Tariff extends Entity {
     void setStatus(@NotNull Status status);
 
     @NotNull BigDecimal getUsdPrice();
+
+    @NotNull String getImageFileName();
 }

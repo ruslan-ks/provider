@@ -10,6 +10,7 @@ BEGIN;
 
 \set regular_text_regex '''^[[:alpha:]0-9 .,;!?-]+$'''
 \set latin_regex '''^[a-zA-Z0-9_]+$'''
+\set file_name_regex '''^[a-zA-Z0-9_.]+$'''
 \set name_regex '''^[[:alpha:]\\d-]+$'''
 
 DROP TABLE IF EXISTS users CASCADE;
@@ -90,7 +91,9 @@ CREATE TABLE tariffs(
     status TEXT NOT NULL
         CONSTRAINT valid_tariff_status CHECK(status ~* :latin_regex),
     usd_price NUMERIC(12, 2) NOT NULL
-        CONSTRAINT positive_usd_price CHECK(usd_price >= 0)
+        CONSTRAINT positive_usd_price CHECK(usd_price >= 0),
+    image_file_name TEXT NOT NULL
+        CONSTRAINT valid_tariff_image_file_name CHECK(image_file_name ~* :file_name_regex)
 );
 
 DROP TABLE IF EXISTS tariff_translations;

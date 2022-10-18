@@ -22,6 +22,9 @@ import java.util.Optional;
  * Uses Command pattern to obtain a command for request handling, then executes this command.
  */
 @WebServlet(name = "FrontControllerServlet", value = "/controller")
+@MultipartConfig(fileSizeThreshold = 1024 * 1024,
+        maxFileSize = 1024 * 1024 * 5,
+        maxRequestSize = 1024 * 1024 * 5 * 5)
 public class FrontControllerServlet extends HttpServlet {
     private final Logger logger = LoggerFactory.getLogger(FrontControllerServlet.class);
 

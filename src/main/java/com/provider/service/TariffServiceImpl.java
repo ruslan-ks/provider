@@ -115,7 +115,8 @@ public class TariffServiceImpl extends AbstractService implements TariffService 
         if (!validator.isValidTitle(tariff.getTitle())
                 || !validator.isValidDescription(tariff.getDescription())
                 || !validator.isValidUsdPrice(tariff.getUsdPrice())
-                || !validator.isValidDuration(tariffDuration.getMonths(), tariffDuration.getMonths())) {
+                || !validator.isValidDuration(tariffDuration.getMonths(), tariffDuration.getMinutes())
+                || !validator.isValidImageFileName(tariff.getImageFileName())) {
             throw new ValidationException("Invalid Tariff or TariffDuration property values");
         }
     }

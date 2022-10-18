@@ -13,9 +13,10 @@ public class TariffImpl implements Tariff {
     private final String description;
     private Status status;
     private final BigDecimal usdPrice;
+    private final String imageFileName;
 
     protected TariffImpl(int id, @NotNull String title, @NotNull String description, @NotNull Status status,
-                         @NotNull BigDecimal usdPrice) {
+                         @NotNull BigDecimal usdPrice, @NotNull String imageFileName) {
         if (usdPrice.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("usdPrice(" + usdPrice + ") < 0");
         }
@@ -24,11 +25,12 @@ public class TariffImpl implements Tariff {
         this.description = description;
         this.status = status;
         this.usdPrice = usdPrice;
+        this.imageFileName = imageFileName;
     }
 
     public static TariffImpl of(int id, @NotNull String title, @NotNull String description, @NotNull Status status,
-                                @NotNull BigDecimal usdPrice) {
-        return new TariffImpl(id, title, description, status, usdPrice);
+                                @NotNull BigDecimal usdPrice, @NotNull String imageFileName) {
+        return new TariffImpl(id, title, description, status, usdPrice, imageFileName);
     }
 
     @Override
@@ -73,12 +75,19 @@ public class TariffImpl implements Tariff {
     }
 
     @Override
+    public @NotNull String getImageFileName() {
+        return imageFileName;
+    }
+
+    @Override
     public String toString() {
         return "TariffImpl{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
                 ", status=" + status +
                 ", usdPrice=" + usdPrice +
+                ", imageFileName='" + imageFileName + '\'' +
                 '}';
     }
 
@@ -87,14 +96,11 @@ public class TariffImpl implements Tariff {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TariffImpl tariff = (TariffImpl) o;
-        return id == tariff.id
-                && Objects.equals(title, tariff.title)
-                && status == tariff.status
-                && Objects.equals(usdPrice, tariff.usdPrice);
+        return id == tariff.id && Objects.equals(title, tariff.title) && Objects.equals(description, tariff.description) && status == tariff.status && Objects.equals(usdPrice, tariff.usdPrice) && Objects.equals(imageFileName, tariff.imageFileName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, status, usdPrice);
+        return Objects.hash(id, title, description, status, usdPrice, imageFileName);
     }
 }

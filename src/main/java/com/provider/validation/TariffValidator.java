@@ -8,5 +8,7 @@ public interface TariffValidator {
     boolean isValidTitle(@NotNull String title);
     boolean isValidDescription(@NotNull String description);
     boolean isValidUsdPrice(@NotNull BigDecimal usdPrice);
-    boolean isValidDuration(int months, int minutes);
+    boolean isValidDuration(int months, long minutes);
+
+    boolean isValidImageFileName(@NotNull String fileName);
 }

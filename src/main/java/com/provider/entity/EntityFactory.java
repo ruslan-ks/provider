@@ -94,5 +94,5 @@ public interface EntityFactory {
      * @return new Tariff instance
      */
     @NotNull Tariff newTariff(int id, @NotNull String title, @NotNull String description, @NotNull Tariff.Status status,
-                              @NotNull BigDecimal usdPrice);
+                              @NotNull BigDecimal usdPrice, @NotNull String imageFileName);
 }

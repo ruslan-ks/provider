@@ -27,7 +27,8 @@ public class PostgresTariffDao extends TariffDao {
                     "title AS tariff_title, " +
                     "description AS tariff_description, " +
                     "status AS tariff_status, " +
-                    "usd_price AS tariff_usd_price " +
+                    "usd_price AS tariff_usd_price, " +
+                    "image_file_name AS tariff_image_file_name" +
             "FROM tariffs WHERE id = ?";
 
     @Override
@@ -42,6 +43,7 @@ public class PostgresTariffDao extends TariffDao {
                     "COALESCE(tt.description, t.description) AS tariff_description, " +
                     "t.status AS tariff_status, " +
                     "t.usd_price AS tariff_usd_price, " +
+                    "t.image_file_name AS tariff_image_file_name, " +
                     "td.months AS tariff_duration_months, " +
                     "td.minutes AS tariff_duration_minutes, " +
                     "s.id AS service_id, " +
@@ -94,6 +96,7 @@ public class PostgresTariffDao extends TariffDao {
             "COALESCE(tt.description, t.description) AS tariff_description",
             "t.status AS tariff_status",
             "t.usd_price AS tariff_usd_price",
+            "t.image_file_name AS tariff_image_file_name",
             "td.months AS tariff_duration_months",
             "td.minutes AS tariff_duration_minutes"
     );
@@ -129,8 +132,8 @@ public class PostgresTariffDao extends TariffDao {
         }
     }
 
-    private static final String SQL_INSERT = "INSERT INTO tariffs(title, description, status, usd_price) " +
-            "VALUES (?, ?, ?, ?)";
+    private static final String SQL_INSERT =
+            "INSERT INTO tariffs(title, description, status, usd_price, image_file_name) " + "VALUES (?, ?, ?, ?, ?)";
 
     @Override
     public boolean insert(@NotNull Tariff tariff) throws DBException {
@@ -140,7 +143,8 @@ public class PostgresTariffDao extends TariffDao {
             preparedStatement.setString(i++, tariff.getTitle());
             preparedStatement.setString(i++, tariff.getDescription());
             preparedStatement.setString(i++, tariff.getStatus().name());
-            preparedStatement.setBigDecimal(i, tariff.getUsdPrice());
+            preparedStatement.setBigDecimal(i++, tariff.getUsdPrice());
+            preparedStatement.setString(i, tariff.getImageFileName());
 
             final int rowsUpdated = preparedStatement.executeUpdate();
             if (rowsUpdated > 0) {
@@ -241,7 +245,8 @@ public class PostgresTariffDao extends TariffDao {
             final String description = resultSet.getString("tariff_description");
             final Tariff.Status status = Tariff.Status.valueOf(resultSet.getString("tariff_status"));
             final BigDecimal usdPrice = resultSet.getBigDecimal("tariff_usd_price");
-            return entityFactory.newTariff(id, title, description, status, usdPrice);
+            final String imageFileName = resultSet.getString("tariff_image_file_name");
+            return entityFactory.newTariff(id, title, description, status, usdPrice, imageFileName);
         } catch (SQLException ex) {
             throw new DBException(ex);
         }

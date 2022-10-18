@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -29,8 +30,11 @@ public class AppListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         setAppLocales(servletContextEvent.getServletContext());
+        setTariffImagesUploadPath(servletContextEvent.getServletContext());
+
         tryCreateRootUser();
         tryCreateTestUsers();
+
         logger.info("Application context initialized");
     }
 
@@ -47,6 +51,13 @@ public class AppListener implements ServletContextListener {
             logger.error("Failed to load locales properties file", ex);
             throw new RuntimeException(ex);
         }
+    }
+
+    private void setTariffImagesUploadPath(@NotNull ServletContext servletContext) {
+        final String tariffImageDir = "upload" + File.separator + "images";
+        final String tariffImagesUploadPath = servletContext.getRealPath("") + File.separator + tariffImageDir;
+        servletContext.setAttribute(AppAttributes.TARIFF_IMAGE_UPLOAD_PATH, tariffImagesUploadPath);
+        servletContext.setAttribute(AppAttributes.TARIFF_IMAGE_DIR, tariffImageDir);
     }
 
     public void tryCreateRootUser() {

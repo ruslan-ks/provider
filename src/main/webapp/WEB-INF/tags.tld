@@ -100,4 +100,10 @@
         <function-class>com.provider.functions.EnumDataFunctions</function-class>
         <function-signature>java.lang.Iterable allTariffStatuses()</function-signature>
     </function>
+    <function>
+        <name>tariffImagePath</name>
+        <function-class>com.provider.functions.ImagePath</function-class>
+        <function-signature>java.lang.String tariffImagePath(java.lang.String,jakarta.servlet.ServletContext)
+        </function-signature>
+    </function>
 </taglib>
