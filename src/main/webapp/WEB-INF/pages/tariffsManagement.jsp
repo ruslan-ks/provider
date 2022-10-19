@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.provider.constants.attributes.RequestAttributes" %>
-<%@ page import="com.provider.constants.attributes.AppAttributes" %>
 <%@ page import="com.provider.constants.params.ServiceParams" %>
 <%@ page import="com.provider.constants.params.PaginationParams" %>
 <%@ page import="com.provider.constants.params.TariffParams" %>
@@ -65,33 +64,37 @@
             <form method="post" action="${pageContext.request.contextPath}/${Paths.ADD_TARIFF}"
                   enctype="multipart/form-data" onsubmit="handleSubmit(event)" class="row" id="addTariffForm">
                 <div class="row">
-                    <h5>Add tariff</h5>
+                    <h5><fmt:message key="tariff.add.addTariff"/></h5>
                     <hr>
                 </div>
                 <div class="col-md-7">
                     <div class="mb-3 row">
-                        <label for="tariffTitleIn" class="col-sm-2 col-form-label">Title</label>
+                        <label for="tariffTitleIn"
+                               class="col-sm-2 col-form-label"><fmt:message key="tariff.title"/></label>
                         <div class="col-sm-10">
                             <input type="text" pattern="${Regex.REGULAR_TEXT}" name="${TariffParams.TITLE}"
                                    class="form-control" id="tariffTitleIn" required>
                         </div>
                     </div>
                     <div class="mb-3 row">
-                        <label for="tariffDescIn" class="col-sm-2 col-form-label">Description</label>
+                        <label for="tariffDescIn"
+                               class="col-sm-2 col-form-label"><fmt:message key="tariff.description"/></label>
                         <div class="col-sm-10">
                             <input type="text" pattern="${Regex.REGULAR_TEXT}" name="${TariffParams.DESCRIPTION}"
-                                      class="form-control" id="tariffDescIn" required>
+                                   class="form-control" id="tariffDescIn" required>
                         </div>
                     </div>
                     <div class="mb-3 row">
-                        <label for="tariffUsdPriceIn" class="col-sm-2 col-form-label">Price</label>
+                        <label for="tariffUsdPriceIn"
+                               class="col-sm-2 col-form-label"><fmt:message key="tariff.price"/></label>
                         <div class="col-sm-10">
                             <input type="number" step="0.01" min="0" name="${TariffParams.USD_PRICE}" placeholder="$"
                                    class="form-control" id="tariffUsdPriceIn" required>
                         </div>
                     </div>
                     <div class="mb-3 row">
-                        <label for="tariffStatusSelect" class="col-sm-2 col-form-label">Status</label>
+                        <label for="tariffStatusSelect"
+                               class="col-sm-2 col-form-label"><fmt:message key="tariff.status"/></label>
                         <div class="col-sm-10">
                             <select name="${TariffParams.STATUS}" class="form-select" id="tariffStatusSelect">
                                 <c:forEach var="status" items="${pro:allTariffStatuses()}">
@@ -101,24 +104,26 @@
                         </div>
                     </div>
                     <div class="mb-3 row">
-                        <label class="col-sm-2 col-form-label">Duration</label>
+                        <label class="col-sm-2 col-form-label"><fmt:message key="tariff.duration"/></label>
                         <div class="col-sm-5">
                             <input type="number" min="0" max="12" name="${TariffParams.DURATION_MONTHS}"
-                                   placeholder="months" class="form-control" aria-label="Duration months" required>
+                                   placeholder="<fmt:message key="tariff.duration.months"/>" class="form-control"
+                                   aria-label="Duration months" required>
                         </div>
                         <div class="col-sm-5">
-                            <input type="number" min="0" name="${TariffParams.DURATION_MINUTES}" placeholder="minutes"
+                            <input type="number" min="0" name="${TariffParams.DURATION_MINUTES}"
+                                   placeholder="<fmt:message key="tariff.duration.minutes"/>"
                                    class="form-control" aria-label="Duration minutes" required>
                         </div>
                     </div>
                     <div class="mb-3 row">
-                        <label for="formFile" class="form-label">Pick an image</label>
+                        <label for="formFile" class="form-label"><fmt:message key="tariff.add.selectImage"/></label>
                         <input type="file" name="${TariffParams.IMAGE}" class="form-control" id="formFile" required>
                     </div>
                 </div>
                 <div class="col">
                     <div class="row">
-                        <h6>Select services</h6>
+                        <h6><fmt:message key="tariff.add.selectServices"/></h6>
                     </div>
                     <div class="row">
                         <c:forEach var="service" items="${requestScope[RequestAttributes.SERVICES]}" varStatus="status">
@@ -135,7 +140,8 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-3 mx-auto">
-                        <button class="btn btn-primary w-100" type="submit">Add tariff!</button>
+                        <input class="btn btn-primary w-100" type="submit"
+                               value="<fmt:message key="tariff.add.addTariff"/>">
                     </div>
                 </div>
             </form>
@@ -144,14 +150,14 @@
 
         <table class="table table-striped my-sm-2">
             <tr>
-                <th>id</th>
-                <th>Image</th>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Price</th>
-                <th>Status</th>
-                <th>Duration</th>
-                <th>Services</th>
+                <th><fmt:message key="tariff.id"/></th>
+                <th><fmt:message key="tariff.image"/></th>
+                <th><fmt:message key="tariff.title"/></th>
+                <th><fmt:message key="tariff.description"/></th>
+                <th><fmt:message key="tariff.price"/></th>
+                <th><fmt:message key="tariff.status"/></th>
+                <th><fmt:message key="tariff.duration"/></th>
+                <th><fmt:message key="services"/></th>
             </tr>
             <c:forEach var="tariffDto" items="${requestScope[RequestAttributes.TARIFFS]}">
                 <tr>
@@ -162,7 +168,8 @@
                     <td>${tariffDto.tariff.description}</td>
                     <td>${tariffDto.tariff.usdPrice}</td>
                     <td>${tariffDto.tariff.status}</td>
-                    <td>${tariffDto.duration.months} months ${tariffDto.duration.minutes} min</td>
+                    <td>${tariffDto.duration.months} <fmt:message key="tariff.duration.months"/>
+                            ${tariffDto.duration.minutes} <fmt:message key="tariff.duration.min"/></td>
                     <td>
                         <c:forEach var="service" items="${tariffDto.services}">
                             [${service.id}] ${service.name}<br>
