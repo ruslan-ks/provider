@@ -3,6 +3,7 @@ package com.provider.controller.command;
 import com.provider.constants.attributes.SessionAttributes;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.controller.command.result.CommandResult;
+import com.provider.controller.command.result.CommandResultImpl;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.EntityFactory;
 import com.provider.entity.SimpleEntityFactory;
@@ -126,5 +127,14 @@ public abstract class FrontCommand {
      **/
     protected final @NotNull Optional<String> getParam(@NotNull String name) {
         return Optional.ofNullable(request.getParameter(name));
+    }
+
+    /**
+     * Factory method for {@code CommandResult}
+     * @param location location where user will be forwarded or redirected
+     * @return new {@code CommandResult} instance
+     */
+    protected @NotNull CommandResult newCommandResult(@NotNull String location) {
+        return CommandResultImpl.of(location);
     }
 }

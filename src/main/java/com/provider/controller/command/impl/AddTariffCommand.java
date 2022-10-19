@@ -57,10 +57,14 @@ public class AddTariffCommand extends AdminCommand {
         try {
             uploadedImageFileName = fileUploader.upload(imagePart, uploadPath);
         } catch (InvalidMimeTypeException ex) {
-            // TODO: return error message
-            throw new CommandParamException(ex);
+            logger.warn("Failed to load image", ex);
+            final CommandResult result = newCommandResult(Paths.TARIFFS_MANAGEMENT_PAGE);
+            result.addMessage(CommandResult.MessageType.FAIL, Messages.TARIFF_IMAGE_UPLOAD_FAIL);
+            result.addMessage(CommandResult.MessageType.FAIL, Messages.TARIFF_INSERT_FAIL);
+            return result;
         }
 
+        // Tariff parameters extracting and parsing
         final String title = params.get(TITLE);
         final String description = params.get(DESCRIPTION);
         final Tariff.Status status = CommandUtil.parseTariffStatusParam(params.get(STATUS));
@@ -77,15 +81,24 @@ public class AddTariffCommand extends AdminCommand {
         try {
             final boolean inserted = tariffService.insertTariff(tariff, tariffDuration, serviceIds);
             if (inserted) {
-                commandResult.addMessage(CommandResult.MessageType.SUCCESS, Messages.TARIFF_INSERT_SUCCESS);
+                addInsertedSuccessfullyMsg(commandResult);
             } else {
-                commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.TARIFF_INSERT_FAIL);
+                addInsertionFailedMsg(commandResult);
             }
         } catch (ValidationException ex) {
+            logger.warn("Invalid tariff", ex);
+            logger.warn("Invalid tariff: {}", tariff);
             commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.INVALID_TARIFF_PARAMS);
-            commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.TARIFF_INSERT_FAIL);
-            logger.error("Invalid tariff: {}", tariff);
+            addInsertionFailedMsg(commandResult);
         }
         return commandResult;
+    }
+
+    private void addInsertedSuccessfullyMsg(@NotNull CommandResult commandResult) {
+        commandResult.addMessage(CommandResult.MessageType.SUCCESS, Messages.TARIFF_INSERT_SUCCESS);
+    }
+
+    private void addInsertionFailedMsg(@NotNull CommandResult commandResult) {
+        commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.TARIFF_INSERT_FAIL);
     }
 }

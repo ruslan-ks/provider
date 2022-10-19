@@ -29,4 +29,6 @@ public class Messages {
     public static final String TARIFF_INSERT_FAIL = "Failed to insert tariff";
 
     public static final String INVALID_TARIFF_PARAMS = "Invalid tariff parameters";
+
+    public static final String TARIFF_IMAGE_UPLOAD_FAIL = "Failed to upload tariff image";
 }
