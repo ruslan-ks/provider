@@ -8,7 +8,7 @@ public class ValidatorFactoryImpl implements ValidatorFactory {
     private static final UserValidator userValidator = new UserValidatorImpl();
     private static final ServiceValidator serviceValidator = new ServiceValidatorImpl();
     private static final TariffValidator tariffValidator = new TariffValidatorImpl();
-
+    private static final MoneyValidator moneyValidator = new MoneyValidatorImpl();
 
     public static ValidatorFactoryImpl newInstance() {
         return new ValidatorFactoryImpl();
@@ -27,5 +27,10 @@ public class ValidatorFactoryImpl implements ValidatorFactory {
     @Override
     public @NotNull TariffValidator getTariffValidator() {
         return tariffValidator;
+    }
+
+    @Override
+    public @NotNull MoneyValidator getMoneyValidator() {
+        return moneyValidator;
     }
 }

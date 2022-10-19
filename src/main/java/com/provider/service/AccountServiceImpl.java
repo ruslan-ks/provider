@@ -5,6 +5,8 @@ import com.provider.dao.exception.DBException;
 import com.provider.entity.Currency;
 import com.provider.entity.user.User;
 import com.provider.entity.user.UserAccount;
+import com.provider.service.exception.ValidationException;
+import com.provider.validation.MoneyValidator;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
@@ -22,7 +24,7 @@ public class AccountServiceImpl extends AbstractService implements AccountServic
             userAccountDao.setConnection(connection);
             return userAccountDao.findAll(userId);
         } catch (SQLException ex) {
-            throw new DBException();
+            throw new DBException(ex);
         }
     }
 
@@ -33,19 +35,24 @@ public class AccountServiceImpl extends AbstractService implements AccountServic
             userAccountDao.setConnection(connection);
             return userAccountDao.findByKey(accountId);
         } catch (SQLException ex) {
-            throw new DBException();
+            throw new DBException(ex);
         }
     }
 
     @Override
-    public boolean replenish(@NotNull UserAccount account, @NotNull BigDecimal amount) throws DBException {
+    public boolean replenish(@NotNull UserAccount account, @NotNull BigDecimal amount)
+            throws DBException, ValidationException {
+        final MoneyValidator moneyValidator = validatorFactory.getMoneyValidator();
+        if (!moneyValidator.isPositiveAmount(amount)) {
+            throw new ValidationException("Invalid amount: " + amount);
+        }
         account.replenish(amount);
         try (var connection = connectionSupplier.get()) {
             final UserAccountDao userAccountDao = daoFactory.newUserAccountDao();
             userAccountDao.setConnection(connection);
             return userAccountDao.update(account);
         } catch (SQLException ex) {
-            throw new DBException();
+            throw new DBException(ex);
         }
     }
 

@@ -23,4 +23,6 @@ public interface ValidatorFactory {
      * @return TariffValidator object
      */
     @NotNull TariffValidator getTariffValidator();
+
+    @NotNull MoneyValidator getMoneyValidator();
 }

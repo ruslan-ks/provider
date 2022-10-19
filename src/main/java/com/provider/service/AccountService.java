@@ -4,6 +4,7 @@ import com.provider.dao.exception.DBException;
 import com.provider.entity.Currency;
 import com.provider.entity.user.User;
 import com.provider.entity.user.UserAccount;
+import com.provider.service.exception.ValidationException;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
@@ -31,7 +32,7 @@ public interface AccountService {
      * @param amount money amount
      * @return true if db was changed
      */
-    boolean replenish(@NotNull UserAccount account, @NotNull BigDecimal amount) throws DBException;
+    boolean replenish(@NotNull UserAccount account, @NotNull BigDecimal amount) throws DBException, ValidationException;
 
     /**
      * Returns true if account belongs to the specified user

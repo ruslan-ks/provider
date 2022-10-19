@@ -33,4 +33,10 @@ public class Messages {
     public static final String INVALID_TARIFF_PARAMS = "Invalid tariff parameters";
 
     public static final String TARIFF_IMAGE_UPLOAD_FAIL = "Failed to upload tariff image";
+
+    public static final String ACCOUNT_REPLENISH_FAIL = "Failed to replenish account";
+
+    public static final String ACCOUNT_REPLENISH_SUCCESS = "Account successfully replenished";
+
+    public static final String INVALID_REPLENISH_AMOUNT = "Illegal amount";
 }
