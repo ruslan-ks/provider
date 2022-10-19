@@ -6,7 +6,6 @@ import com.provider.constants.attributes.SessionAttributes;
 import com.provider.constants.params.SignInParams;
 import com.provider.controller.command.FrontCommand;
 import com.provider.controller.command.result.CommandResult;
-import com.provider.controller.command.result.CommandResultImpl;
 import com.provider.service.UserService;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.dao.exception.DBException;
@@ -58,7 +57,7 @@ public class SignInCommand extends FrontCommand {
             // success
             sessionOptional.get().setAttribute(SessionAttributes.SIGNED_USER, userOptional.get());
             logger.debug("User authenticated: {}", userOptional.get());
-            return CommandResultImpl.of(Paths.USER_PANEL_PAGE);
+            return newCommandResult(Paths.USER_PANEL_PAGE);
         }
         failedCommandResult.addMessage(CommandResult.MessageType.FAIL, userFailMessage);
         return failedCommandResult;
