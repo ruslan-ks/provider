@@ -83,7 +83,7 @@ public interface UserService {
      * @throws DBException is db logic fail occurred
      * @throws IllegalArgumentException if offset < 0 or limit <= 0
      */
-    List<User> findUsersRange(long offset, int limit) throws DBException;
+    List<User> findUsersPage(long offset, int limit) throws DBException;
 
     /**
      * Returns count of users in db

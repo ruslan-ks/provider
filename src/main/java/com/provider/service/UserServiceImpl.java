@@ -151,7 +151,7 @@ public class UserServiceImpl extends AbstractService implements UserService {
     }
 
     @Override
-    public List<User> findUsersRange(long offset, int limit) throws DBException {
+    public List<User> findUsersPage(long offset, int limit) throws DBException {
         if (offset < 0 || limit <= 0) {
             throw new IllegalArgumentException("Invalid range: offset: " + offset + ", limit: " + limit);
         }
