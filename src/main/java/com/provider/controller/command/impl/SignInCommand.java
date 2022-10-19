@@ -16,12 +16,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
 public class SignInCommand extends FrontCommand {
+    private static final Logger logger = LoggerFactory.getLogger(SignInCommand.class);
+
     SignInCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
         super(request, response);
     }
@@ -36,20 +40,24 @@ public class SignInCommand extends FrontCommand {
         final Optional<User> userOptional = userService.authenticate(login, password);
         final Optional<HttpSession> sessionOptional = getSession();
 
-        final CommandResult failedCommandResult = CommandResultImpl.of(Paths.SIGN_IN_JSP);
+        final CommandResult failedCommandResult = newCommandResult(Paths.SIGN_IN_JSP);
         final String userFailMessage;
         if (userOptional.isEmpty()) {
-            // invalid login or password
+            // Invalid login or password
+            logger.warn("Authentication failed: Invalid login or password: login: {}", login);
             userFailMessage = Messages.INVALID_LOGIN_OR_PASS;
         } else if (!userService.isActiveUser(userOptional.get())) {
-            // user is not active - he was suspended, and he's not allowed to sign in
-            userFailMessage =  Messages.YOU_WERE_SUSPENDED;
+            // User is not active - he was suspended, and he's not allowed to sign in
+            logger.warn("Authentication failed: user is SUSPENDED: user: {}", userOptional.get());
+            userFailMessage = Messages.YOU_WERE_SUSPENDED;
         } else if (sessionOptional.isEmpty()) {
-            // there is no session, we just cannot save this guy
+            // There is no session, we just cannot save this guy
+            logger.warn("Authentication failed: failed to obtain session! user: {}", userOptional.get());
             userFailMessage = Messages.SESSIONS_NOT_ALLOWED;
         } else {
             // success
             sessionOptional.get().setAttribute(SessionAttributes.SIGNED_USER, userOptional.get());
+            logger.debug("User authenticated: {}", userOptional.get());
             return CommandResultImpl.of(Paths.USER_PANEL_PAGE);
         }
         failedCommandResult.addMessage(CommandResult.MessageType.FAIL, userFailMessage);
