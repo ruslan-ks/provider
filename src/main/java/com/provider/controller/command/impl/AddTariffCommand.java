@@ -78,17 +78,17 @@ public class AddTariffCommand extends AdminCommand {
 
         final CommandResult commandResult = CommandResultImpl.of(Paths.TARIFFS_MANAGEMENT_PAGE);
         final TariffService tariffService = serviceFactory.getTariffService();
+        boolean inserted = false;
         try {
-            final boolean inserted = tariffService.insertTariff(tariff, tariffDuration, serviceIds);
-            if (inserted) {
-                addInsertedSuccessfullyMsg(commandResult);
-            } else {
-                addInsertionFailedMsg(commandResult);
-            }
+            inserted = tariffService.insertTariff(tariff, tariffDuration, serviceIds);
         } catch (ValidationException ex) {
             logger.warn("Invalid tariff", ex);
             logger.warn("Invalid tariff: {}", tariff);
             commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.INVALID_TARIFF_PARAMS);
+        }
+        if (inserted) {
+            addInsertedSuccessfullyMsg(commandResult);
+        } else {
             addInsertionFailedMsg(commandResult);
         }
         return commandResult;
