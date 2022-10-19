@@ -6,7 +6,6 @@ import com.provider.controller.command.CommandUtil;
 import com.provider.controller.command.MemberCommand;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.controller.command.result.CommandResult;
-import com.provider.controller.command.result.CommandResultImpl;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.Currency;
 import com.provider.entity.user.User;
@@ -36,13 +35,17 @@ public class ReplenishPageCommand extends MemberCommand {
         final AccountService accountService = serviceFactory.getAccountService();
         final Optional<UserAccount> account = accountService.findUserAccount(user, accountCurrency);
 
-        logger.debug("ReplenishPageCommand: user: {}, currency: {}, account: {}", user, accountCurrency, account);
+        logger.trace("ReplenishPageCommand: user: {}, currency: {}, account: {}", user, accountCurrency, account);
 
-        if (account.isPresent() && accountService.isUserAccount(account.get(), user)) {
-            request.setAttribute(ReplenishParams.CURRENCY, account.get().getCurrency());
-            return CommandResultImpl.of(Paths.REPLENISH_JSP);
+        if (account.isEmpty()) {
+            logger.warn("Failed to find user account: user: {}, currency: {}", user, accountCurrency);
+            throw new CommandParamException("Failed to find user account");
         }
-        // There is no requested account that belongs to the signed user
-        throw new CommandParamException();
+        if (!accountService.isUserAccount(account.get(), user)) {
+            logger.warn("Account does not belong to the signed user! user: {}, account: {}", user, account.get());
+            throw new CommandParamException("Account does not belong to the signed user!");
+        }
+        request.setAttribute(ReplenishParams.CURRENCY, account.get().getCurrency());
+        return newCommandResult(Paths.REPLENISH_JSP);
     }
 }
