@@ -7,7 +7,6 @@ import com.provider.controller.command.AdminCommand;
 import com.provider.controller.command.CommandUtil;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.controller.command.result.CommandResult;
-import com.provider.controller.command.result.CommandResultImpl;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
 import com.provider.service.UserService;
@@ -44,20 +43,17 @@ public class AddUserCommand extends AdminCommand {
         if (!userService.rolesAllowedForCreation(user).contains(role)) {
             throw new CommandParamException();
         }
-
         final User newUser = entityFactory.newUser(0, name, surname, login, phone, role, User.Status.ACTIVE);
 
+        final CommandResult commandResult = newCommandResult(Paths.USERS_MANAGEMENT_PAGE);
         boolean userInserted = false;
         try {
             userInserted = userService.insertUser(newUser, password);
         } catch (ValidationException ex) {
-            throw new CommandParamException(ex);
-        } catch (DBException ex) {
-            // TODO: add unique constraint violation handling
-            logger.error("DBException", ex);
+            logger.warn("Failed to insert user: invalid user: {}", user);
+            logger.warn("Failed to insert user", ex);
+            commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.INVALID_USER_PARAMS);
         }
-
-        final CommandResult commandResult = CommandResultImpl.of(Paths.USERS_MANAGEMENT_PAGE);
         if (userInserted) {
             commandResult.addMessage(CommandResult.MessageType.SUCCESS, Messages.USER_INSERT_SUCCESS);
         } else {

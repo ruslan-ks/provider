@@ -11,6 +11,8 @@ public class Messages {
 
     public static final String USER_INSERT_FAIL = "Failed to insert user";
 
+    public static final String INVALID_USER_PARAMS = "Invalid user params";
+
     public static final String YOU_WERE_SUSPENDED = "You were suspended by an administrator";
 
     public static final String INVALID_LOGIN_OR_PASS = "Invalid login or password";
