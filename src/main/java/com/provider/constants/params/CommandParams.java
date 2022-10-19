@@ -64,4 +64,9 @@ public class CommandParams {
      * Add tariff action command
      */
     public static final String ADD_TARIFF = "addTariff";
+
+    /**
+     * Catalog page command
+     */
+    public static final String CATALOG_PAGE = "catalogPage";
 }

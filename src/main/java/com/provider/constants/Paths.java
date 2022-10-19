@@ -7,7 +7,7 @@ import com.provider.constants.params.CommandParams;
  * Suffixes meaning:
  *      _JSP - jsp page location
  *      _PAGE - page access through servlet
- *      no suffix - action handler
+ *      no suffix - action handler(command)
  */
 public class Paths {
     private Paths() {}
@@ -36,6 +36,11 @@ public class Paths {
      * Tariffs management jsp
      */
     public static final String TARIFFS_MANAGEMENT_JSP = "/WEB-INF/pages/tariffsManagement.jsp";
+
+    /**
+     * Catalog jsp
+     */
+    public static final String CATALOG_JSP = "/WEB-INF/pages/catalog.jsp";
 
     /**
      * Front controller servlet
@@ -104,4 +109,10 @@ public class Paths {
      */
     public static final String ADD_TARIFF = CONTROLLER + "?" + CommandParams.COMMAND + "="
             + CommandParams.ADD_TARIFF;
+
+    /**
+     * Catalog page command
+     */
+    public static final String CATALOG_PAGE = CONTROLLER + "?" + CommandParams.COMMAND + "="
+            + CommandParams.CATALOG_PAGE;
 }

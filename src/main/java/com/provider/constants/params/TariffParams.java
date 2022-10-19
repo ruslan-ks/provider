@@ -3,6 +3,7 @@ package com.provider.constants.params;
 public class TariffParams {
     private TariffParams() {}
 
+    public static final String ID = "tariffId";
     public static final String TITLE = "tariffTitle";
     public static final String DESCRIPTION = "tariffDescription";
     public static final String USD_PRICE = "tariffUsdPrice";

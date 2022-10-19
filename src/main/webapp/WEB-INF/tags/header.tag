@@ -27,7 +27,8 @@
         <nav class="collapse navbar-collapse" id="navMenu">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a href="#" class="nav-link"><fmt:message key="nav.main"/></a></li>
-                <li class="nav-item"><a href="#" class="nav-link"><fmt:message key="nav.catalogue"/></a></li>
+                <li class="nav-item"><a href="${Paths.CATALOG_PAGE}"
+                                        class="nav-link"><fmt:message key="nav.catalog"/></a></li>
                 <li class="nav-item"><a href="#" class="nav-link"><fmt:message key="nav.about"/></a></li>
                 <c:choose>
                     <c:when test="${not empty user}">

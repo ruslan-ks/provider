@@ -42,6 +42,7 @@ public class FrontCommandFactoryImpl implements FrontCommandFactory {
             case CommandParams.TARIFFS_MANAGEMENT_PAGE -> new TariffsManagementPageCommand(request, response);
             case CommandParams.ADD_SERVICE -> new AddServiceCommand(request, response);
             case CommandParams.ADD_TARIFF -> new AddTariffCommand(request, response);
+            case CommandParams.CATALOG_PAGE -> new CatalogPageCommand(request, response);
             default -> throw new IllegalCommandException("Unknown command: " + paramCommand);
         };
     }
