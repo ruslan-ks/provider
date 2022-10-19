@@ -1,6 +1,8 @@
 package com.provider.controller.command;
 
+import com.provider.constants.attributes.RequestAttributes;
 import com.provider.constants.attributes.SessionAttributes;
+import com.provider.constants.params.PaginationParams;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.controller.command.result.CommandResult;
 import com.provider.controller.command.result.CommandResultImpl;
@@ -16,6 +18,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
@@ -136,5 +140,48 @@ public abstract class FrontCommand {
      */
     protected @NotNull CommandResult newCommandResult(@NotNull String location) {
         return CommandResultImpl.of(location);
+    }
+
+    protected PaginationHelper getPaginationHelper() throws CommandParamException {
+        return new PaginationHelper();
+    }
+
+    protected class PaginationHelper {
+        private static final Logger logger = LoggerFactory.getLogger(PaginationHelper.class);
+
+        private static final int DEFAULT_PAGE_SIZE = 5;
+
+        private final int pageNumber;
+        private final int pageSize;
+
+        PaginationHelper() throws CommandParamException {
+            final String pageNumberParam = getParam(PaginationParams.PAGE_NUMBER).orElse("1");
+            pageNumber = CommandUtil.parseIntParam(pageNumberParam);
+            if (pageNumber <= 0) {
+                logger.warn("Invalid param '{}' == {} <= 0", PaginationParams.PAGE_NUMBER, pageNumber);
+                throw new CommandParamException("Invalid param: '" + PaginationParams.PAGE_NUMBER + "' == " +
+                        pageNumber + " <= 0");
+            }
+            final String pageSizeParam = getParam(PaginationParams.PAGE_SIZE).orElse(String.valueOf(DEFAULT_PAGE_SIZE));
+            pageSize = CommandUtil.parseIntParam(pageSizeParam);
+            if (pageSize < 1) {
+                logger.warn("Invalid param '{}' == {} < 1", PaginationParams.PAGE_SIZE, pageSize);
+                throw new CommandParamException("Invalid param: '" + PaginationParams.PAGE_SIZE + "' == " + pageSize +
+                        " < 1");
+            }
+        }
+
+        public int getPageSize() {
+            return pageSize;
+        }
+
+        public long getOffset() {
+            return (long) (pageNumber - 1) * pageSize;
+        }
+
+        public void setPageCountAttribute(long recordsCount) {
+            final int pageCount = (int) Math.ceil((double) recordsCount / pageSize);
+            request.setAttribute(RequestAttributes.PAGE_COUNT, pageCount);
+        }
     }
 }
