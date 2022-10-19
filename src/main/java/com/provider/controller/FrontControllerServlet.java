@@ -28,16 +28,13 @@ import java.util.Optional;
 public class FrontControllerServlet extends HttpServlet {
     private final Logger logger = LoggerFactory.getLogger(FrontControllerServlet.class);
 
-    // Factory that is used to obtain appropriate command
     private final FrontCommandFactory frontCommandFactory = FrontCommandFactoryImpl.newInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         final Optional<CommandResult> result = handleRequest(request, response);
-        logger.debug("OPTIONAL<COMMAND RESULT>: {}", result);
         if (result.isPresent()) {
-            logger.debug("FORWARD URL: {}", result.get().getViewLocation());
             request.getRequestDispatcher(result.get().getViewLocation()).forward(request, response);
         }
     }
