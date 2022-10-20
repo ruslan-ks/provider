@@ -30,6 +30,7 @@
                             </label>
                         </div>
                     </c:forEach>
+                    <hr>
                     <div class="form-check">
                         <input type="checkbox" name="${CatalogParams.IS_ORDER_DESC}" value="true" class="form-check-input"
                                id="defaultCheck1">
