@@ -30,11 +30,11 @@
         <form method="post" action="#">
             <input type="number" name="${TariffParams.ID}" value="${tariffDto.tariff.id}" aria-label="tariff id"
                    readonly hidden>
-            <input type="submit" value="Buy now" class="btn btn-success w-100">
+            <input type="submit" value="<fmt:message key="tariffCard.buyBtn"/>" class="btn btn-success w-100">
         </form>
         <div class="row">
             <div class="col-lg-5 ms-auto">
-                <a href="#" class="card-link3">Download pdf</a>
+                <a href="#" class="card-link3"><fmt:message key="tariffCard.downloadPdfBtn"/></a>
             </div>
         </div>
     </div>

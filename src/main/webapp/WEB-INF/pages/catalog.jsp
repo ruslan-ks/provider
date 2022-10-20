@@ -6,6 +6,8 @@
 <%@ page import="com.provider.constants.params.CatalogParams" %>
 <%@ taglib prefix="pro" uri="http://provider.com" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="ftm" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html>
 <head>
     <title>Catalog - Provider</title>
@@ -18,7 +20,7 @@
                 <form action="${Paths.CONTROLLER}">
                     <input type="text" name="${CommandParams.COMMAND}" value="${CommandParams.CATALOG_PAGE}"
                            readonly hidden aria-label="Controller">
-                    <h5>Order by</h5>
+                    <h5><fmt:message key="catalog.orderBy"/></h5>
                     <c:forEach var="orderByEntry" items="${requestScope[RequestAttributes.TARIFF_ORDER_BY_FIELDS]}"
                             varStatus="status">
                         <div class="form-check">
@@ -34,9 +36,12 @@
                     <div class="form-check">
                         <input type="checkbox" name="${CatalogParams.IS_ORDER_DESC}" value="true" class="form-check-input"
                                id="defaultCheck1">
-                        <label class="form-check-label" for="defaultCheck1">Descending</label>
+                        <label class="form-check-label" for="defaultCheck1">
+                            <fmt:message key="catalog.orderBy.descending"/>
+                        </label>
                     </div>
-                    <input type="submit" class="btn btn-success w-100 my-2" value="Apply">
+                    <input type="submit" class="btn btn-success w-100 my-2"
+                           value="<fmt:message key="catalog.orderBy.applyBtn"/>">
                 </form>
             </div>
             <div class="col">
