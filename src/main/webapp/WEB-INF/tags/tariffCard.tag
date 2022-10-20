@@ -22,8 +22,10 @@
     <div class="card-body">
         <div class="row mb-1">
             <div class="col"><strong>$${tariffDto.tariff.usdPrice}</strong></div>
-            <div class="col-5 ms-auto"><i>${tariffDto.duration.months} <fmt:message key="tariff.duration.months"/> ${tariffDto.duration.minutes}
-                <fmt:message key="tariff.duration.min"/></i></div>
+            <div class="col-6 ms-auto">
+                <i>${tariffDto.duration.months} <fmt:message key="tariff.duration.months"/> ${tariffDto.duration.minutes}
+                    <fmt:message key="tariff.duration.min"/></i>
+            </div>
         </div>
         <form method="post" action="#">
             <input type="number" name="${TariffParams.ID}" value="${tariffDto.tariff.id}" aria-label="tariff id"
