@@ -6,6 +6,7 @@ import com.provider.entity.product.Service;
 import com.provider.entity.product.Tariff;
 import com.provider.entity.product.TariffDuration;
 import com.provider.service.exception.ValidationException;
+import com.provider.sorting.TariffOrderRule;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -38,10 +39,12 @@ public interface TariffService {
      * Returns page of TariffDto objects
      * @param offset offset
      * @param limit limit
+     * @param orderRules order rules that define the order of tariffs
      * @return {@code List<TariffDto>} containing all the tariffs found
      * @throws DBException if {@link com.provider.dao.TariffDao} throws DBException
      */
-    @NotNull List<TariffDto> findTariffsPage(long offset, int limit, @NotNull String locale) throws DBException;
+    @NotNull List<TariffDto> findTariffsPage(long offset, int limit, @NotNull String locale,
+                                             @NotNull TariffOrderRule @NotNull... orderRules) throws DBException;
 
     /**
      * Returns tariff count

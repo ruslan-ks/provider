@@ -8,6 +8,7 @@ import com.provider.entity.dto.TariffDto;
 import com.provider.entity.product.Service;
 import com.provider.entity.product.Tariff;
 import com.provider.entity.product.TariffDuration;
+import com.provider.sorting.TariffOrderRule;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
@@ -102,12 +103,16 @@ public class PostgresTariffDao extends TariffDao {
     );
 
     @Override
-    public @NotNull List<TariffDto> findFullInfoPage(long offset, int limit, @NotNull String locale) throws DBException {
+    public @NotNull List<TariffDto> findFullInfoPage(long offset, int limit, @NotNull String locale,
+            @NotNull TariffOrderRule @NotNull... orderRules) throws DBException {
+        final List<String> orderByFields = Arrays.stream(orderRules)
+                .map(PostgresTariffDao::orderRuleToQueryField)
+                .toList();
         final PostgresQueryBuilder queryBuilder = PostgresQueryBuilder.of("tariffs t")
                 .addSelect(TARIFF_AND_DURATION_FIELDS)
                 .addLeftJoin("tariff_durations td", "td.tariff_id = t.id")
                 .addLeftJoin("tariff_translations tt", "tt.tariff_id = t.id AND tt.locale = ?")
-                .addOrderBy("t.id")
+                .addOrderBy(orderByFields)
                 .setOffsetArg(true)
                 .setLimitArg(true);
         final String query = queryBuilder.getQuery();
@@ -227,7 +232,7 @@ public class PostgresTariffDao extends TariffDao {
         }
     }
 
-    private static @NotNull String orderRuleToQuery(@NotNull OrderRule orderRule) {
+    private static @NotNull String orderRuleToQueryField(@NotNull TariffOrderRule orderRule) {
         final String fieldName = switch (orderRule.getOrderByField()) {
             case ID -> "tariff_id";
             case TITLE -> "tariff_title";

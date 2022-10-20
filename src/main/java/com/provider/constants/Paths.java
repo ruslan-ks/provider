@@ -45,7 +45,7 @@ public class Paths {
     /**
      * Front controller servlet
      */
-    private static final String CONTROLLER = "controller";
+    public static final String CONTROLLER = "controller";
 
     /**
      * Sign in controller action

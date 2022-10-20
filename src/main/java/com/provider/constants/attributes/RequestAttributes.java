@@ -24,4 +24,11 @@ public class RequestAttributes {
      * Attribute of type {@code List<TariffDto>}
      */
     public static final String TARIFFS = "tariffs";
+
+    /**
+     * Attribute of type {@code Map<String, String>}, where
+     * key: order defining enum value string representation obtained via .name(),
+     * value: title that should be shown to user
+     */
+    public static final String TARIFF_ORDER_BY_FIELDS = "tariffOrderByFields";
 }

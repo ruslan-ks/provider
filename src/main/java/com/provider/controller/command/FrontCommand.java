@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
  * Command used by the front controller servlet.
  */
 public abstract class FrontCommand {
+    private static final Logger logger = LoggerFactory.getLogger(FrontCommand.class);
 
     /**
      * Incoming request
@@ -80,14 +81,18 @@ public abstract class FrontCommand {
     }
 
     /**
-     * Returns optional containing locale obtained from UserSettings object that resides in the session scope
-     * @return optional containing locale obtained from UserSettings object that resides in the session scope
+     * Returns locale obtained from UserSettings object that resides in the session scope
+     * @return locale obtained from UserSettings object that resides in the session scope
      */
-    protected final @NotNull Optional<String> getUserSettingsLocale() {
-        return getSession()
+    protected final @NotNull String getLocale() {
+        final Optional<String> localeOptional = getSession()
                 .map(s -> s.getAttribute(SessionAttributes.USER_SETTINGS))
                 .map(obj -> (UserSettings) obj)
                 .map(UserSettings::getLocale);
+        if (localeOptional.isEmpty()) {
+            logger.warn("Failed to obtain user settings locale");
+        }
+        return localeOptional.orElse("en");
     }
 
     /**

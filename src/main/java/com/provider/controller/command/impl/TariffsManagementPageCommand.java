@@ -28,7 +28,7 @@ public class TariffsManagementPageCommand extends AdminCommand {
         final int pageSize = paginationHelper.getPageSize();
         final long offset = paginationHelper.getOffset();
 
-        final String locale = getUserSettingsLocale().orElseThrow();
+        final String locale = getLocale();
         final TariffService tariffService = serviceFactory.getTariffService();
 
         final List<TariffDto> tariffsList = tariffService.findTariffsPage(offset, pageSize, locale);

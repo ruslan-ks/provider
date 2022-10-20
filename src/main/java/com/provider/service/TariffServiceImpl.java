@@ -10,6 +10,7 @@ import com.provider.entity.product.Service;
 import com.provider.entity.product.Tariff;
 import com.provider.entity.product.TariffDuration;
 import com.provider.service.exception.ValidationException;
+import com.provider.sorting.TariffOrderRule;
 import com.provider.validation.ServiceValidator;
 import com.provider.validation.TariffValidator;
 import org.jetbrains.annotations.NotNull;
@@ -53,11 +54,12 @@ public class TariffServiceImpl extends AbstractService implements TariffService 
     }
 
     @Override
-    public @NotNull List<TariffDto> findTariffsPage(long offset, int limit, @NotNull String locale) throws DBException {
+    public @NotNull List<TariffDto> findTariffsPage(long offset, int limit, @NotNull String locale,
+            @NotNull TariffOrderRule @NotNull... orderRules) throws DBException {
         final TariffDao tariffDao = daoFactory.newTariffDao();
         try (var connection = connectionSupplier.get()) {
             tariffDao.setConnection(connection);
-            return tariffDao.findFullInfoPage(offset, limit, locale);
+            return tariffDao.findFullInfoPage(offset, limit, locale, orderRules);
         } catch (SQLException ex) {
             throw new DBException(ex);
         }

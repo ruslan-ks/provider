@@ -2,10 +2,7 @@ package com.provider.dao.postgres.util;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class PostgresQueryBuilder {
@@ -81,13 +78,13 @@ public class PostgresQueryBuilder {
     }
 
     /**
-     * Adds ORDER BY field.
-     * ORDER BY fields are appended to the query in the order of {@code addOrderByField calls}
-     * @param orderByField field to be used with ORDER BY clause; may contain DESC keyword
+     * Adds ORDER BY fields.
+     * ORDER BY fields are appended to the query in the order of {@code addOrderByFields} calls
+     * @param orderByFields fields to be used with ORDER BY clause; may contain DESC keyword
      * @return reference to the same builder object
      */
-    public PostgresQueryBuilder addOrderBy(@NotNull String orderByField) {
-        orderByFields.add(orderByField);
+    public PostgresQueryBuilder addOrderBy(@NotNull List<String> orderByFields) {
+        this.orderByFields.addAll(orderByFields);
         return this;
     }
 }
