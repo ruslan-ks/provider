@@ -43,7 +43,7 @@ public interface TariffService {
      * @return {@code List<TariffDto>} containing all the tariffs found
      * @throws DBException if {@link com.provider.dao.TariffDao} throws DBException
      */
-    @NotNull List<TariffDto> findTariffsPage(long offset, int limit, @NotNull String locale,
+    @NotNull List<TariffDto> findTariffsPage(long offset, int limit, @NotNull String locale, boolean activeOnly,
                                              @NotNull TariffOrderRule @NotNull... orderRules) throws DBException;
 
     /**
@@ -52,6 +52,13 @@ public interface TariffService {
      * @throws DBException if {@link com.provider.dao.TariffDao} throws DBException
      */
     int countAllTariffs() throws DBException;
+
+    /**
+     * Return count of tariffs that that hav status ACTIVE
+     * @return count of tariffs that that hav status ACTIVE
+     * @throws DBException if {@link com.provider.dao.TariffDao} throws DBException
+     */
+    int countActiveTariffs() throws DBException;
 
     /**
      * Inserts tariff, tariff_duration and service ids to the corresponding tables. Returns true if successfully inserted.

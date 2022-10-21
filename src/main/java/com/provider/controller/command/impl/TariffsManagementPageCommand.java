@@ -31,7 +31,7 @@ public class TariffsManagementPageCommand extends AdminCommand {
         final String locale = getLocale();
         final TariffService tariffService = serviceFactory.getTariffService();
 
-        final List<TariffDto> tariffsList = tariffService.findTariffsPage(offset, pageSize, locale);
+        final List<TariffDto> tariffsList = tariffService.findTariffsPage(offset, pageSize, locale, false);
         request.setAttribute(RequestAttributes.TARIFFS, tariffsList);
 
         final int tariffsCount = tariffService.countAllTariffs();

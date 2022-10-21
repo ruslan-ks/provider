@@ -66,7 +66,12 @@ public class CommandParams {
     public static final String ADD_TARIFF = "addTariff";
 
     /**
-     * Catalog page command
+     * Catalog page access command
      */
     public static final String CATALOG_PAGE = "catalogPage";
+
+    /**
+     * Buy tariff action command
+     */
+    public static final String BUY_TARIFF = "buyTariff";
 }

@@ -12,6 +12,7 @@ public class PostgresQueryBuilder {
     private final List<String> orderByFields = new ArrayList<>();
     private boolean limitArg;
     private boolean offsetArg;
+    private String whereCondition = "true";
 
     protected PostgresQueryBuilder(@NotNull String table) {
         this.table = table;
@@ -27,12 +28,14 @@ public class PostgresQueryBuilder {
         final String joinsPart = leftJoins.entrySet().stream()
                 .map(e -> "LEFT JOIN " + e.getKey() + " ON " + e.getValue())
                 .collect(Collectors.joining(" "));
+        final String wherePart = "WHERE " + whereCondition;
         final String orderByPart = !orderByFields.isEmpty()
                 ? "ORDER BY " + String.join(", ", orderByFields)
                 : "";
         final String offsetPart = offsetArg ? "OFFSET ?" : "";
         final String limitPart = limitArg ? "LIMIT ?" : "";
-        return selectPart + " " + fromPart + " " + joinsPart + " " + orderByPart + " " + offsetPart + " " + limitPart;
+        return selectPart + " " + fromPart + " " + joinsPart + " " + wherePart + " " + orderByPart + " " + offsetPart +
+                " " + limitPart;
     }
 
     /**
@@ -54,6 +57,18 @@ public class PostgresQueryBuilder {
      */
     public PostgresQueryBuilder addLeftJoin(@NotNull String tableName, @NotNull String condition) {
         leftJoins.put(tableName, condition);
+        return this;
+    }
+
+    /**
+     * Sets WHERE condition of the query
+     * @param condition condition that will be placed after WHERE keyword; may contain AND, OR operators
+     * @return this reference
+     */
+    public PostgresQueryBuilder setWhere(@NotNull String condition) {
+        if (!condition.isBlank()) {
+            this.whereCondition = condition;
+        }
         return this;
     }
 

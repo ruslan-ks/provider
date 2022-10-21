@@ -54,12 +54,12 @@ public class TariffServiceImpl extends AbstractService implements TariffService 
     }
 
     @Override
-    public @NotNull List<TariffDto> findTariffsPage(long offset, int limit, @NotNull String locale,
+    public @NotNull List<TariffDto> findTariffsPage(long offset, int limit, @NotNull String locale, boolean activeOnly,
             @NotNull TariffOrderRule @NotNull... orderRules) throws DBException {
         final TariffDao tariffDao = daoFactory.newTariffDao();
         try (var connection = connectionSupplier.get()) {
             tariffDao.setConnection(connection);
-            return tariffDao.findFullInfoPage(offset, limit, locale, orderRules);
+            return tariffDao.findFullInfoPage(offset, limit, locale, activeOnly, orderRules);
         } catch (SQLException ex) {
             throw new DBException(ex);
         }
@@ -71,6 +71,17 @@ public class TariffServiceImpl extends AbstractService implements TariffService 
         try (var connection = connectionSupplier.get()) {
             tariffDao.setConnection(connection);
             return tariffDao.countAll();
+        } catch (SQLException ex) {
+            throw new DBException(ex);
+        }
+    }
+
+    @Override
+    public int countActiveTariffs() throws DBException {
+        final TariffDao tariffDao = daoFactory.newTariffDao();
+        try (var connection = connectionSupplier.get()) {
+            tariffDao.setConnection(connection);
+            return tariffDao.countActive();
         } catch (SQLException ex) {
             throw new DBException(ex);
         }

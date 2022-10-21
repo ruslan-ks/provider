@@ -36,8 +36,7 @@ public abstract class TariffDao extends EntityDao<Integer, Tariff> {
      * @throws DBException if SQLException occurred
      */
     public abstract @NotNull List<TariffDto> findFullInfoPage(long offset, int limit, @NotNull String locale,
-            @NotNull TariffOrderRule @NotNull... orderRules)
-            throws DBException;
+            boolean activeOnly, @NotNull TariffOrderRule @NotNull... orderRules) throws DBException;
 
     /**
      * Adds tariff service link
@@ -60,8 +59,15 @@ public abstract class TariffDao extends EntityDao<Integer, Tariff> {
 
     /**
      * Returns records count
-     * @return all tariffs count
+     * @return count of all tariffs count
      * @throws DBException if SQLException occurres
      */
     public abstract int countAll() throws DBException;
+
+    /**
+     * Returns ACTIVE tariff records count
+     * @return all tariffs count
+     * @throws DBException if SQLException occurres
+     */
+    public abstract int countActive() throws DBException;
 }

@@ -8,6 +8,7 @@ import com.provider.entity.dto.TariffDto;
 import com.provider.entity.product.Service;
 import com.provider.entity.product.Tariff;
 import com.provider.entity.product.TariffDuration;
+import com.provider.sorting.TariffOrderByField;
 import com.provider.sorting.TariffOrderRule;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,8 +20,6 @@ import java.util.*;
 
 public class PostgresTariffDao extends TariffDao {
     PostgresTariffDao() {}
-
-    // TODO: add addService(s) method
 
     private static final String SQL_FIND_BY_ID =
             "SELECT " +
@@ -103,15 +102,19 @@ public class PostgresTariffDao extends TariffDao {
     );
 
     @Override
-    public @NotNull List<TariffDto> findFullInfoPage(long offset, int limit, @NotNull String locale,
+    public @NotNull List<TariffDto> findFullInfoPage(long offset, int limit, @NotNull String locale, boolean activeOnly,
             @NotNull TariffOrderRule @NotNull... orderRules) throws DBException {
         final List<String> orderByFields = Arrays.stream(orderRules)
                 .map(PostgresTariffDao::orderRuleToQueryField)
                 .toList();
+        final String whereCondition = activeOnly
+                ? "t.status = '" + Tariff.Status.ACTIVE.name() + "'"
+                : "true";
         final PostgresQueryBuilder queryBuilder = PostgresQueryBuilder.of("tariffs t")
                 .addSelect(TARIFF_AND_DURATION_FIELDS)
                 .addLeftJoin("tariff_durations td", "td.tariff_id = t.id")
                 .addLeftJoin("tariff_translations tt", "tt.tariff_id = t.id AND tt.locale = ?")
+                .setWhere(whereCondition)
                 .addOrderBy(orderByFields)
                 .setOffsetArg(true)
                 .setLimitArg(true);
@@ -221,8 +224,20 @@ public class PostgresTariffDao extends TariffDao {
 
     @Override
     public int countAll() throws DBException {
+        return count(SQL_COUNT_ALL);
+    }
+
+    private static final String SQL_COUNT_ACTIVE = "SELECT COUNT(*) FROM tariffs t " +
+            "WHERE t.status = '" + Tariff.Status.ACTIVE.name() + "'";
+
+    @Override
+    public int countActive() throws DBException {
+        return count(SQL_COUNT_ACTIVE);
+    }
+
+    private int count(@NotNull String countQuery) throws DBException {
         try (var statement = connection.createStatement()) {
-            final ResultSet resultSet = statement.executeQuery(SQL_COUNT_ALL);
+            final ResultSet resultSet = statement.executeQuery(countQuery);
             if (resultSet.next()) {
                 return resultSet.getInt(1);
             }
@@ -233,13 +248,13 @@ public class PostgresTariffDao extends TariffDao {
     }
 
     private static @NotNull String orderRuleToQueryField(@NotNull TariffOrderRule orderRule) {
-        final String fieldName = switch (orderRule.getOrderByField()) {
-            case ID -> "tariff_id";
-            case TITLE -> "tariff_title";
-            case STATUS -> "tariff_status";
-            case USD_PRICE -> "tariff_usd_price";
-        };
-        return fieldName + (orderRule.isDesc() ? " DESC" : "");
+        final Map<TariffOrderByField, String> orderByFieldStringMap = Map.of(
+                TariffOrderByField.ID, "tariff_id",
+                TariffOrderByField.TITLE, "tariff_title",
+                TariffOrderByField.STATUS, "tariff_status",
+                TariffOrderByField.USD_PRICE, "tariff_usd_price"
+        );
+        return orderByFieldStringMap.get(orderRule.getOrderByField()) + (orderRule.isDesc() ? " DESC" : "");
     }
 
     @Override

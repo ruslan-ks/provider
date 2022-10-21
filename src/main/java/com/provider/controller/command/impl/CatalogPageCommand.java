@@ -55,10 +55,10 @@ public class CatalogPageCommand extends FrontCommand {
         final long offset = paginationHelper.getOffset();
 
         final String locale = getLocale();
-        final List<TariffDto> tariffDtoList = tariffService.findTariffsPage(offset, pageSize, locale, tariffOrderRule);
+        final List<TariffDto> tariffDtoList = tariffService.findTariffsPage(offset, pageSize, locale, true, tariffOrderRule);
         request.setAttribute(RequestAttributes.TARIFFS, tariffDtoList);
 
-        paginationHelper.setPageCountAttribute(tariffService.countAllTariffs());
+        paginationHelper.setPageCountAttribute(tariffService.countActiveTariffs());
 
         request.setAttribute(RequestAttributes.TARIFF_ORDER_BY_FIELDS, TARIFF_ORDER_BY_FIELD_STRING_MAP);
 

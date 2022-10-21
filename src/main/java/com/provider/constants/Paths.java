@@ -115,4 +115,10 @@ public class Paths {
      */
     public static final String CATALOG_PAGE = CONTROLLER + "?" + CommandParams.COMMAND + "="
             + CommandParams.CATALOG_PAGE;
+
+    /**
+     * Buy tariff action command
+     */
+    public static final String BUY_TARIFF = CONTROLLER + "?" + CommandParams.COMMAND + "="
+            + CommandParams.BUY_TARIFF;
 }
