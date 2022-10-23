@@ -102,7 +102,7 @@ public abstract class FrontCommand {
      * @return Immutable Map containing parameter name -> value[] pairs; may contain more params than required
      * @throws CommandParamException if at least one of required parameters not found
      **/
-    protected final @NotNull Map<String, String> getRequiredParams(String... requiredParamNames)
+    protected final @NotNull Map<String, String> getRequiredParams(@NotNull String @NotNull... requiredParamNames)
             throws CommandParamException {
         final Map<String, String> paramMap = request.getParameterMap().entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue()[0]));
@@ -112,6 +112,11 @@ public abstract class FrontCommand {
             }
         }
         return paramMap;
+    }
+
+    protected final @NotNull String getRequiredParam(@NotNull String name) throws CommandParamException {
+        return Optional.ofNullable(request.getParameter(name))
+                .orElseThrow(() -> new CommandParamException("Parameter '" + name + "' is null"));
     }
 
     /**

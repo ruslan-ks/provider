@@ -10,6 +10,7 @@ import com.provider.sorting.TariffOrderRule;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -45,6 +46,13 @@ public interface TariffService {
      */
     @NotNull List<TariffDto> findTariffsPage(long offset, int limit, @NotNull String locale, boolean activeOnly,
                                              @NotNull TariffOrderRule @NotNull... orderRules) throws DBException;
+
+    /**
+     * Returns optional containing tariff if found
+     * @param tariffId tariff id
+     * @return optional containing tariff object if found, empty optional otherwise
+     */
+    @NotNull Optional<Tariff> findTariffById(int tariffId) throws DBException;
 
     /**
      * Returns tariff count

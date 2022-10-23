@@ -39,4 +39,12 @@ public class Messages {
     public static final String ACCOUNT_REPLENISH_SUCCESS = "Account successfully replenished";
 
     public static final String INVALID_REPLENISH_AMOUNT = "Illegal amount";
+
+    public static final String NOT_ENOUGH_MONEY = "You don't have enough money!";
+
+    public static final String BUY_SUBSCRIPTION_SUCCESS = "Subscription successfully bought!";
+
+    public static final String BUY_SUBSCRIPTION_FAIL = "Failed to buy subscription!";
+
+    public static final String SUBSCRIPTION_ALREADY_EXISTS = "Active subscription already exists!";
 }

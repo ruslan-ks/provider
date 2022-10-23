@@ -12,6 +12,7 @@ import com.provider.entity.user.impl.UserPasswordImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 
 public class SimpleEntityFactory implements EntityFactory {
     protected SimpleEntityFactory() {}
@@ -66,5 +67,11 @@ public class SimpleEntityFactory implements EntityFactory {
                                      @NotNull BigDecimal usdPrice,
                                      @NotNull String imageFileName) {
         return TariffImpl.of(id, title, description, status, usdPrice, imageFileName);
+    }
+
+    @Override
+    public @NotNull Subscription newSubscription(long id, long userAccountId, int tariffId, @NotNull Instant startTime,
+                                                 @NotNull Instant lastPaymentTime, Subscription.@NotNull Status status) {
+        return SubscriptionImpl.of(id, userAccountId, tariffId, startTime, lastPaymentTime, status);
     }
 }

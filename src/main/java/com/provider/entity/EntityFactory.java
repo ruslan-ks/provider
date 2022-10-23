@@ -8,6 +8,7 @@ import com.provider.entity.user.hashing.PasswordHashing;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 
 /**
  * Entity abstract factory
@@ -95,4 +96,17 @@ public interface EntityFactory {
      */
     @NotNull Tariff newTariff(int id, @NotNull String title, @NotNull String description, @NotNull Tariff.Status status,
                               @NotNull BigDecimal usdPrice, @NotNull String imageFileName);
+
+    /**
+     * Creates new Subscription object
+     * @param id id, may be 0 if Subscription is new
+     * @param userAccountId user account used to pay for subscription id
+     * @param tariffId tariff id
+     * @param startTime start time
+     * @param lastPaymentTime last payment time
+     * @param status current status
+     * @return new Subscription instance
+     */
+    @NotNull Subscription newSubscription(long id, long userAccountId, int tariffId, @NotNull Instant startTime,
+                                          @NotNull Instant lastPaymentTime, @NotNull Subscription.Status status);
 }

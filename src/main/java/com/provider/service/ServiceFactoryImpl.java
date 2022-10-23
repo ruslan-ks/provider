@@ -24,4 +24,9 @@ public class ServiceFactoryImpl implements ServiceFactory {
     public @NotNull TariffService getTariffService() throws DBException {
         return new TariffServiceImpl();
     }
+
+    @Override
+    public @NotNull SubscriptionService getSubscriptionService() throws DBException {
+        return new SubscriptionServiceImpl();
+    }
 }

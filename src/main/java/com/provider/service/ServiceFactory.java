@@ -24,4 +24,11 @@ public interface ServiceFactory {
      * @return TariffService object
      */
     @NotNull TariffService getTariffService() throws DBException;
+
+    /**
+     * Returns SubscriptionService object
+     * @return SubscriptionService object
+     * @throws DBException if {@link SubscriptionService constructor throws it}
+     */
+    @NotNull SubscriptionService getSubscriptionService() throws DBException;
 }

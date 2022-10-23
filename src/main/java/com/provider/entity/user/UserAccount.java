@@ -47,4 +47,12 @@ public interface UserAccount extends Entity {
      * @throws IllegalArgumentException if value <= 0
      */
     void replenish(@NotNull BigDecimal value);
+
+    /**
+     * Withdraws funds
+     * @param value money amount to be withdrawn
+     * @throws IllegalArgumentException if {@code value < 0}
+     * @throws IllegalStateException if {@code value} is greater than current account money amount
+     */
+    void withdraw(@NotNull BigDecimal value);
 }

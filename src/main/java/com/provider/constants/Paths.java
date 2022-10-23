@@ -119,6 +119,6 @@ public class Paths {
     /**
      * Buy tariff action command
      */
-    public static final String BUY_TARIFF = CONTROLLER + "?" + CommandParams.COMMAND + "="
-            + CommandParams.BUY_TARIFF;
+    public static final String SUBSCRIBE = CONTROLLER + "?" + CommandParams.COMMAND + "="
+            + CommandParams.SUBSCRIBE;
 }

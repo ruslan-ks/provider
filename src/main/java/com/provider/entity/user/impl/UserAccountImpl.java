@@ -2,6 +2,7 @@ package com.provider.entity.user.impl;
 
 import com.provider.entity.Currency;
 import com.provider.entity.user.UserAccount;
+import com.provider.util.Checks;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
@@ -64,6 +65,18 @@ public class UserAccountImpl implements UserAccount {
             throw new IllegalArgumentException("Value(" + value + ") < 0");
         }
         amount = amount.add(value);
+    }
+
+    @Override
+    public void withdraw(@NotNull BigDecimal value) {
+        if (Checks.isLessThanZero(value)) {
+            throw new IllegalArgumentException("Money amount to be withdrawn is < 0: value = " + value);
+        }
+        if (amount.compareTo(value) < 0) {
+            throw new IllegalStateException("Money amount to be withdrawn is greater that account money amount: " +
+                    "account amount = " + amount + ", value = " + value);
+        }
+        amount = amount.subtract(value);
     }
 
     @Override

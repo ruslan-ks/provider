@@ -49,5 +49,14 @@ public interface AccountService {
      * @param accountCurrency account currency
      * @return Optional containing user account if found, empty Optional otherwise
      */
-    @NotNull Optional<UserAccount> findUserAccount(@NotNull User user, @NotNull Currency accountCurrency) throws DBException;
+    @NotNull Optional<UserAccount> findUserAccount(@NotNull User user, @NotNull Currency accountCurrency)
+            throws DBException;
+
+    /**
+     * Returns User USD account
+     * For each currency User can have one and only one account
+     * @param user user
+     * @return Optional containing user account if found, empty Optional otherwise
+     */
+    @NotNull Optional<UserAccount> findUserAccount(@NotNull User user) throws DBException;
 }

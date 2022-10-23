@@ -73,5 +73,5 @@ public class CommandParams {
     /**
      * Buy tariff action command
      */
-    public static final String BUY_TARIFF = "buyTariff";
+    public static final String SUBSCRIBE = "subscribe";
 }

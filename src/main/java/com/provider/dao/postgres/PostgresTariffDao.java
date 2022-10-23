@@ -28,8 +28,9 @@ public class PostgresTariffDao extends TariffDao {
                     "description AS tariff_description, " +
                     "status AS tariff_status, " +
                     "usd_price AS tariff_usd_price, " +
-                    "image_file_name AS tariff_image_file_name" +
-            "FROM tariffs WHERE id = ?";
+                    "image_file_name AS tariff_image_file_name " +
+            "FROM tariffs " +
+                    "WHERE id = ?";
 
     @Override
     public @NotNull Optional<Tariff> findByKey(@NotNull Integer key) throws DBException {

@@ -92,8 +92,10 @@ public class UserServiceImpl extends AbstractService implements UserService {
                     return true;
                 }
             } catch (Throwable ex) {
+                logger.error("Failed to execute transaction: {}", transaction);
+                logger.error("Failed to insert user: {}", user);
+                logger.error("Failed to insert user!", ex);
                 transaction.rollback();
-                logger.error("Couldn't execute transaction {}", transaction, ex);
                 throw ex;
             }
             transaction.rollback();

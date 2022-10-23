@@ -8,6 +8,10 @@ public class Checks {
     private Checks() {}
 
     public static boolean isGreaterEqualZero(@NotNull BigDecimal value) {
-        return !(value.compareTo(BigDecimal.ZERO) < 0);
+        return !(isLessThanZero(value));
+    }
+
+    public static boolean isLessThanZero(@NotNull BigDecimal value) {
+        return value.compareTo(BigDecimal.ZERO) < 0;
     }
 }

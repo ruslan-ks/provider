@@ -60,14 +60,14 @@ public abstract class TariffDao extends EntityDao<Integer, Tariff> {
     /**
      * Returns records count
      * @return count of all tariffs count
-     * @throws DBException if SQLException occurres
+     * @throws DBException if SQLException occurred
      */
     public abstract int countAll() throws DBException;
 
     /**
      * Returns ACTIVE tariff records count
      * @return all tariffs count
-     * @throws DBException if SQLException occurres
+     * @throws DBException if SQLException occurred
      */
     public abstract int countActive() throws DBException;
 }

@@ -58,7 +58,7 @@ public class TransactionImpl implements Transaction {
     @Override
     public void close() throws DBException {
         try {
-            connection.setAutoCommit(false);
+            connection.setAutoCommit(true);
             connection.setTransactionIsolation(previousTransactionIsolation);
             connection.close();
             entityDaoList.forEach(EntityDao::resetConnection);

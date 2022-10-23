@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public class TariffServiceImpl extends AbstractService implements TariffService {
@@ -60,6 +61,17 @@ public class TariffServiceImpl extends AbstractService implements TariffService 
         try (var connection = connectionSupplier.get()) {
             tariffDao.setConnection(connection);
             return tariffDao.findFullInfoPage(offset, limit, locale, activeOnly, orderRules);
+        } catch (SQLException ex) {
+            throw new DBException(ex);
+        }
+    }
+
+    @Override
+    public @NotNull Optional<Tariff> findTariffById(int tariffId) throws DBException {
+        final TariffDao tariffDao = daoFactory.newTariffDao();
+        try (var connection = connectionSupplier.get()) {
+            tariffDao.setConnection(connection);
+            return tariffDao.findByKey(tariffId);
         } catch (SQLException ex) {
             throw new DBException(ex);
         }
@@ -123,7 +135,7 @@ public class TariffServiceImpl extends AbstractService implements TariffService 
         return false;
     }
 
-    void throwIfInvalid(@NotNull Tariff tariff, @NotNull TariffDuration tariffDuration) throws ValidationException {
+    private void throwIfInvalid(@NotNull Tariff tariff, @NotNull TariffDuration tariffDuration) throws ValidationException {
         final TariffValidator validator = validatorFactory.getTariffValidator();
         if (!validator.isValidTitle(tariff.getTitle())
                 || !validator.isValidDescription(tariff.getDescription())

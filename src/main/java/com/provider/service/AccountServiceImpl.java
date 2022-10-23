@@ -68,4 +68,9 @@ public class AccountServiceImpl extends AbstractService implements AccountServic
                 .filter(acc -> acc.getCurrency().equals(accountCurrency))
                 .findAny();
     }
+
+    @Override
+    public @NotNull Optional<UserAccount> findUserAccount(@NotNull User user) throws DBException {
+        return findUserAccount(user, Currency.USD);
+    }
 }
