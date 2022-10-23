@@ -40,15 +40,18 @@
                             <fmt:message key="catalog.orderBy.descending"/>
                         </label>
                     </div>
-                    <input type="submit" class="btn btn-success w-100 my-2"
+                    <input type="submit" class="btn btn-dark w-100 my-2"
                            value="<fmt:message key="catalog.orderBy.applyBtn"/>">
                 </form>
             </div>
             <div class="col">
                 <div class="row">
+                    <c:set var="subscribedTariffIds"
+                           value="${requestScope[RequestAttributes.USER_SUBSCRIBED_TARIFF_IDS]}"/>
                     <c:forEach var="tariffDto" items="${requestScope[RequestAttributes.TARIFFS]}">
                         <div class="col-lg-4 col-md-6 my-3">
-                            <pro:tariffCard tariffDto="${tariffDto}"/>
+                            <pro:tariffCard tariffDto="${tariffDto}"
+                                            isSubscribed="${subscribedTariffIds.contains(tariffDto.tariff.id)}"/>
                         </div>
                     </c:forEach>
                 </div>

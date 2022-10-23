@@ -1,9 +1,12 @@
 package com.provider.service;
 
 import com.provider.dao.exception.DBException;
+import com.provider.entity.product.Subscription;
 import com.provider.entity.product.Tariff;
 import com.provider.entity.user.UserAccount;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public interface SubscriptionService {
     /**
@@ -30,4 +33,12 @@ public interface SubscriptionService {
      * @return true if subscription of {@code userAccount} and {@code tariff} exists and has {@code ACTIVE} status
      */
     boolean activeSubscriptionExists(@NotNull UserAccount userAccount, @NotNull Tariff tariff) throws DBException;
+
+    /**
+     * Returns list of subscriptions bound to {@code userAccount} and with status == ACTIVE
+     * @param userAccount user account
+     * @return list of subscriptions bound to {@code userAccount} and with status == ACTIVE
+     * @throws DBException if {@link com.provider.dao.SubscriptionDao} throws it
+     */
+    List<Subscription> findActiveSubscriptions(@NotNull UserAccount userAccount) throws DBException;
 }

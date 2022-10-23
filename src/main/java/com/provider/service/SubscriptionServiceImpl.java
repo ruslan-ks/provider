@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.time.Instant;
+import java.util.List;
 
 public class SubscriptionServiceImpl extends AbstractService implements SubscriptionService {
     private static final Logger logger = LoggerFactory.getLogger(SubscriptionServiceImpl.class);
@@ -81,5 +82,20 @@ public class SubscriptionServiceImpl extends AbstractService implements Subscrip
 
     private boolean hasActiveStatus(@NotNull Subscription subscription) {
         return (subscription.getStatus() == Subscription.Status.ACTIVE);
+    }
+
+    @Override
+    public List<Subscription> findActiveSubscriptions(@NotNull UserAccount userAccount) throws DBException {
+        final SubscriptionDao subscriptionDao = daoFactory.newSubscriptionDao();
+        try (var connection = connectionSupplier.get()) {
+            subscriptionDao.setConnection(connection);
+            return subscriptionDao.findSubscriptions(userAccount.getId())
+                    .stream()
+                    .filter(this::hasActiveStatus)
+                    .toList();
+        } catch (SQLException ex) {
+            logger.error("Failed to close connection!", ex);
+            throw new DBException(ex);
+        }
     }
 }

@@ -1,4 +1,5 @@
 <%@ attribute name="tariffDto" type="com.provider.entity.dto.TariffDto" required="true" rtexprvalue="true" %>
+<%@ attribute name="isSubscribed" type="java.lang.Boolean" required="true" rtexprvalue="true" %>
 <%@ tag dynamic-attributes="dynamicAttributes" body-content="empty" %>
 <%@ tag import="com.provider.constants.params.TariffParams"%>
 <%@ tag import="com.provider.constants.Paths"%>
@@ -31,11 +32,13 @@
         <form method="post" action="${Paths.SUBSCRIBE}">
             <input type="number" name="${TariffParams.ID}" value="${tariffDto.tariff.id}" aria-label="tariff id"
                    readonly hidden>
-            <input type="submit" value="<fmt:message key="tariffCard.subscribeBtn"/>" class="btn btn-success w-100">
+            <c:set var="disabled" value="${isSubscribed ? 'disabled' : ''}"/>
+            <input type="submit" value="<fmt:message key="tariffCard.subscribeBtn"/>" class="btn btn-success w-100"
+                    ${disabled}>
         </form>
         <div class="row">
             <div class="col-lg-5 ms-auto">
-                <a href="#" class="card-link3"><fmt:message key="tariffCard.downloadPdfBtn"/></a>
+                <a href="#" class="card-link3" disabled><fmt:message key="tariffCard.downloadPdfBtn"/></a>
             </div>
         </div>
     </div>

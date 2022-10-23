@@ -7,7 +7,7 @@ import java.util.List;
 
 public abstract class SubscriptionDao extends EntityDao<Integer, Subscription> {
     /**
-     * Returns list subscriptions paid via account with {@code userAccountId}
+     * Returns list of subscriptions bound to user account with {@code userAccountId}
      * @param userAccountId user account id that is used when paying for subscriptions
      * @return {@code List<Subscription> } containing all subscriptions bought by this account
      * @throws IllegalArgumentException if {@code userAccountId <= 0}

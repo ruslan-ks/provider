@@ -31,4 +31,9 @@ public class RequestAttributes {
      * value: title that should be shown to user
      */
     public static final String TARIFF_ORDER_BY_FIELDS = "tariffOrderByFields";
+
+    /**
+     * Attribute of type {@code Iterable<Integer>}
+     */
+    public static final String USER_SUBSCRIBED_TARIFF_IDS = "userSubscribedTariffIds";
 }

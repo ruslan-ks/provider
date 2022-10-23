@@ -8,6 +8,11 @@ import com.provider.controller.command.exception.CommandParamException;
 import com.provider.controller.command.result.CommandResult;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.dto.TariffDto;
+import com.provider.entity.product.Subscription;
+import com.provider.entity.user.User;
+import com.provider.entity.user.UserAccount;
+import com.provider.service.AccountService;
+import com.provider.service.SubscriptionService;
 import com.provider.service.TariffService;
 import com.provider.sorting.TariffOrderByField;
 import com.provider.sorting.TariffOrderRule;
@@ -21,6 +26,9 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CatalogPageCommand extends FrontCommand {
     private static final Logger logger = LoggerFactory.getLogger(CatalogPageCommand.class);
@@ -55,10 +63,25 @@ public class CatalogPageCommand extends FrontCommand {
         final long offset = paginationHelper.getOffset();
 
         final String locale = getLocale();
-        final List<TariffDto> tariffDtoList = tariffService.findTariffsPage(offset, pageSize, locale, true, tariffOrderRule);
+        final List<TariffDto> tariffDtoList = tariffService.findTariffsPage(offset, pageSize, locale, true,
+                tariffOrderRule);
         request.setAttribute(RequestAttributes.TARIFFS, tariffDtoList);
 
         paginationHelper.setPageCountAttribute(tariffService.countActiveTariffs());
+
+        // Adding user active subscription tariff ids to request scope
+        final Optional<User> user = getSessionUser();
+        if (user.isPresent()) {
+            final AccountService accountService = serviceFactory.getAccountService();
+            final UserAccount userAccount = accountService.findUserAccount(user.get())
+                    .orElseThrow(() -> new RuntimeException("User account not found! User: " + user.get()));
+            final SubscriptionService subscriptionService = serviceFactory.getSubscriptionService();
+            final List<Subscription> activeSubscriptions = subscriptionService.findActiveSubscriptions(userAccount);
+            final Set<Integer> activeSubscriptionTariffIds = activeSubscriptions.stream()
+                    .map(Subscription::getTariffId)
+                    .collect(Collectors.toSet());
+            request.setAttribute(RequestAttributes.USER_SUBSCRIBED_TARIFF_IDS, activeSubscriptionTariffIds);
+        }
 
         request.setAttribute(RequestAttributes.TARIFF_ORDER_BY_FIELDS, TARIFF_ORDER_BY_FIELD_STRING_MAP);
 
