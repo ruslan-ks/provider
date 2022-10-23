@@ -57,7 +57,7 @@ public class AddTariffCommand extends AdminCommand {
         try {
             uploadedImageFileName = fileUploader.upload(imagePart, uploadPath);
         } catch (InvalidMimeTypeException ex) {
-            logger.warn("Failed to load image", ex);
+            logger.warn("Failed to load tariff image! Invalid MIME-type! Admin: {}", user);
             final CommandResult result = newCommandResult(Paths.TARIFFS_MANAGEMENT_PAGE);
             result.addMessage(CommandResult.MessageType.FAIL, Messages.TARIFF_IMAGE_UPLOAD_FAIL);
             result.addMessage(CommandResult.MessageType.FAIL, Messages.TARIFF_INSERT_FAIL);
@@ -82,8 +82,8 @@ public class AddTariffCommand extends AdminCommand {
         try {
             inserted = tariffService.insertTariff(tariff, tariffDuration, serviceIds);
         } catch (ValidationException ex) {
-            logger.warn("Invalid tariff", ex);
-            logger.warn("Invalid tariff: {}", tariff);
+            logger.warn("Invalid tariff data format", ex);
+            logger.warn("Invalid tariff data format: {}", tariff);
             commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.INVALID_TARIFF_PARAMS);
         }
         if (inserted) {

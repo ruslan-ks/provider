@@ -35,7 +35,7 @@ public class ImageUploader implements FileUploader {
         final String submittedFileName = java.nio.file.Paths.get(part.getSubmittedFileName()).getFileName().toString();
         try (InputStream is = part.getInputStream()) {
             try {
-                ImageIO.read(is);   // .toString();
+                ImageIO.read(is).toString();    // toString() call is mandatory!
                 // It's an image (only BMP, GIF, JPG and PNG are recognized).
             } catch (Exception e) {
                 throw new InvalidMimeTypeException(e);
