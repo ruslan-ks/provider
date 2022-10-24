@@ -4,6 +4,7 @@
 <%@ page import="com.provider.constants.params.CommandParams" %>
 <%@ page import="com.provider.constants.params.PaginationParams" %>
 <%@ page import="com.provider.constants.params.CatalogParams" %>
+<%@ page import="com.provider.constants.params.TariffParams" %>
 <%@ taglib prefix="pro" uri="http://provider.com" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="ftm" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -50,8 +51,16 @@
                            value="${requestScope[RequestAttributes.USER_SUBSCRIBED_TARIFF_IDS]}"/>
                     <c:forEach var="tariffDto" items="${requestScope[RequestAttributes.TARIFFS]}">
                         <div class="col-lg-4 col-md-6 my-3">
-                            <pro:tariffCard tariffDto="${tariffDto}"
-                                            isSubscribed="${subscribedTariffIds.contains(tariffDto.tariff.id)}"/>
+                            <pro:tariffCard tariffDto="${tariffDto}">
+                                <form method="post" action="${Paths.SUBSCRIBE}">
+                                    <input type="number" name="${TariffParams.ID}" value="${tariffDto.tariff.id}"
+                                           aria-label="tariff id" readonly hidden>
+                                    <c:set var="disabled"
+                                           value="${subscribedTariffIds.contains(tariffDto.tariff.id) ? 'disabled' : ''}"/>
+                                    <input type="submit" value="<fmt:message key="tariffCard.subscribeBtn"/>"
+                                           class="btn btn-success w-100"${disabled}>
+                                </form>
+                            </pro:tariffCard>
                         </div>
                     </c:forEach>
                 </div>

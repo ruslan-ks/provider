@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.provider.constants.attributes.SessionAttributes" %>
 <%@ page import="com.provider.constants.attributes.RequestAttributes" %>
+<%@ page import="com.provider.constants.params.TariffParams" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="pro" uri="http://provider.com" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -24,20 +25,21 @@
                    value="${requestScope[RequestAttributes.USER_ACTIVE_SUBSCRIPTION_DTOS]}"/>
             <c:forEach var="subscriptionDto" items="${activeSubscriptions}">
                 <div class="col-4">
-                    <strong>
+                    <pro:tariffCard tariffDto="${subscriptionDto.tariffDto}">
+                        <form method="post" action="#">
+                            <input type="number" name="${TariffParams.ID}" value="${subscriptionDto.tariffDto.tariff.id}"
+                                   aria-label="tariff id" readonly hidden>
+                            <input type="submit" value="<fmt:message key="tariffCard.unsubscribeBtn"/>"
+                                   class="btn btn-danger w-100">
+                        </form>
                         Last payment:
-                        <fmt:formatDate value="${pro:toDate(subscriptionDto.subscription.lastPaymentTime)}"
-                                        pattern="yyyy-MM-dd HH:mm:ss"
-                                        timeZone="${sessionScope[SessionAttributes.USER_SETTINGS].timezone}"/>
-                    </strong>
-                    <br>
-                    <strong>
+                        <strong><pro:date instant="${subscriptionDto.subscription.lastPaymentTime}"/></strong>
+                        <br>
                         Next payment:
-                        <fmt:formatDate value="${pro:nextPaymentTime(subscriptionDto.subscription, subscriptionDto.tariffDto.duration)}"
-                                pattern="yyyy-MM-dd HH:mm:ss"
-                                timeZone="${sessionScope[SessionAttributes.USER_SETTINGS].timezone}"/>
-                    </strong>
-                    <pro:tariffCard tariffDto="${subscriptionDto.tariffDto}" isSubscribed="${true}"/>
+                        <strong>
+                            <pro:date instant="${pro:nextPaymentTime(subscriptionDto.subscription, subscriptionDto.tariffDto.duration)}"/>
+                        </strong>
+                    </pro:tariffCard>
                 </div>
             </c:forEach>
         </div>

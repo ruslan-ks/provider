@@ -1,8 +1,5 @@
 <%@ attribute name="tariffDto" type="com.provider.entity.dto.TariffDto" required="true" rtexprvalue="true" %>
-<%@ attribute name="isSubscribed" type="java.lang.Boolean" required="true" rtexprvalue="true" %>
-<%@ tag dynamic-attributes="dynamicAttributes" body-content="empty" %>
-<%@ tag import="com.provider.constants.params.TariffParams"%>
-<%@ tag import="com.provider.constants.Paths"%>
+<%@ tag dynamic-attributes="dynamicAttributes" body-content="scriptless" %>
 <%@ taglib prefix="pro" uri="http://provider.com" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -29,13 +26,7 @@
                     <fmt:message key="tariff.duration.min"/></i>
             </div>
         </div>
-        <form method="post" action="${Paths.SUBSCRIBE}">
-            <input type="number" name="${TariffParams.ID}" value="${tariffDto.tariff.id}" aria-label="tariff id"
-                   readonly hidden>
-            <c:set var="disabled" value="${isSubscribed ? 'disabled' : ''}"/>
-            <input type="submit" value="<fmt:message key="tariffCard.subscribeBtn"/>" class="btn btn-success w-100"
-                    ${disabled}>
-        </form>
+        <jsp:doBody/>
         <div class="row">
             <div class="col-lg-5 ms-auto">
                 <a href="#" class="card-link3" disabled><fmt:message key="tariffCard.downloadPdfBtn"/></a>
