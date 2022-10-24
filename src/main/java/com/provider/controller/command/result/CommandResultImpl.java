@@ -31,17 +31,17 @@ public class CommandResultImpl implements CommandResult {
     }
 
     private @NotNull String messageTypeToParam(@NotNull MessageType messageType) {
-        switch (messageType) {
-            case FAIL:
-                return MessageParams.ERROR;
-            case SUCCESS:
-                return MessageParams.SUCCESS;
-        }
-        throw new IllegalArgumentException();
+        final Map<MessageType, String> messageTypeParamNameMap = Map.of(
+                MessageType.FAIL, MessageParams.ERROR,
+                MessageType.SUCCESS, MessageParams.SUCCESS
+        );
+        return Optional.ofNullable(messageTypeParamNameMap.get(messageType))
+                .orElseThrow(IllegalArgumentException::new);
     }
 
     @Override
-    public void addMessage(@NotNull MessageType messageType, @NotNull String message) {
+    public @NotNull CommandResultImpl addMessage(@NotNull MessageType messageType, @NotNull String message) {
         messages.add(Pair.of(messageTypeToParam(messageType), message));
+        return this;
     }
 }

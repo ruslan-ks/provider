@@ -25,6 +25,7 @@ public interface CommandResult {
      * Adds message of a specified type
      * @param messageType message type
      * @param message message
+     * @return reference to the same object
      */
-    void addMessage(@NotNull MessageType messageType, @NotNull String message);
+    @NotNull CommandResult addMessage(@NotNull MessageType messageType, @NotNull String message);
 }
