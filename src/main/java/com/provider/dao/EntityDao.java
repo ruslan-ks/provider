@@ -4,6 +4,7 @@ import com.provider.dao.exception.DBException;
 import com.provider.entity.Entity;
 import com.provider.entity.EntityFactory;
 import com.provider.entity.SimpleEntityFactory;
+import com.provider.util.Checks;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
@@ -68,9 +69,7 @@ public abstract class EntityDao<K, T extends Entity> {
      * @throws DBException if SQLException occurred
      */
     protected final Optional<T> findByKey(@NotNull String sqlRequest, int key) throws DBException {
-        if (key == 0) {
-            throw new IllegalArgumentException("id == 0");
-        }
+        Checks.throwIfInvalidId(key);
         try (var preparedStatement = connection.prepareStatement(sqlRequest)) {
             preparedStatement.setInt(1, key);
             final ResultSet resultSet = preparedStatement.executeQuery();
@@ -92,9 +91,7 @@ public abstract class EntityDao<K, T extends Entity> {
      * @throws DBException if SQLException occurred
      */
     protected final Optional<T> findByKey(@NotNull String sqlRequest, long key) throws DBException {
-        if (key == 0) {
-            throw new IllegalArgumentException("id == 0");
-        }
+        Checks.throwIfInvalidId(key);
         try (var preparedStatement = connection.prepareStatement(sqlRequest)) {
             preparedStatement.setLong(1, key);
             final ResultSet resultSet = preparedStatement.executeQuery();

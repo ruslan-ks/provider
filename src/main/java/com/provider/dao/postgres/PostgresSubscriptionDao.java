@@ -3,6 +3,7 @@ package com.provider.dao.postgres;
 import com.provider.dao.SubscriptionDao;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.product.Subscription;
+import com.provider.util.Checks;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,9 +82,7 @@ public class PostgresSubscriptionDao extends SubscriptionDao {
 
     @Override
     public List<Subscription> findSubscriptions(long userAccountId) throws DBException {
-        if (userAccountId <= 0) {
-            throw new IllegalArgumentException("User account id <= 0: userAccountId = " + userAccountId);
-        }
+        Checks.throwIfInvalidId(userAccountId);
         try (var preparedStatement = connection.prepareStatement(SQL_FIND_BY_USER_ACCOUNT)) {
             preparedStatement.setLong(1, userAccountId);
             final ResultSet resultSet = preparedStatement.executeQuery();
