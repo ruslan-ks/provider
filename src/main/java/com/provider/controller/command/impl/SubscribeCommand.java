@@ -45,22 +45,20 @@ public class SubscribeCommand extends MemberCommand {
 
         final SubscriptionService subscriptionService = serviceFactory.getSubscriptionService();
 
+        final CommandResult commandResult = newCommandResult(Paths.USER_PANEL_PAGE);
         if (subscriptionService.activeSubscriptionExists(userAccount, tariff)) {
             logger.warn("Failed to subscribe! Active subscription already exists!  user: {}, account: {}, tariff: {}",
                     user, userAccount, tariff);
-            return newCommandResult(Paths.USER_PANEL_PAGE)
-                    .addMessage(CommandResult.MessageType.FAIL, Messages.SUBSCRIPTION_ALREADY_EXISTS);
+            return commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.SUBSCRIPTION_ALREADY_EXISTS);
         }
 
         if (!subscriptionService.hasEnoughMoneyToPay(userAccount, tariff)) {
             logger.warn("Failed to subscribe! User does not have enough money! user: {}, account: {}, tariff: {}",
                     user, userAccount, tariff);
-            return newCommandResult(Paths.USER_PANEL_PAGE)
-                    .addMessage(CommandResult.MessageType.FAIL, Messages.NOT_ENOUGH_MONEY);
+            return commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.NOT_ENOUGH_MONEY);
         }
 
         final boolean bought = subscriptionService.buySubscription(userAccount, tariff);
-        final CommandResult commandResult = newCommandResult(Paths.USER_PANEL_PAGE);
         if (bought) {
             logger.info("Subscription added: user: {}, userAccount: {}, tariff: {}", user, userAccount, tariff);
             return commandResult.addMessage(CommandResult.MessageType.SUCCESS, Messages.BUY_SUBSCRIPTION_SUCCESS);
