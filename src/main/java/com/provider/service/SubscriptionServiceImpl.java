@@ -4,15 +4,17 @@ import com.provider.dao.SubscriptionDao;
 import com.provider.dao.UserAccountDao;
 import com.provider.dao.exception.DBException;
 import com.provider.dao.transaction.Transaction;
+import com.provider.entity.dto.SubscriptionTariffDto;
 import com.provider.entity.product.Subscription;
 import com.provider.entity.product.Tariff;
+import com.provider.entity.product.TariffDuration;
 import com.provider.entity.user.UserAccount;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
-import java.time.Instant;
+import java.time.*;
 import java.util.List;
 
 public class SubscriptionServiceImpl extends AbstractService implements SubscriptionService {
@@ -84,8 +86,12 @@ public class SubscriptionServiceImpl extends AbstractService implements Subscrip
         return (subscription.getStatus() == Subscription.Status.ACTIVE);
     }
 
+    private boolean hasActiveStatus(@NotNull SubscriptionTariffDto subscriptionTariffDto) {
+        return (subscriptionTariffDto.getSubscription().getStatus() == Subscription.Status.ACTIVE);
+    }
+
     @Override
-    public List<Subscription> findActiveSubscriptions(@NotNull UserAccount userAccount) throws DBException {
+    public @NotNull List<Subscription> findActiveSubscriptions(@NotNull UserAccount userAccount) throws DBException {
         final SubscriptionDao subscriptionDao = daoFactory.newSubscriptionDao();
         try (var connection = connectionSupplier.get()) {
             subscriptionDao.setConnection(connection);
@@ -97,5 +103,35 @@ public class SubscriptionServiceImpl extends AbstractService implements Subscrip
             logger.error("Failed to close connection!", ex);
             throw new DBException(ex);
         }
+    }
+
+    @Override
+    public @NotNull List<SubscriptionTariffDto> findActiveSubscriptionsFullInfo(@NotNull UserAccount userAccount,
+                                                                                @NotNull String locale)
+            throws DBException {
+        final SubscriptionDao subscriptionDao = daoFactory.newSubscriptionDao();
+        try (var connection = connectionSupplier.get()) {
+            subscriptionDao.setConnection(connection);
+            return subscriptionDao.findSubscriptionsFullInfo(userAccount.getId(), locale)
+                    .stream()
+                    .filter(this::hasActiveStatus)
+                    .toList();
+        } catch (SQLException ex) {
+            logger.error("Failed to close connection!", ex);
+            throw new DBException(ex);
+        }
+    }
+
+    @Override
+    public @NotNull Instant computeNextPaymentTime(@NotNull Subscription subscription,
+                                                   @NotNull TariffDuration tariffDuration) {
+        if (subscription.getTariffId() != tariffDuration.getTariffId()) {
+            throw new IllegalArgumentException("Subscription tariff id(" + subscription.getTariffId() + ") != " +
+                    "tariff duration tariff id(" + tariffDuration.getTariffId() + ")");
+        }
+        return ZonedDateTime.ofInstant(subscription.getLastPaymentTime(), ZoneOffset.UTC)
+                .plus(Period.ofMonths(tariffDuration.getMonths()))
+                .plus(Duration.ofMinutes(tariffDuration.getMinutes()))
+                .toInstant();
     }
 }

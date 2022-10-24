@@ -6,6 +6,7 @@ import com.provider.entity.product.Tariff;
 import com.provider.entity.product.TariffDuration;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -17,4 +18,10 @@ public interface TariffDto extends Entity {
     @NotNull TariffDuration getDuration();
 
     @NotNull List<Service> getServices();
+
+    /**
+     * Adds services to the existing service list
+     * @param services services to be added
+     */
+    void addServices(@NotNull Collection<Service> services);
 }

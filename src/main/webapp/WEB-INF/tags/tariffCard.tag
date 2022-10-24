@@ -7,7 +7,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<div class="card border border-0 shadow rounded rounded-3" <pro:attributes map="${dynamicAttributes}"/>>
+<div class="card border border-0 shadow rounded rounded-3 my-2" <pro:attributes map="${dynamicAttributes}"/>>
     <img src="${pro:tariffImagePath(tariffDto.tariff.imageFileName, pageContext.servletContext)}" class="card-img-top"
          alt="Tariff image">
     <div class="card-body">

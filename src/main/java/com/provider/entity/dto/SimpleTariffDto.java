@@ -5,8 +5,7 @@ import com.provider.entity.product.Tariff;
 import com.provider.entity.product.TariffDuration;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class SimpleTariffDto implements TariffDto {
     private final Tariff tariff;
@@ -20,9 +19,19 @@ public class SimpleTariffDto implements TariffDto {
         this.serviceList = List.copyOf(serviceList);
     }
 
+    SimpleTariffDto(@NotNull Tariff tariff, @NotNull TariffDuration tariffDuration) {
+        this.tariff = tariff;
+        this.tariffDuration = tariffDuration;
+        this.serviceList = new ArrayList<>();
+    }
+
     public static SimpleTariffDto of(@NotNull Tariff tariff, @NotNull TariffDuration tariffDuration,
                                      @NotNull List<Service> serviceList) {
         return new SimpleTariffDto(tariff, tariffDuration, serviceList);
+    }
+
+    public static SimpleTariffDto of(@NotNull Tariff tariff, @NotNull TariffDuration tariffDuration) {
+        return new SimpleTariffDto(tariff, tariffDuration);
     }
 
     @Override
@@ -37,7 +46,12 @@ public class SimpleTariffDto implements TariffDto {
 
     @Override
     public @NotNull List<Service> getServices() {
-        return serviceList;
+        return Collections.unmodifiableList(serviceList);
+    }
+
+    @Override
+    public void addServices(@NotNull Collection<Service> services) {
+        serviceList.addAll(services);
     }
 
     @Override

@@ -2,6 +2,11 @@ package com.provider.dao.postgres;
 
 import com.provider.dao.SubscriptionDao;
 import com.provider.dao.exception.DBException;
+import com.provider.entity.dto.SimpleSubscriptionTariffDto;
+import com.provider.entity.dto.SimpleTariffDto;
+import com.provider.entity.dto.SubscriptionTariffDto;
+import com.provider.entity.dto.TariffDto;
+import com.provider.entity.product.Service;
 import com.provider.entity.product.Subscription;
 import com.provider.util.Checks;
 import org.jetbrains.annotations.NotNull;
@@ -13,9 +18,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class PostgresSubscriptionDao extends SubscriptionDao {
     private static final Logger logger = LoggerFactory.getLogger(PostgresSubscriptionDao.class);
@@ -23,8 +26,8 @@ public class PostgresSubscriptionDao extends SubscriptionDao {
     private static final String SQL_FIND_BY_ID =
             "SELECT " +
                     "id AS subscription_id, " +
-                    "user_account_id AS subscription_user_account_id, " +
-                    "tariff_id AS subscription_tariff_id, " +
+                    "user_account_id AS user_account_id, " +
+                    "tariff_id AS tariff_id, " +
                     "start_time AS subscription_start_time, " +
                     "last_payment_time AS subscription_last_payment_time, " +
                     "status AS subscription_status " +
@@ -72,8 +75,8 @@ public class PostgresSubscriptionDao extends SubscriptionDao {
     private static final String SQL_FIND_BY_USER_ACCOUNT =
             "SELECT " +
                     "id AS subscription_id, " +
-                    "user_account_id AS subscription_user_account_id, " +
-                    "tariff_id AS subscription_tariff_id, " +
+                    "user_account_id AS user_account_id, " +
+                    "tariff_id AS tariff_id, " +
                     "start_time AS subscription_start_time, " +
                     "last_payment_time AS subscription_last_payment_time, " +
                     "status AS subscription_status " +
@@ -93,12 +96,86 @@ public class PostgresSubscriptionDao extends SubscriptionDao {
         }
     }
 
+    private static final String SQL_FIND_FULL_INFO_BY_USER_ACCOUNT =
+            "SELECT " +
+                    "sub.id AS subscription_id, " +
+                    "sub.user_account_id AS user_account_id, " +
+                    "sub.start_time AS subscription_start_time, " +
+                    "sub.last_payment_time AS subscription_last_payment_time, " +
+                    "sub.status AS subscription_status, " +
+                    "t.id AS tariff_id, " +
+                    "COALESCE(tt.title, t.title) AS tariff_title, " +
+                    "COALESCE(tt.description, t.description) AS tariff_description, " +
+                    "t.status AS tariff_status, " +
+                    "t.usd_price AS tariff_usd_price, " +
+                    "t.image_file_name AS tariff_image_file_name, " +
+                    "td.months AS tariff_duration_months, " +
+                    "td.minutes AS tariff_duration_minutes, " +
+                    "s.id AS service_id, " +
+                    "COALESCE(st.name, s.name) AS service_name, " +
+                    "COALESCE(st.description, s.description) AS service_description " +
+            "FROM subscriptions sub " +
+            "INNER JOIN tariffs t " +
+                    "ON t.id = sub.tariff_id " +
+            "INNER JOIN tariff_durations td " +
+                    "ON td.tariff_id = t.id " +
+            "INNER JOIN tariff_services ts " +
+                    "ON ts.tariff_id = t.id " +
+            "INNER JOIN services s " +
+                    "ON s.id = ts.service_id " +
+            "LEFT JOIN tariff_translations tt " +
+                    "ON tt.tariff_id = t.id AND tt.locale = ? " +
+            "LEFT JOIN service_translations st " +
+                    "ON st.service_id = s.id AND st.locale = ? " +
+            "WHERE sub.user_account_id = ? " +
+            "ORDER BY sub.last_payment_time DESC";
+
+    @Override
+    public List<SubscriptionTariffDto> findSubscriptionsFullInfo(long userAccountId, @NotNull String locale) throws DBException {
+        Checks.throwIfInvalidId(userAccountId);
+        try (var preparedStatement = connection.prepareStatement(SQL_FIND_FULL_INFO_BY_USER_ACCOUNT)) {
+            int i = 1;
+            preparedStatement.setString(i++, locale);
+            preparedStatement.setString(i++, locale);
+            preparedStatement.setLong(i, userAccountId);
+            final ResultSet resultSet = preparedStatement.executeQuery();
+
+            final PostgresServiceDao serviceDao = new PostgresServiceDao();
+            final PostgresTariffDurationDao tariffDurationDao = new PostgresTariffDurationDao();
+            final PostgresTariffDao tariffDao = new PostgresTariffDao();
+
+            final Map<Long, SubscriptionTariffDto> subscriptionTariffDtoMap = new LinkedHashMap<>(); // key - subscription id
+            final Map<Integer, List<Service>> tariffServicesMap = new HashMap<>(); // key - tariff id, value - list of service
+            while (resultSet.next()) {
+                final Subscription subscription = fetchOne(resultSet);
+
+                // computeIfAbsent() could be applied, but fetchOne() may throw DBException, and it would look scattered
+                if (!subscriptionTariffDtoMap.containsKey(subscription.getId())) {
+                    final TariffDto tariffDto = SimpleTariffDto.of(
+                            tariffDao.fetchOne(resultSet), tariffDurationDao.fetchOne(resultSet));
+                    final SubscriptionTariffDto subscriptionTariffDto = SimpleSubscriptionTariffDto.of(
+                            subscription, tariffDto);
+                    subscriptionTariffDtoMap.put(subscription.getId(), subscriptionTariffDto);
+                }
+                tariffServicesMap.computeIfAbsent(subscription.getTariffId(), id -> new ArrayList<>())
+                        .add(serviceDao.fetchOne(resultSet));
+            }
+            return subscriptionTariffDtoMap.values().stream()
+                    .peek(stDto -> stDto.getTariffDto()
+                            .addServices(tariffServicesMap.get(stDto.getSubscription().getTariffId())))
+                    .toList();
+        } catch (SQLException ex) {
+            logger.error("Failed to obtain user subscriptions!", ex);
+            throw new DBException(ex);
+        }
+    }
+
     @Override
     protected @NotNull Subscription fetchOne(@NotNull ResultSet resultSet) throws DBException {
         try {
             final long id = resultSet.getInt("subscription_id");
-            final long userAccountId = resultSet.getLong("subscription_user_account_id");
-            final int tariffId = resultSet.getInt("subscription_tariff_id");
+            final long userAccountId = resultSet.getLong("user_account_id");
+            final int tariffId = resultSet.getInt("tariff_id");
             final Instant startTime = resultSet.getTimestamp("subscription_start_time").toInstant();
             final Instant lastPaymentTime = resultSet.getTimestamp("subscription_last_payment_time").toInstant();
             final Subscription.Status status = Subscription.Status.valueOf(resultSet.getString("subscription_status"));

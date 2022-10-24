@@ -259,7 +259,7 @@ public class PostgresTariffDao extends TariffDao {
     }
 
     @Override
-    protected @NotNull Tariff fetchOne(@NotNull ResultSet resultSet) throws DBException {
+    public @NotNull Tariff fetchOne(@NotNull ResultSet resultSet) throws DBException {
         try {
             final int id = resultSet.getInt("tariff_id");
             final String title = resultSet.getString("tariff_title");
@@ -271,13 +271,5 @@ public class PostgresTariffDao extends TariffDao {
         } catch (SQLException ex) {
             throw new DBException(ex);
         }
-    }
-
-    private @NotNull List<Tariff> fetchAll(@NotNull ResultSet resultSet) throws SQLException, DBException {
-        final List<Tariff> tariffList = new ArrayList<>();
-        while (resultSet.next()) {
-            tariffList.add(fetchOne(resultSet));
-        }
-        return tariffList;
     }
 }
