@@ -19,12 +19,12 @@
             <pro:userAccounts accounts="${requestScope[RequestAttributes.USER_ACCOUNTS]}"/>
         </div>
     </div>
-    <div class="container">
-        <div class="row">
+    <div class="container my-5">
+        <div class="row mb-3">
             <c:set var="activeSubscriptions"
                    value="${requestScope[RequestAttributes.USER_ACTIVE_SUBSCRIPTION_DTOS]}"/>
             <c:forEach var="subscriptionDto" items="${activeSubscriptions}">
-                <div class="col-4">
+                <div class="col-lg-4 col-md-6">
                     <pro:tariffCard tariffDto="${subscriptionDto.tariffDto}">
                         <form method="post" action="#">
                             <input type="number" name="${TariffParams.ID}" value="${subscriptionDto.tariffDto.tariff.id}"

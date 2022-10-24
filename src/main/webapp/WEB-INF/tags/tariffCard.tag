@@ -8,7 +8,14 @@
     <img src="${pro:tariffImagePath(tariffDto.tariff.imageFileName, pageContext.servletContext)}" class="card-img-top"
          alt="Tariff image">
     <div class="card-body">
-        <h4 class="card-title">${tariffDto.tariff.title}</h4>
+        <div class="row">
+            <div class="col">
+                <h4 class="card-title">${tariffDto.tariff.title}</h4>
+            </div>
+            <div class="col-5 ms-auto">
+                <a href="#" class="card-link3" disabled><fmt:message key="tariffCard.downloadPdfBtn"/></a>
+            </div>
+        </div>
     </div>
     <ul class="list-group list-group-flush">
         <c:forEach var="service" items="${tariffDto.services}">
@@ -27,10 +34,5 @@
             </div>
         </div>
         <jsp:doBody/>
-        <div class="row">
-            <div class="col-lg-5 ms-auto">
-                <a href="#" class="card-link3" disabled><fmt:message key="tariffCard.downloadPdfBtn"/></a>
-            </div>
-        </div>
     </div>
 </div>
