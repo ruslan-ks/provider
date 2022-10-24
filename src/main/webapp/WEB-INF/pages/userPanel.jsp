@@ -24,9 +24,19 @@
                    value="${requestScope[RequestAttributes.USER_ACTIVE_SUBSCRIPTION_DTOS]}"/>
             <c:forEach var="subscriptionDto" items="${activeSubscriptions}">
                 <div class="col-4">
-                    <strong>Last payment: ${subscriptionDto.subscription.lastPaymentTime}</strong>
+                    <strong>
+                        Last payment:
+                        <fmt:formatDate value="${pro:toDate(subscriptionDto.subscription.lastPaymentTime)}"
+                                        pattern="yyyy-MM-dd HH:mm:ss"
+                                        timeZone="${sessionScope[SessionAttributes.USER_SETTINGS].timezone}"/>
+                    </strong>
                     <br>
-                    <strong>Next payment: ${pro:nextPaymentTime(subscriptionDto.subscription, subscriptionDto.tariffDto.duration)}</strong>
+                    <strong>
+                        Next payment:
+                        <fmt:formatDate value="${pro:nextPaymentTime(subscriptionDto.subscription, subscriptionDto.tariffDto.duration)}"
+                                pattern="yyyy-MM-dd HH:mm:ss"
+                                timeZone="${sessionScope[SessionAttributes.USER_SETTINGS].timezone}"/>
+                    </strong>
                     <pro:tariffCard tariffDto="${subscriptionDto.tariffDto}" isSubscribed="${true}"/>
                 </div>
             </c:forEach>

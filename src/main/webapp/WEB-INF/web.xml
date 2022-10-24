@@ -7,6 +7,10 @@
         <param-name>localesPropertiesFilePath</param-name>
         <param-value>/WEB-INF/locales.properties</param-value>
     </context-param>
+    <context-param>
+        <param-name>defaultUserTimezone</param-name>
+        <param-value>GMT+3</param-value>
+    </context-param>
     <!-- JSP mappings are placed here. Servlet mappings are configured using annotations -->
     <servlet>
         <servlet-name>signInJsp</servlet-name>

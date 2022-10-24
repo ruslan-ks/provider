@@ -12,4 +12,11 @@ public interface UserSettings extends Entity {
 
     @SuppressWarnings("unused")
     @NotNull String getLocale();
+
+    /**
+     * Timezone. Example: 'GMT+3'
+     * @return user timezone
+     */
+    @SuppressWarnings("unused")
+    @NotNull String getTimezone();
 }

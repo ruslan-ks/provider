@@ -107,14 +107,22 @@
     <function>
         <name>tariffImagePath</name>
         <function-class>com.provider.functions.ImagePath</function-class>
-        <function-signature>java.lang.String tariffImagePath(java.lang.String,jakarta.servlet.ServletContext)
+        <function-signature>java.lang.String tariffImagePath(java.lang.String, jakarta.servlet.ServletContext)
         </function-signature>
     </function>
     <function>
         <name>nextPaymentTime</name>
         <function-class>com.provider.functions.TimeFunctions</function-class>
-        <function-signature>java.time.Instant
+        <function-signature>
+            java.util.Date
             nextPaymentTime(com.provider.entity.product.Subscription, com.provider.entity.product.TariffDuration)
+        </function-signature>
+    </function>
+    <function>
+        <name>toDate</name>
+        <function-class>com.provider.functions.TimeFunctions</function-class>
+        <function-signature>
+            java.util.Date toDate(java.time.Instant)
         </function-signature>
     </function>
 </taglib>

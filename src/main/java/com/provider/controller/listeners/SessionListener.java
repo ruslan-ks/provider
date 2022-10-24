@@ -17,9 +17,9 @@ public class SessionListener implements HttpSessionListener {
         final var localeLanguageMap = (Map<String, String>) se.getSession().getServletContext()
                 .getAttribute(AppAttributes.LOCALE_LANG_MAP);
         final String defaultLocale = localeLanguageMap.entrySet().iterator().next().getKey();
+        final String defaultTimezone = se.getSession().getServletContext().getInitParameter("defaultUserTimezone");
 
-        final UserSettings userSettings = UserSettingsImpl.newInstance();
-        userSettings.setLocale(defaultLocale);
+        final UserSettings userSettings = UserSettingsImpl.newInstance(defaultLocale, defaultTimezone);
         se.getSession().setAttribute(SessionAttributes.USER_SETTINGS, userSettings);
     }
 }
