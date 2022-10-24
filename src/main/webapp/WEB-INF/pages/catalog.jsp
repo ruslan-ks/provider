@@ -57,7 +57,7 @@
                                            aria-label="tariff id" readonly hidden>
                                     <c:set var="disabled"
                                            value="${subscribedTariffIds.contains(tariffDto.tariff.id) ? 'disabled' : ''}"/>
-                                    <input type="submit" value="<fmt:message key="tariffCard.subscribeBtn"/>"
+                                    <input type="submit" value="<fmt:message key="subscription.subscribeBtn"/>"
                                            class="btn btn-success w-100"${disabled}>
                                 </form>
                             </pro:tariffCard>

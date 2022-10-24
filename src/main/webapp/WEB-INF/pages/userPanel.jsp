@@ -20,6 +20,8 @@
         </div>
     </div>
     <div class="container my-5">
+        <h4><fmt:message key="subscriptions"/></h4>
+        <hr>
         <div class="row mb-3">
             <c:set var="activeSubscriptions"
                    value="${requestScope[RequestAttributes.USER_ACTIVE_SUBSCRIPTION_DTOS]}"/>
@@ -29,13 +31,13 @@
                         <form method="post" action="#">
                             <input type="number" name="${TariffParams.ID}" value="${subscriptionDto.tariffDto.tariff.id}"
                                    aria-label="tariff id" readonly hidden>
-                            <input type="submit" value="<fmt:message key="tariffCard.unsubscribeBtn"/>"
+                            <input type="submit" value="<fmt:message key="subscription.unsubscribeBtn"/>"
                                    class="btn btn-danger w-100">
                         </form>
-                        Last payment:
+                        <fmt:message key="subscription.lastPayment"/>
                         <strong><pro:date instant="${subscriptionDto.subscription.lastPaymentTime}"/></strong>
                         <br>
-                        Next payment:
+                        <fmt:message key="subscription.nextPayment"/>
                         <strong>
                             <pro:date instant="${pro:nextPaymentTime(subscriptionDto.subscription, subscriptionDto.tariffDto.duration)}"/>
                         </strong>
