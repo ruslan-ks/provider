@@ -70,12 +70,11 @@ public class SubscriptionImpl implements Subscription {
 
     @Override
     public void setStatus(@NotNull Status status) {
-        if (Status.FLOW.contains(Pair.of(this.status, status))) {
-            this.status = status;
-            return;
+        if (!Status.FLOW.contains(Pair.of(this.status, status))) {
+            throw new IllegalArgumentException("Illegal status change: Status change not allowed: " +
+                    this.status + " -> " + status);
         }
-        throw new IllegalArgumentException("Illegal status change: SStatus change not allowed: " +
-                this.status + " -> " + status);
+        this.status = status;
     }
 
     @Override
