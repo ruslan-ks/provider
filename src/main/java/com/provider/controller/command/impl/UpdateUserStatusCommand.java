@@ -6,7 +6,6 @@ import com.provider.controller.command.AdminCommand;
 import com.provider.controller.command.CommandUtil;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.controller.command.result.CommandResult;
-import com.provider.controller.command.result.CommandResultImpl;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
 import com.provider.service.UserService;
@@ -34,7 +33,7 @@ public class UpdateUserStatusCommand extends AdminCommand {
         final long userId = CommandUtil.parseLongParam(paramMap.get(UserParams.ID));
         final User.Status newStatus = CommandUtil.parseUserStatusParam(paramMap.get(UserParams.STATUS));
 
-        final CommandResult commandResult = CommandResultImpl.of(Paths.USERS_MANAGEMENT_PAGE);
+        final CommandResult commandResult = newCommandResult(Paths.USERS_MANAGEMENT_PAGE);
         boolean statusUpdated = false;
         try {
             statusUpdated = userService.updateUserStatus(userId, newStatus);
@@ -43,11 +42,9 @@ public class UpdateUserStatusCommand extends AdminCommand {
         }
         if (statusUpdated) {
             logger.info("User status changed: user id: {}, new status: {}", userId, newStatus);
-            commandResult.addMessage(CommandResult.MessageType.SUCCESS, "User status changed successfully");
-        } else {
-            logger.warn("Failed to change user status: user id: {}, new status: {}", userId, newStatus);
-            commandResult.addMessage(CommandResult.MessageType.FAIL, "Failed to change user status");
+            return commandResult.addMessage(CommandResult.MessageType.SUCCESS, "User status changed successfully");
         }
-        return commandResult;
+        logger.warn("Failed to change user status: user id: {}, new status: {}", userId, newStatus);
+        return commandResult.addMessage(CommandResult.MessageType.FAIL, "Failed to change user status");
     }
 }

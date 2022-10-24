@@ -36,19 +36,17 @@ public class AddServiceCommand extends AdminCommand {
                 params.get(ServiceParams.DESCRIPTION));
         final TariffService tariffService = serviceFactory.getTariffService();
         final CommandResult commandResult = newCommandResult(Paths.TARIFFS_MANAGEMENT_PAGE);
+        boolean inserted = false;
         try {
-            final boolean inserted = tariffService.insertService(service);
-            if (inserted) {
-                commandResult.addMessage(CommandResult.MessageType.SUCCESS, Messages.SERVICE_INSERT_SUCCESS);
-            } else {
-                commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.SERVICE_INSERT_FAIL);
-            }
+            inserted = tariffService.insertService(service);
         } catch (ValidationException ex) {
             logger.warn("Failed to insert service: invalid service {}", service);
             logger.warn("Failed to insert service", ex);
-            commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.SERVICE_INSERT_FAIL);
             commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.INVALID_SERVICE_PARAMS);
         }
-        return commandResult;
+        if (inserted) {
+            return commandResult.addMessage(CommandResult.MessageType.SUCCESS, Messages.SERVICE_INSERT_SUCCESS);
+        }
+        return commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.SERVICE_INSERT_FAIL);
     }
 }

@@ -40,26 +40,23 @@ public class SignInCommand extends FrontCommand {
         final Optional<HttpSession> sessionOptional = getSession();
 
         final CommandResult failedCommandResult = newCommandResult(Paths.SIGN_IN_JSP);
-        final String userFailMessage;
         if (userOptional.isEmpty()) {
             // Invalid login or password
             logger.warn("Authentication failed: Invalid login or password: login: {}", login);
-            userFailMessage = Messages.INVALID_LOGIN_OR_PASS;
+            return failedCommandResult.addMessage(CommandResult.MessageType.FAIL, Messages.INVALID_LOGIN_OR_PASS);
         } else if (!userService.isActiveUser(userOptional.get())) {
-            // User is not active - he was suspended, and he's not allowed to sign in
+            // User is not active - he was suspended, he's not allowed to sign in
             logger.warn("Authentication failed: user is SUSPENDED: user: {}", userOptional.get());
-            userFailMessage = Messages.YOU_WERE_SUSPENDED;
+            return failedCommandResult.addMessage(CommandResult.MessageType.FAIL, Messages.YOU_WERE_SUSPENDED);
         } else if (sessionOptional.isEmpty()) {
             // There is no session, we just cannot save this guy
             logger.warn("Authentication failed: failed to obtain session! user: {}", userOptional.get());
-            userFailMessage = Messages.SESSIONS_NOT_ALLOWED;
+            return failedCommandResult.addMessage(CommandResult.MessageType.FAIL, Messages.SESSIONS_NOT_ALLOWED);
         } else {
-            // success
+            // Success
             sessionOptional.get().setAttribute(SessionAttributes.SIGNED_USER, userOptional.get());
             logger.debug("User authenticated: {}", userOptional.get());
             return newCommandResult(Paths.USER_PANEL_PAGE);
         }
-        failedCommandResult.addMessage(CommandResult.MessageType.FAIL, userFailMessage);
-        return failedCommandResult;
     }
 }

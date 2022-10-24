@@ -48,27 +48,23 @@ public class SubscribeCommand extends MemberCommand {
         if (subscriptionService.activeSubscriptionExists(userAccount, tariff)) {
             logger.warn("Failed to subscribe! Active subscription already exists!  user: {}, account: {}, tariff: {}",
                     user, userAccount, tariff);
-            final CommandResult subscriptionAlreadyExistsResult = newCommandResult(Paths.USER_PANEL_PAGE);
-            subscriptionAlreadyExistsResult.addMessage(CommandResult.MessageType.FAIL, Messages.SUBSCRIPTION_ALREADY_EXISTS);
-            return subscriptionAlreadyExistsResult;
+            return newCommandResult(Paths.USER_PANEL_PAGE)
+                    .addMessage(CommandResult.MessageType.FAIL, Messages.SUBSCRIPTION_ALREADY_EXISTS);
         }
 
         if (!subscriptionService.hasEnoughMoneyToPay(userAccount, tariff)) {
             logger.warn("Failed to subscribe! User does not have enough money! user: {}, account: {}, tariff: {}",
                     user, userAccount, tariff);
-            final CommandResult notEnoughMoneyResult = newCommandResult(Paths.USER_PANEL_PAGE);
-            notEnoughMoneyResult.addMessage(CommandResult.MessageType.FAIL, Messages.NOT_ENOUGH_MONEY);
-            return notEnoughMoneyResult;
+            return newCommandResult(Paths.USER_PANEL_PAGE)
+                    .addMessage(CommandResult.MessageType.FAIL, Messages.NOT_ENOUGH_MONEY);
         }
 
         final boolean bought = subscriptionService.buySubscription(userAccount, tariff);
         final CommandResult commandResult = newCommandResult(Paths.USER_PANEL_PAGE);
         if (bought) {
             logger.info("Subscription added: user: {}, userAccount: {}, tariff: {}", user, userAccount, tariff);
-            commandResult.addMessage(CommandResult.MessageType.SUCCESS, Messages.BUY_SUBSCRIPTION_SUCCESS);
-        } else {
-            commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.BUY_SUBSCRIPTION_FAIL);
+            return commandResult.addMessage(CommandResult.MessageType.SUCCESS, Messages.BUY_SUBSCRIPTION_SUCCESS);
         }
-        return commandResult;
+        return commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.BUY_SUBSCRIPTION_FAIL);
     }
 }

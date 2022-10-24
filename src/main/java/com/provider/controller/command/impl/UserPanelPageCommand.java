@@ -4,7 +4,6 @@ import com.provider.constants.Paths;
 import com.provider.constants.attributes.RequestAttributes;
 import com.provider.controller.command.MemberCommand;
 import com.provider.controller.command.result.CommandResult;
-import com.provider.controller.command.result.CommandResultImpl;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.dto.SubscriptionTariffDto;
 import com.provider.entity.user.User;
@@ -36,6 +35,6 @@ public class UserPanelPageCommand extends MemberCommand {
                 subscriptionService.findActiveSubscriptionsFullInfo(userUsdAccount, getLocale());
         request.setAttribute(RequestAttributes.USER_ACTIVE_SUBSCRIPTION_DTOS, userActiveSubscriptionDtoList);
 
-        return CommandResultImpl.of(Paths.USER_PANEL_JSP);
+        return newCommandResult(Paths.USER_PANEL_JSP);
     }
 }

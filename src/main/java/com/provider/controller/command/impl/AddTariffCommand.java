@@ -7,7 +7,6 @@ import com.provider.controller.command.AdminCommand;
 import com.provider.controller.command.CommandUtil;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.controller.command.result.CommandResult;
-import com.provider.controller.command.result.CommandResultImpl;
 import com.provider.controller.upload.FileUploader;
 import com.provider.controller.upload.ImageUploader;
 import com.provider.controller.upload.InvalidMimeTypeException;
@@ -54,14 +53,14 @@ public class AddTariffCommand extends AdminCommand {
         final Part imagePart = request.getPart(IMAGE);
         final FileUploader fileUploader = ImageUploader.newInstance();
         final String uploadedImageFileName;
+        final CommandResult commandResult = newCommandResult(Paths.TARIFFS_MANAGEMENT_PAGE);
         try {
             uploadedImageFileName = fileUploader.upload(imagePart, uploadPath);
         } catch (InvalidMimeTypeException ex) {
             logger.warn("Failed to load tariff image! Invalid MIME-type! Admin: {}", user);
-            final CommandResult result = newCommandResult(Paths.TARIFFS_MANAGEMENT_PAGE);
-            result.addMessage(CommandResult.MessageType.FAIL, Messages.TARIFF_IMAGE_UPLOAD_FAIL);
-            result.addMessage(CommandResult.MessageType.FAIL, Messages.TARIFF_INSERT_FAIL);
-            return result;
+            return commandResult
+                    .addMessage(CommandResult.MessageType.FAIL, Messages.TARIFF_IMAGE_UPLOAD_FAIL)
+                    .addMessage(CommandResult.MessageType.FAIL, Messages.TARIFF_INSERT_FAIL);
         }
 
         // Tariff parameters extracting and parsing
@@ -76,7 +75,6 @@ public class AddTariffCommand extends AdminCommand {
         final Tariff tariff = entityFactory.newTariff(0, title, description, status, usdPrice, uploadedImageFileName);
         final TariffDuration tariffDuration = entityFactory.newTariffDuration(0, months, minutes);
 
-        final CommandResult commandResult = CommandResultImpl.of(Paths.TARIFFS_MANAGEMENT_PAGE);
         final TariffService tariffService = serviceFactory.getTariffService();
         boolean inserted = false;
         try {
@@ -87,18 +85,8 @@ public class AddTariffCommand extends AdminCommand {
             commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.INVALID_TARIFF_PARAMS);
         }
         if (inserted) {
-            addInsertedSuccessfullyMsg(commandResult);
-        } else {
-            addInsertionFailedMsg(commandResult);
+            return commandResult.addMessage(CommandResult.MessageType.SUCCESS, Messages.TARIFF_INSERT_SUCCESS);
         }
-        return commandResult;
-    }
-
-    private void addInsertedSuccessfullyMsg(@NotNull CommandResult commandResult) {
-        commandResult.addMessage(CommandResult.MessageType.SUCCESS, Messages.TARIFF_INSERT_SUCCESS);
-    }
-
-    private void addInsertionFailedMsg(@NotNull CommandResult commandResult) {
-        commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.TARIFF_INSERT_FAIL);
+        return commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.TARIFF_INSERT_FAIL);
     }
 }

@@ -4,7 +4,6 @@ import com.provider.constants.Messages;
 import com.provider.constants.Paths;
 import com.provider.constants.attributes.SessionAttributes;
 import com.provider.controller.command.result.CommandResult;
-import com.provider.controller.command.result.CommandResultImpl;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
 import com.provider.service.UserService;
@@ -41,12 +40,12 @@ public abstract class MemberCommand extends UserAccessCommand {
         if (isMember) {
             getSession().orElseThrow().removeAttribute(SessionAttributes.SIGNED_USER);
 
-            final CommandResult commandResult = CommandResultImpl.of(Paths.SIGN_IN_JSP);
+            final CommandResult commandResult = newCommandResult(Paths.SIGN_IN_JSP);
             if (!isActive) {
                 commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.YOU_WERE_SUSPENDED);
             }
             return commandResult;
         }
-        return CommandResultImpl.of(Paths.SIGN_IN_JSP);
+        return newCommandResult(Paths.SIGN_IN_JSP);
     }
 }

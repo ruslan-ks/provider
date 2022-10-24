@@ -5,7 +5,6 @@ import com.provider.constants.attributes.RequestAttributes;
 import com.provider.controller.command.AdminCommand;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.controller.command.result.CommandResult;
-import com.provider.controller.command.result.CommandResultImpl;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.dto.TariffDto;
 import com.provider.entity.product.Service;
@@ -40,6 +39,6 @@ public class TariffsManagementPageCommand extends AdminCommand {
         final List<Service> serviceList = tariffService.findAllServices(locale);
         request.setAttribute(RequestAttributes.SERVICES, serviceList);
 
-        return CommandResultImpl.of(Paths.TARIFFS_MANAGEMENT_JSP);
+        return newCommandResult(Paths.TARIFFS_MANAGEMENT_JSP);
     }
 }

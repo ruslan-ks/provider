@@ -5,7 +5,6 @@ import com.provider.constants.attributes.RequestAttributes;
 import com.provider.controller.command.AdminCommand;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.controller.command.result.CommandResult;
-import com.provider.controller.command.result.CommandResultImpl;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
 import com.provider.service.UserService;
@@ -34,6 +33,6 @@ public class UsersManagementPageCommand extends AdminCommand {
         final long userCount = userService.getUsersCount();
         paginationHelper.setPageCountAttribute(userCount);
 
-        return CommandResultImpl.of(Paths.USERS_MANAGEMENT_JSP);
+        return newCommandResult(Paths.USERS_MANAGEMENT_JSP);
     }
 }

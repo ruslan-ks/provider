@@ -40,6 +40,7 @@ public class ReplenishCommand extends MemberCommand {
         final AccountService accountService = serviceFactory.getAccountService();
         final Optional<UserAccount> userAccount = accountService.findUserAccount(user, accountCurrency);
 
+        // TODO: get rid of duplicates
         if (userAccount.isEmpty()) {
             logger.warn("Failed to find user account: user: {}, currency: {}", user, accountCurrency);
             throw new CommandParamException("Failed to find user account");
@@ -58,10 +59,8 @@ public class ReplenishCommand extends MemberCommand {
             commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.INVALID_REPLENISH_AMOUNT);
         }
         if (replenished) {
-            commandResult.addMessage(CommandResult.MessageType.SUCCESS, Messages.ACCOUNT_REPLENISH_SUCCESS);
-        } else {
-            commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.ACCOUNT_REPLENISH_FAIL);
+            return commandResult.addMessage(CommandResult.MessageType.SUCCESS, Messages.ACCOUNT_REPLENISH_SUCCESS);
         }
-        return commandResult;
+        return commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.ACCOUNT_REPLENISH_FAIL);
     }
 }

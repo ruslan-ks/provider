@@ -55,10 +55,8 @@ public class AddUserCommand extends AdminCommand {
             commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.INVALID_USER_PARAMS);
         }
         if (userInserted) {
-            commandResult.addMessage(CommandResult.MessageType.SUCCESS, Messages.USER_INSERT_SUCCESS);
-        } else {
-            commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.USER_INSERT_FAIL);
+            return commandResult.addMessage(CommandResult.MessageType.SUCCESS, Messages.USER_INSERT_SUCCESS);
         }
-        return commandResult;
+        return commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.USER_INSERT_FAIL);
     }
 }
