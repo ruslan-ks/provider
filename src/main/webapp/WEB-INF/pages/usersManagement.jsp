@@ -4,6 +4,7 @@
 <%@ page import="com.provider.constants.params.PaginationParams" %>
 <%@ page import="com.provider.constants.params.UserParams" %>
 <%@ page import="com.provider.constants.Paths" %>
+<%@ page import="com.provider.constants.Regex" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="pro" uri="http://provider.com" %>
@@ -20,11 +21,11 @@
     <c:set var="users" value="${requestScope[RequestAttributes.USERS]}" scope="page"/>
 
     <div class="container-md x-md-auto my-md-3 p-sm-3 rounded rounded-1 shadow">
-        <form method="post" action="${Paths.ADD_USER}">
+        <form method="post" action="${Paths.ADD_USER}" class="needs-validation" novalidate>
             <div class="mb-3 row">
                 <label for="inoutLogin" class="col-md-2 col-form-label"><fmt:message key="user.login"/></label>
                 <div class="col-sm-10">
-                    <input type="text" pattern="^[a-zA-Z0-9_]{4,}$" name="${UserParams.LOGIN}"
+                    <input type="text" pattern="${Regex.LOGIN}" name="${UserParams.LOGIN}"
                            class="form-control" id="inoutLogin" required>
                 </div>
             </div>
@@ -38,21 +39,21 @@
             <div class="mb-3 row">
                 <label for="inputName" class="col-md-2 col-form-label"><fmt:message key="user.name"/></label>
                 <div class="col-sm-10">
-                    <input type="text" pattern="^[\w-]+$" name="${UserParams.NAME}" class="form-control"
+                    <input type="text" pattern="${Regex.NAME}" name="${UserParams.NAME}" class="form-control"
                            id="inputName" required>
                 </div>
             </div>
             <div class="mb-3 row">
                 <label for="inputSurname" class="col-md-2 col-form-label"><fmt:message key="user.surname"/></label>
                 <div class="col-sm-10">
-                    <input type="text" pattern="^[\w-]+$" name="${UserParams.SURNAME}" class="form-control"
+                    <input type="text" pattern="${Regex.NAME}" name="${UserParams.SURNAME}" class="form-control"
                            id="inputSurname" required>
                 </div>
             </div>
             <div class="mb-3 row">
                 <label for="inputPhone" class="col-md-2 col-form-label"><fmt:message key="user.phone"/></label>
                 <div class="col-sm-10">
-                    <input type="text" pattern="\+?([1-9][0-9])?[0-9]{6,10}$" name="${UserParams.PHONE}"
+                    <input type="text" pattern="${Regex.PHONE}" name="${UserParams.PHONE}"
                            class="form-control" id="inputPhone" required>
                 </div>
             </div>
@@ -114,5 +115,6 @@
                            href="${pageContext.request.contextPath}/${Paths.USERS_MANAGEMENT_PAGE}"
                            pageParam="${PaginationParams.PAGE_NUMBER}"/>
     </div>
+    <script src="${pageContext.request.contextPath}/public/js/validation.js"></script>
 </body>
 </html>

@@ -17,7 +17,7 @@
     <div class="container-md my-5 p-sm-3">
         <div class="row">
             <form method="post" action="${pageContext.request.contextPath}/${Paths.ADD_SERVICE}"
-                  class="col p-3 border-0 shadow">
+                  class="col p-3 border-0 shadow needs-validation" novalidate>
                 <h5><fmt:message key="service.addService"/></h5>
                 <hr>
                 <div class="mb-3 row">
@@ -62,7 +62,7 @@
 
         <div class="border border-0 shadow p-sm-4">
             <form method="post" action="${pageContext.request.contextPath}/${Paths.ADD_TARIFF}"
-                  enctype="multipart/form-data" onsubmit="handleSubmit(event)" class="row" id="addTariffForm">
+                  enctype="multipart/form-data" id="addTariffForm" class="row needs-validation" novalidate>
                 <div class="row">
                     <h5><fmt:message key="tariff.add.addTariff"/></h5>
                     <hr>
@@ -185,7 +185,7 @@
     <script>
         const tariffForm = document.querySelector('#addTariffForm');
         const tariffServiceChecks = document.querySelectorAll('.tariff-service-check');
-        function handleSubmit(event) {
+        tariffForm.addEventListener("submit", (event) => {
             let checkedFound = false;
             for (let check of tariffServiceChecks) {
                 if (check.checked) {
@@ -201,7 +201,8 @@
                 event.preventDefault();
             }
             return false;
-        }
+        }, false);
     </script>
+    <script src="${pageContext.request.contextPath}/public/js/validation.js"></script>
 </body>
 </html>

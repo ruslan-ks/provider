@@ -37,7 +37,8 @@ public class SubscribeCommand extends MemberCommand {
 
         final TariffService tariffService = serviceFactory.getTariffService();
         final Tariff tariff = tariffService.findTariffById(tariffId)
-                .orElseThrow(CommandParamException::new);
+                .orElseThrow(() -> new CommandParamException("Failed to subscribe! Tariff not found! Tariff id: " +
+                        tariffId));
 
         final AccountService accountService = serviceFactory.getAccountService();
         final UserAccount userAccount = accountService.findUserAccount(user)
