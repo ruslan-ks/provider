@@ -60,8 +60,9 @@ public class FrontCommandFactoryImpl implements FrontCommandFactory {
         if (commandParam == null) {
             throw new IllegalCommandException("Parameter '" + CommandParams.COMMAND + "' is null");
         }
-        final Optional<Class<? extends FrontCommand>> foundCommandClass = Optional.ofNullable(
-                commandClassMap.get(commandParam));
+
+        final Optional<Class<? extends FrontCommand>> foundCommandClass =
+                Optional.ofNullable(commandClassMap.get(commandParam));
         if (foundCommandClass.isEmpty()) {
             throw new IllegalCommandException("Unknown command: " + commandParam);
         }
