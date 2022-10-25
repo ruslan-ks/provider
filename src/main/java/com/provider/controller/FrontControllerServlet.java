@@ -35,7 +35,8 @@ public class FrontControllerServlet extends HttpServlet {
             throws ServletException, IOException {
         final Optional<CommandResult> result = handleRequest(request, response);
         if (result.isPresent()) {
-            request.getRequestDispatcher(result.get().getViewLocation()).forward(request, response);
+            request.getRequestDispatcher(result.get().getViewLocation())
+                    .forward(request, response);
         }
     }
 
