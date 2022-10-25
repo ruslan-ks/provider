@@ -42,7 +42,7 @@ public class TransactionImpl implements Transaction {
         try {
             connection.commit();
         } catch (SQLException ex) {
-            throw new DBException();
+            throw new DBException(ex);
         }
     }
 
