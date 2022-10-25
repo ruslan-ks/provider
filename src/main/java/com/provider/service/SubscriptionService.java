@@ -62,4 +62,11 @@ public interface SubscriptionService {
      * @throws IllegalArgumentException if subscription's tariff id != tariffDuration's tariff id
      */
     @NotNull Instant computeNextPaymentTime(@NotNull Subscription subscription, @NotNull TariffDuration tariffDuration);
+
+    /**
+     * Inactivates subscription
+     * @param subscription subscription to be inactivated
+     * @return true if db changes were made successfully
+     */
+    boolean unsubscribe(@NotNull Subscription subscription) throws DBException;
 }

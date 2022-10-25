@@ -170,6 +170,23 @@ public class PostgresSubscriptionDao extends SubscriptionDao {
         }
     }
 
+    private static final String SQL_UPDATE = "UPDATE subscriptions SET last_payment_time = ?, status = ? WHERE id = ?";
+
+    @Override
+    public boolean update(@NotNull Subscription subscription) throws DBException {
+        Checks.throwIfInvalidId(subscription.getId());
+        try (var preparedStatement = connection.prepareStatement(SQL_UPDATE)) {
+            int i = 1;
+            preparedStatement.setTimestamp(i++, Timestamp.from(subscription.getLastPaymentTime()));
+            preparedStatement.setString(i++, subscription.getStatus().name());
+            preparedStatement.setLong(i, subscription.getId());
+            return preparedStatement.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            logger.error("Failed to update subscription!", ex);
+            throw new DBException(ex);
+        }
+    }
+
     @Override
     protected @NotNull Subscription fetchOne(@NotNull ResultSet resultSet) throws DBException {
         try {

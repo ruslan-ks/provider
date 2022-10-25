@@ -47,4 +47,8 @@ public class Messages {
     public static final String BUY_SUBSCRIPTION_FAIL = "Failed to buy subscription!";
 
     public static final String SUBSCRIPTION_ALREADY_EXISTS = "Active subscription already exists!";
+
+    public static final String UNSUBSCRIBE_SUCCESS = "You successfully unsubscribed!";
+
+    public static final String UNSUBSCRIBE_FAIL = "Failed to unsubscribe!";
 }

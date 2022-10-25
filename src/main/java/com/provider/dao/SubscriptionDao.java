@@ -28,4 +28,14 @@ public abstract class SubscriptionDao extends EntityDao<Integer, Subscription> {
      */
     public abstract List<SubscriptionTariffDto> findSubscriptionsFullInfo(long userAccountId, @NotNull String locale)
             throws DBException;
+
+    /**
+     * Updates ONLY subscription's lastPaymentTime and status.<br>
+     * userAccountId, tariffId, startTime are NOT UPDATED.
+     * @param subscription subscription to be updated
+     * @return true if db changes were made
+     * @throws DBException if SQLException caught
+     * @throws IllegalArgumentException if {@code subscription.getId() <= 0}
+     */
+    public abstract boolean update(@NotNull Subscription subscription) throws DBException;
 }

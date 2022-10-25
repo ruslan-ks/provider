@@ -9,11 +9,18 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+import static com.provider.constants.params.CommandParams.*;
+
 /**
  * FrontCommand factory implementation.
  */
 public class FrontCommandFactoryImpl implements FrontCommandFactory {
-
     /**
      * A convenience method.
      * @return new factory instance
@@ -22,29 +29,48 @@ public class FrontCommandFactoryImpl implements FrontCommandFactory {
         return new FrontCommandFactoryImpl();
     }
 
+    private static final Map<String, Class<? extends FrontCommand>> commandClassMap;
+
+    static {
+        final Map<String, Class<? extends FrontCommand>> mutableTmpMap = new HashMap<>(Map.of(
+                SIGN_IN, SignInCommand.class,
+                SIGN_OUT, SignOutCommand.class,
+                USER_PANEL, UserPanelPageCommand.class,
+                REPLENISH_PAGE, ReplenishPageCommand.class,
+                REPLENISH, ReplenishCommand.class,
+                USERS_MANAGEMENT_PAGE, UsersManagementPageCommand.class,
+                ADD_USER, AddUserCommand.class,
+                UPDATE_USER_STATUS, UpdateUserStatusCommand.class,
+                TARIFFS_MANAGEMENT_PAGE, TariffsManagementPageCommand.class,
+                ADD_SERVICE, AddServiceCommand.class
+        ));
+        mutableTmpMap.put(ADD_TARIFF, AddTariffCommand.class);
+        mutableTmpMap.put(CATALOG_PAGE, CatalogPageCommand.class);
+        mutableTmpMap.put(SUBSCRIBE, SubscribeCommand.class);
+        mutableTmpMap.put(UNSUBSCRIBE, UnsubscribeCommand.class);
+
+        commandClassMap = Collections.unmodifiableMap(mutableTmpMap);
+    }
+
     @Override
     public @NotNull FrontCommand getCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,
                                             @NotNull ServletConfig config)
             throws IllegalCommandException {
-        final String paramCommand = request.getParameter(CommandParams.COMMAND);
-        if (paramCommand == null) {
+        final String commandParam = request.getParameter(CommandParams.COMMAND);
+        if (commandParam == null) {
             throw new IllegalCommandException("Parameter '" + CommandParams.COMMAND + "' is null");
         }
-        return switch (paramCommand) {
-            case CommandParams.SIGN_IN -> new SignInCommand(request, response);
-            case CommandParams.SIGN_OUT -> new SignOutCommand(request, response);
-            case CommandParams.USER_PANEL -> new UserPanelPageCommand(request, response);
-            case CommandParams.REPLENISH_PAGE -> new ReplenishPageCommand(request, response);
-            case CommandParams.REPLENISH -> new ReplenishCommand(request, response);
-            case CommandParams.USERS_MANAGEMENT_PAGE -> new UsersManagementPageCommand(request, response);
-            case CommandParams.ADD_USER -> new AddUserCommand(request, response);
-            case CommandParams.UPDATE_USER_STATUS -> new UpdateUserStatusCommand(request, response);
-            case CommandParams.TARIFFS_MANAGEMENT_PAGE -> new TariffsManagementPageCommand(request, response);
-            case CommandParams.ADD_SERVICE -> new AddServiceCommand(request, response);
-            case CommandParams.ADD_TARIFF -> new AddTariffCommand(request, response);
-            case CommandParams.CATALOG_PAGE -> new CatalogPageCommand(request, response);
-            case CommandParams.SUBSCRIBE -> new SubscribeCommand(request, response);
-            default -> throw new IllegalCommandException("Unknown command: " + paramCommand);
-        };
+        final Optional<Class<? extends FrontCommand>> foundCommandClass = Optional.ofNullable(
+                commandClassMap.get(commandParam));
+        if (foundCommandClass.isEmpty()) {
+            throw new IllegalCommandException("Unknown command: " + commandParam);
+        }
+        try {
+            return foundCommandClass.get()
+                    .getDeclaredConstructor(HttpServletRequest.class, HttpServletResponse.class)
+                    .newInstance(request, response);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

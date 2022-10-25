@@ -134,4 +134,17 @@ public class SubscriptionServiceImpl extends AbstractService implements Subscrip
                 .plus(Duration.ofMinutes(tariffDuration.getMinutes()))
                 .toInstant();
     }
+
+    @Override
+    public boolean unsubscribe(@NotNull Subscription subscription) throws DBException {
+        try (var connection = connectionSupplier.get()) {
+            final SubscriptionDao subscriptionDao = daoFactory.newSubscriptionDao();
+            subscriptionDao.setConnection(connection);
+            subscription.setStatus(Subscription.Status.INACTIVE);
+            return subscriptionDao.update(subscription);
+        } catch (SQLException  ex) {
+            logger.error("Failed to close connection", ex);
+            throw new DBException(ex);
+        }
+    }
 }
