@@ -1,2 +1,5 @@
 <%@ page import="com.provider.constants.Paths" %>
-<jsp:forward page="${Paths.CATALOG_PAGE}"/>
+<%
+    // TODO: configure web.xml: make catalog page one of welcome files
+    response.sendRedirect(Paths.CATALOG_PAGE);
+%>

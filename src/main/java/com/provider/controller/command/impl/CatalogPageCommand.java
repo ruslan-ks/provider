@@ -34,7 +34,7 @@ public class CatalogPageCommand extends FrontCommand {
     private static final Logger logger = LoggerFactory.getLogger(CatalogPageCommand.class);
 
     /**
-     * Key: enum value used to obtain sorted tariffs
+     * Key: enum value used to obtain sorted tariffs<br>
      * Value: title that will be shown to user
      */
     private static final Map<String, String> TARIFF_ORDER_BY_FIELD_STRING_MAP = Map.of(

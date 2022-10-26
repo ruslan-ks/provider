@@ -19,14 +19,16 @@
 
 <header class="navbar navbar-expand-md bg-dark navbar-dark">
     <div class="container">
-        <a href="${pageContext.request.contextPath}/index.jsp" class="navbar-brand">Provider</a>
+        <a href="${pageContext.request.contextPath}/" class="navbar-brand">Provider</a>
 
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
         <nav class="collapse navbar-collapse" id="navMenu">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a href="${pageContext.request.contextPath}/index.jsp" class="nav-link"><fmt:message key="nav.main"/></a></li>
+                <li class="nav-item">
+                    <a href="${pageContext.request.contextPath}/" class="nav-link"><fmt:message key="nav.main"/></a>
+                </li>
                 <li class="nav-item"><a href="${Paths.CATALOG_PAGE}"
                                         class="nav-link"><fmt:message key="nav.catalog"/></a></li>
                 <li class="nav-item"><a href="#" class="nav-link"><fmt:message key="nav.about"/></a></li>

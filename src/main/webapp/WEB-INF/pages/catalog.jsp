@@ -15,6 +15,7 @@
 </head>
 <body>
     <pro:header/>
+
     <div class="container-fluid px-5">
         <div class="row">
             <div class="col-md-2 my-3 bg-light border border-1 py-2 rounded rounded-3">
@@ -25,7 +26,8 @@
                     <c:forEach var="orderByEntry" items="${requestScope[RequestAttributes.TARIFF_ORDER_BY_FIELDS]}"
                             varStatus="status">
                         <div class="form-check">
-                            <c:set var="checked" value="${status.index == 0 ? 'checked' : ''}"/>
+                            <c:set var="checked"
+                                   value="${orderByEntry.key eq param[CatalogParams.ORDER_BY_FIELD] ? 'checked' : ''}"/>
                             <input type="radio" name="${CatalogParams.ORDER_BY_FIELD}" value="${orderByEntry.key}"
                                    id="orderRadio${status.index}" class="form-check-input" ${checked}>
                             <label class="form-check-label" for="orderRadio${status.index}">
@@ -35,8 +37,9 @@
                     </c:forEach>
                     <hr>
                     <div class="form-check">
+                        <c:set var="checked" value="${param[CatalogParams.IS_ORDER_DESC] eq 'true' ? 'checked' : ''}"/>
                         <input type="checkbox" name="${CatalogParams.IS_ORDER_DESC}" value="true" class="form-check-input"
-                               id="defaultCheck1">
+                               id="defaultCheck1" ${checked}>
                         <label class="form-check-label" for="defaultCheck1">
                             <fmt:message key="catalog.orderBy.descending"/>
                         </label>
@@ -67,8 +70,20 @@
             </div>
         </div>
     </div>
-    <pro:paginationNav pageCount="${requestScope[RequestAttributes.PAGE_COUNT]}"
-                       href="${Paths.CATALOG_PAGE}"
-                       pageParam="${PaginationParams.PAGE_NUMBER}"/>
+
+    <%--
+    URL with parameters should be passed to the pro:paginationNav,
+    so all the filtering and ordering params will be saved
+    --%>
+    <c:set var="urlWithParams"
+           value="${pageContext.request.contextPath}${requestScope['jakarta.servlet.forward.servlet_path']}?${requestScope['jakarta.servlet.forward.query_string']}"/>
+    <div class="row">
+        <div class="col-2 col-lg-3 col-md-5 col-sm mx-auto">
+            <pro:paginationNav pageCount="${requestScope[RequestAttributes.PAGE_COUNT]}"
+                               href="${urlWithParams}"
+                               pageParam="${PaginationParams.PAGE_NUMBER}"/>
+        </div>
+    </div>
+    <br>
 </body>
 </html>

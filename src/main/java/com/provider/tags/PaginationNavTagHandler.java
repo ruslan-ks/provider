@@ -1,12 +1,11 @@
 package com.provider.tags;
 
-import com.provider.util.AppendingParameterizedUrl;
+import com.provider.util.ParameterizedUrlImpl;
 import com.provider.util.ParameterizedUrl;
 import jakarta.servlet.jsp.JspWriter;
 import jakarta.servlet.jsp.PageContext;
 import jakarta.servlet.jsp.tagext.DynamicAttributes;
 import jakarta.servlet.jsp.tagext.SimpleTagSupport;
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -81,8 +80,8 @@ public class PaginationNavTagHandler extends SimpleTagSupport implements Dynamic
     }
 
     private @NotNull String navItem(int pageNum, @NotNull String title, String... classes) {
-        final ParameterizedUrl parameterizedUrl = AppendingParameterizedUrl.of(href);
-        parameterizedUrl.addParam(pageParam, String.valueOf(pageNum));
+        final ParameterizedUrl parameterizedUrl = ParameterizedUrlImpl.of(href);
+        parameterizedUrl.setParam(pageParam, String.valueOf(pageNum));
         return navItemTag(parameterizedUrl.getString(), title, classes);
     }
 
@@ -92,7 +91,7 @@ public class PaginationNavTagHandler extends SimpleTagSupport implements Dynamic
 
     private @NotNull String navItemTag(@NotNull String href, @NotNull String title, String... classes) {
         return String.format("<li class='page-item %s'><a class='page-link' href='%s'>%s</a></li>",
-                Strings.join(Arrays.asList(classes), ' '), href, title);
+                String.join(" ", Arrays.asList(classes)), href, title);
     }
 
     @SuppressWarnings("unused")

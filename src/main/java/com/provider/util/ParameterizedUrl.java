@@ -13,8 +13,21 @@ public interface ParameterizedUrl {
     @NotNull String getString();
 
     static ParameterizedUrl of(@NotNull String url) {
-        return AppendingParameterizedUrl.of(url);
+        return ParameterizedUrlImpl.of(url);
     }
 
+    /**
+     * Adds parameter name-value pair; If parameter by name of {@code paramName} has already been added,
+     * adds one more parameter of the same name
+     * @param paramName parameter name
+     * @param paramValue parameter value
+     */
     void addParam(@NotNull String paramName, @NotNull String paramValue);
+
+    /**
+     * Sets the specified url parameter; replaces the parameter by name of {@code paramName} if one is present
+     * @param paramName parameter name
+     * @param paramValue parameter value
+     */
+    void setParam(@NotNull String paramName, @NotNull String paramValue);
 }
