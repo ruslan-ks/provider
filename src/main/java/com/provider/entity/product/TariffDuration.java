@@ -17,5 +17,5 @@ public interface TariffDuration extends Entity {
 
     int getMonths();
 
-    long getMinutes();
+    int getMinutes();
 }

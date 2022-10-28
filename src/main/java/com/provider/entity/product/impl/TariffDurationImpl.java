@@ -7,15 +7,15 @@ import java.util.Objects;
 public class TariffDurationImpl implements TariffDuration {
     private int tariffId;
     private final int months;
-    private final long minutes;
+    private final int minutes;
 
-    protected TariffDurationImpl(int tariffId, int months, long minutes) {
+    protected TariffDurationImpl(int tariffId, int months, int minutes) {
         this.tariffId = tariffId;
         this.months = months;
         this.minutes = minutes;
     }
 
-    public static TariffDurationImpl of(int tariffId, int months, long minutes) {
+    public static TariffDurationImpl of(int tariffId, int months, int minutes) {
         return new TariffDurationImpl(tariffId, months, minutes);
     }
 
@@ -38,7 +38,7 @@ public class TariffDurationImpl implements TariffDuration {
     }
 
     @Override
-    public long getMinutes() {
+    public int getMinutes() {
         return minutes;
     }
 

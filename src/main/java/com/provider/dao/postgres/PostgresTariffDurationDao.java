@@ -32,7 +32,7 @@ public class PostgresTariffDurationDao extends TariffDurationDao {
             int i = 1;
             preparedStatement.setInt(i++, tariffDuration.getTariffId());
             preparedStatement.setInt(i++, tariffDuration.getMonths());
-            preparedStatement.setLong(i, tariffDuration.getMinutes());
+            preparedStatement.setInt(i, tariffDuration.getMinutes());
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException ex) {
             throw new DBException(ex);
@@ -44,7 +44,7 @@ public class PostgresTariffDurationDao extends TariffDurationDao {
         try {
             final int tariffId = resultSet.getInt("tariff_id");
             final int months = resultSet.getInt("tariff_duration_months");
-            final long minutes = resultSet.getInt("tariff_duration_minutes");
+            final int minutes = resultSet.getInt("tariff_duration_minutes");
             return entityFactory.newTariffDuration(tariffId, months, minutes);
         } catch (SQLException ex) {
             throw new DBException(ex);
