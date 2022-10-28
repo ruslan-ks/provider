@@ -61,13 +61,6 @@
                     <input type="submit" class="btn btn-dark w-100 my-2"
                            value="<fmt:message key="catalog.orderBy.applyBtn"/>">
                 </form>
-
-                <%-- TODO: delete --%>
-                <c:forEach var="service" items="${paramValues[CatalogParams.SERVICE_ID_FILTER]}">
-                    ${service}
-                    <br>
-                </c:forEach>
-
             </div>
             <div class="col">
                 <div class="row">
