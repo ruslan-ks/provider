@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -55,12 +56,16 @@ public class TariffServiceImpl extends AbstractService implements TariffService 
     }
 
     @Override
-    public @NotNull List<TariffDto> findTariffsPage(long offset, int limit, @NotNull String locale, boolean activeOnly,
-            @NotNull TariffOrderRule @NotNull... orderRules) throws DBException {
+    public @NotNull List<TariffDto> findTariffsPage(long offset,
+                                                    int limit,
+                                                    @NotNull String locale,
+                                                    @NotNull Set<TariffOrderRule> orderRules,
+                                                    @NotNull Set<Integer> serviceIds,
+                                                    boolean activeOnly) throws DBException {
         final TariffDao tariffDao = daoFactory.newTariffDao();
         try (var connection = connectionSupplier.get()) {
             tariffDao.setConnection(connection);
-            return tariffDao.findFullInfoPage(offset, limit, locale, activeOnly, orderRules);
+            return tariffDao.findFullInfoPage(offset, limit, locale, orderRules, serviceIds, activeOnly);
         } catch (SQLException ex) {
             throw new DBException(ex);
         }
@@ -135,7 +140,8 @@ public class TariffServiceImpl extends AbstractService implements TariffService 
         return false;
     }
 
-    private void throwIfInvalid(@NotNull Tariff tariff, @NotNull TariffDuration tariffDuration) throws ValidationException {
+    private void throwIfInvalid(@NotNull Tariff tariff, @NotNull TariffDuration tariffDuration)
+            throws ValidationException {
         final TariffValidator validator = validatorFactory.getTariffValidator();
         if (!validator.isValidTitle(tariff.getTitle())
                 || !validator.isValidDescription(tariff.getDescription())
@@ -143,6 +149,19 @@ public class TariffServiceImpl extends AbstractService implements TariffService 
                 || !validator.isValidDuration(tariffDuration.getMonths(), tariffDuration.getMinutes())
                 || !validator.isValidImageFileName(tariff.getImageFileName())) {
             throw new ValidationException("Invalid Tariff or TariffDuration property values");
+        }
+    }
+
+    @Override
+    public @NotNull Map<Service, Integer> findAllServicesTariffsCount(@NotNull String locale, boolean activeOnly)
+            throws DBException {
+        final ServiceDao serviceDao = daoFactory.newServiceDao();
+        try (var connection = connectionSupplier.get()) {
+            serviceDao.setConnection(connection);
+            return serviceDao.findAllServicesTariffsCount(locale, activeOnly);
+        } catch (SQLException ex) {
+            logger.error("Failed to close connection", ex);
+            throw new DBException(ex);
         }
     }
 }

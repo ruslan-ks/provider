@@ -7,8 +7,10 @@ import java.util.stream.Collectors;
 
 public class PostgresQueryBuilder {
     private final String table;
+    private boolean distinct;
     private final List<String> selectFields = new ArrayList<>();
     private final Map<String, String> leftJoins = new LinkedHashMap<>();
+    private final Map<String, String> innerJoins = new LinkedHashMap<>();
     private final List<String> orderByFields = new ArrayList<>();
     private boolean limitArg;
     private boolean offsetArg;
@@ -23,9 +25,12 @@ public class PostgresQueryBuilder {
     }
 
     public @NotNull String getQuery() {
-        final String selectPart = "SELECT " + String.join(", ", selectFields);
+        final String selectPart = "SELECT " + (distinct ? "DISTINCT " : "") + String.join(", ", selectFields);
         final String fromPart = "FROM " + table;
-        final String joinsPart = leftJoins.entrySet().stream()
+        final String innerJoinsPart = innerJoins.entrySet().stream()
+                .map(e -> "INNER JOIN " + e.getKey() + " ON " + e.getValue())
+                .collect(Collectors.joining(" "));
+        final String leftJoinsPart = leftJoins.entrySet().stream()
                 .map(e -> "LEFT JOIN " + e.getKey() + " ON " + e.getValue())
                 .collect(Collectors.joining(" "));
         final String wherePart = "WHERE " + whereCondition;
@@ -34,18 +39,20 @@ public class PostgresQueryBuilder {
                 : "";
         final String offsetPart = offsetArg ? "OFFSET ?" : "";
         final String limitPart = limitArg ? "LIMIT ?" : "";
-        return selectPart + " " + fromPart + " " + joinsPart + " " + wherePart + " " + orderByPart + " " + offsetPart +
-                " " + limitPart;
+        return selectPart + " " + fromPart + " " + innerJoinsPart + " " + leftJoinsPart + " " + wherePart + " " +
+                orderByPart + " " + offsetPart + " " + limitPart;
     }
 
     /**
      * Adds fields to be selected
      * Each field may contain alias, for example: {@code tariffs.id AS tariff_id}
      * @param fields fields to be selected
+     * @param distinct defines whether {@code DISTINCT} keyword should be used or not
      * @return reference to the same builder object
      */
-    public PostgresQueryBuilder addSelect(@NotNull List<String> fields) {
+    public PostgresQueryBuilder addSelect(@NotNull List<String> fields, boolean distinct) {
         selectFields.addAll(fields);
+        this.distinct = distinct;
         return this;
     }
 
@@ -57,6 +64,17 @@ public class PostgresQueryBuilder {
      */
     public PostgresQueryBuilder addLeftJoin(@NotNull String tableName, @NotNull String condition) {
         leftJoins.put(tableName, condition);
+        return this;
+    }
+
+    /**
+     * Adds tables to be joined with inner join
+     * @param tableName table name
+     * @param condition condition
+     * @return reference to the same builder object
+     */
+    public PostgresQueryBuilder addInnerJoin(@NotNull String tableName, @NotNull String condition) {
+        innerJoins.put(tableName, condition);
         return this;
     }
 

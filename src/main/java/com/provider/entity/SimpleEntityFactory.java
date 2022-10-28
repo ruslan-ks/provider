@@ -56,7 +56,7 @@ public class SimpleEntityFactory implements EntityFactory {
     }
 
     @Override
-    public @NotNull TariffDuration newTariffDuration(int tariffId, int months, long minutes) {
+    public @NotNull TariffDuration newTariffDuration(int tariffId, int months, int minutes) {
         return TariffDurationImpl.of(tariffId, months, minutes);
     }
 

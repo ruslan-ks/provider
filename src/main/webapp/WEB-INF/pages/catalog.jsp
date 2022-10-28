@@ -44,9 +44,30 @@
                             <fmt:message key="catalog.orderBy.descending"/>
                         </label>
                     </div>
+                    <hr>
+                    <c:forEach var="serviceCountEntry" items="${requestScope[RequestAttributes.SERVICE_COUNT_MAP]}"
+                               varStatus="status">
+                        <c:set var="checked"
+                               value="${pro:contains(paramValues[CatalogParams.SERVICE_ID_FILTER], serviceCountEntry.key.id)
+                                        ? 'checked'
+                                        : ''}"/>
+                        <input type="checkbox" name="${CatalogParams.SERVICE_ID_FILTER}" value="${serviceCountEntry.key.id}"
+                               id="filterBtnCheck${status.index}" class="btn-check" ${checked}>
+                        <label class="btn btn-outline-primary w-100" for="filterBtnCheck${status.index}">
+                                ${serviceCountEntry.key.name} <span class="badge bg-success">${serviceCountEntry.value}</span>
+                        </label>
+                        <br>
+                    </c:forEach>
                     <input type="submit" class="btn btn-dark w-100 my-2"
                            value="<fmt:message key="catalog.orderBy.applyBtn"/>">
                 </form>
+
+                <%-- TODO: delete --%>
+                <c:forEach var="service" items="${paramValues[CatalogParams.SERVICE_ID_FILTER]}">
+                    ${service}
+                    <br>
+                </c:forEach>
+
             </div>
             <div class="col">
                 <div class="row">

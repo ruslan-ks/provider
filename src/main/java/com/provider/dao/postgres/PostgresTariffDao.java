@@ -11,14 +11,19 @@ import com.provider.entity.product.TariffDuration;
 import com.provider.sorting.TariffOrderByField;
 import com.provider.sorting.TariffOrderRule;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class PostgresTariffDao extends TariffDao {
+    private static final Logger logger = LoggerFactory.getLogger(PostgresTariffDao.class);
+
     PostgresTariffDao() {}
 
     private static final String SQL_FIND_BY_ID =
@@ -86,6 +91,7 @@ public class PostgresTariffDao extends TariffDao {
                 return Optional.of(SimpleTariffDto.of(tariff, tariffDuration, serviceList));
             }
         } catch (SQLException ex) {
+            logger.error("Failed to find tariff full info by key", ex);
             throw new DBException(ex);
         }
         return Optional.empty();
@@ -103,23 +109,25 @@ public class PostgresTariffDao extends TariffDao {
     );
 
     @Override
-    public @NotNull List<TariffDto> findFullInfoPage(long offset, int limit, @NotNull String locale, boolean activeOnly,
-            @NotNull TariffOrderRule @NotNull... orderRules) throws DBException {
-        final List<String> orderByFields = Arrays.stream(orderRules)
-                .map(PostgresTariffDao::orderRuleToQueryField)
-                .toList();
-        final String whereCondition = activeOnly
-                ? "t.status = '" + Tariff.Status.ACTIVE.name() + "'"
-                : "true";
+    public @NotNull List<TariffDto> findFullInfoPage(long offset,
+                                                     int limit,
+                                                     @NotNull String locale,
+                                                     @NotNull Set<TariffOrderRule> orderRules,
+                                                     @NotNull Set<Integer> serviceIds,
+                                                     boolean activeOnly) throws DBException {
         final PostgresQueryBuilder queryBuilder = PostgresQueryBuilder.of("tariffs t")
-                .addSelect(TARIFF_AND_DURATION_FIELDS)
-                .addLeftJoin("tariff_durations td", "td.tariff_id = t.id")
+                .addSelect(TARIFF_AND_DURATION_FIELDS, true)
+                .addInnerJoin("tariff_durations td", "td.tariff_id = t.id")
                 .addLeftJoin("tariff_translations tt", "tt.tariff_id = t.id AND tt.locale = ?")
-                .setWhere(whereCondition)
-                .addOrderBy(orderByFields)
+                .setWhere(activeOnly ? "t.status = '" + Tariff.Status.ACTIVE.name() + "'" : "true")
                 .setOffsetArg(true)
                 .setLimitArg(true);
+        addOrderBy(queryBuilder, orderRules);
+        addServiceIdsFilter(queryBuilder, serviceIds);
+
         final String query = queryBuilder.getQuery();
+        logger.debug("Executing sql query: {}", query);
+
         try (var preparedStatement = connection.prepareStatement(query)) {
             int i = 1;
             preparedStatement.setString(i++, locale);
@@ -137,8 +145,39 @@ public class PostgresTariffDao extends TariffDao {
             }
             return tariffDtoList;
         } catch (SQLException ex) {
+            logger.error("Failed to find tariff full info page", ex);
             throw new DBException(ex);
         }
+    }
+
+    private static void addServiceIdsFilter(@NotNull PostgresQueryBuilder queryBuilder,
+                                            @NotNull Set<Integer> serviceIds) {
+        if (!serviceIds.isEmpty()) {
+            final String tariffServicesInnerJoinCondition = serviceIds.stream()
+                    .map(id -> "ts.service_id = " + id)
+                    .collect(Collectors.joining(" OR ", "ts.tariff_id = t.id AND (", ")"));
+            queryBuilder.addInnerJoin("tariff_services ts", tariffServicesInnerJoinCondition);
+        }
+    }
+
+    private static void addOrderBy(@NotNull PostgresQueryBuilder queryBuilder,
+                                   @NotNull Set<TariffOrderRule> orderRules) {
+        if (!orderRules.isEmpty()) {
+            final List<String> orderByFields = orderRules.stream()
+                    .map(PostgresTariffDao::orderRuleToQueryField)
+                    .toList();
+            queryBuilder.addOrderBy(orderByFields);
+        }
+    }
+
+    private static @NotNull String orderRuleToQueryField(@NotNull TariffOrderRule orderRule) {
+        final Map<TariffOrderByField, String> orderByFieldStringMap = Map.of(
+                TariffOrderByField.ID, "tariff_id",
+                TariffOrderByField.TITLE, "tariff_title",
+                TariffOrderByField.STATUS, "tariff_status",
+                TariffOrderByField.USD_PRICE, "tariff_usd_price"
+        );
+        return orderByFieldStringMap.get(orderRule.getOrderByField()) + (orderRule.isDesc() ? " DESC" : "");
     }
 
     private static final String SQL_INSERT =
@@ -165,6 +204,8 @@ public class PostgresTariffDao extends TariffDao {
                 throw new DBException("Failed to obtain generated keys after inserting a row " + tariff);
             }
         } catch (SQLException ex) {
+            logger.error("Failed to insert tariff: {}", tariff);
+            logger.error("Failed to insert tariff", ex);
             throw new DBException(ex);
         }
         return false;
@@ -187,6 +228,8 @@ public class PostgresTariffDao extends TariffDao {
             int[] updatedRows = preparedStatement.executeBatch();
             return Arrays.stream(updatedRows).sum() == serviceIds.size();
         } catch (SQLException ex) {
+            logger.error("Failed to add tariff services! Tariff id: {}, service ids: {}", tariffId, serviceIds);
+            logger.error("Failed to add tariff services!", ex);
             throw new DBException(ex);
         }
     }
@@ -217,6 +260,7 @@ public class PostgresTariffDao extends TariffDao {
             final PostgresServiceDao serviceDao = new PostgresServiceDao();
             return serviceDao.fetchAll(resultSet);
         } catch (SQLException ex) {
+            logger.error("Failed to find tariff services", ex);
             throw new DBException(ex);
         }
     }
@@ -244,18 +288,9 @@ public class PostgresTariffDao extends TariffDao {
             }
             throw new DBException("Failed to get tariffs count from db. Query: " + SQL_COUNT_ALL);
         } catch (SQLException ex) {
+            logger.error("Failed to count tariffs", ex);
             throw new DBException(ex);
         }
-    }
-
-    private static @NotNull String orderRuleToQueryField(@NotNull TariffOrderRule orderRule) {
-        final Map<TariffOrderByField, String> orderByFieldStringMap = Map.of(
-                TariffOrderByField.ID, "tariff_id",
-                TariffOrderByField.TITLE, "tariff_title",
-                TariffOrderByField.STATUS, "tariff_status",
-                TariffOrderByField.USD_PRICE, "tariff_usd_price"
-        );
-        return orderByFieldStringMap.get(orderRule.getOrderByField()) + (orderRule.isDesc() ? " DESC" : "");
     }
 
     @Override
@@ -269,6 +304,8 @@ public class PostgresTariffDao extends TariffDao {
             final String imageFileName = resultSet.getString("tariff_image_file_name");
             return entityFactory.newTariff(id, title, description, status, usdPrice, imageFileName);
         } catch (SQLException ex) {
+            logger.error("Failed to fetch tariff! ResultSet: {}", resultSet);
+            logger.error("Failed to fetch tariff", ex);
             throw new DBException(ex);
         }
     }

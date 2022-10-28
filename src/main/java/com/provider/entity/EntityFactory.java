@@ -84,7 +84,7 @@ public interface EntityFactory {
      * @param minutes minutes count
      * @return new TariffDuration instance
      */
-    @NotNull TariffDuration newTariffDuration(int tariffId, int months, long minutes);
+    @NotNull TariffDuration newTariffDuration(int tariffId, int months, int minutes);
 
     /**
      * Creates new Tariff instance

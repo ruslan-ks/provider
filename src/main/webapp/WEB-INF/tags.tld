@@ -129,4 +129,9 @@
             java.util.Date toDate(java.time.Instant)
         </function-signature>
     </function>
+    <function>
+        <name>contains</name>
+        <function-class>com.provider.functions.Util</function-class>
+        <function-signature>boolean contains(java.lang.String[], java.lang.String)</function-signature>
+    </function>
 </taglib>

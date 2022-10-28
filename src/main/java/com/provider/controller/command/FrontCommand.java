@@ -126,12 +126,12 @@ public abstract class FrontCommand {
      * obtained via {@code request.getParameterValues(name)} or empty list if the parameter does not exist
      * @throws CommandParamException if parameter does not exist
      */
-    protected final @NotNull List<String> getRequiredParamValues(@NotNull String name) throws CommandParamException {
+    protected final @NotNull Set<String> getRequiredParamValues(@NotNull String name) throws CommandParamException {
         final String[] params = request.getParameterValues(name);
         if (params == null) {
             throw new CommandParamException("Param '" + name + "' is null");
         }
-        return Arrays.asList(params);
+        return new HashSet<>(Arrays.asList(params));
     }
 
     /**
@@ -141,6 +141,20 @@ public abstract class FrontCommand {
      **/
     protected final @NotNull Optional<String> getParam(@NotNull String name) {
         return Optional.ofNullable(request.getParameter(name));
+    }
+
+    /**
+     * Returns Set of request parameter values
+     * @param name request parameter name
+     * @return Set of parameter values obtained via {@code request.getParameterValues(name)} or empty Set, if there is
+     * no such parameter
+     */
+    protected final @NotNull Set<String> getParamValues(@NotNull String name) {
+        return Optional.ofNullable(request.getParameterValues(name))
+                .map(Arrays::asList)
+                .map(HashSet::new)
+                .map(hs -> (Set<String>) hs)
+                .orElseGet(Collections::emptySet);
     }
 
     /**
@@ -189,7 +203,7 @@ public abstract class FrontCommand {
             return (long) (pageNumber - 1) * pageSize;
         }
 
-        public void setPageCountAttribute(long recordsCount) {
+        public void computeAndSetPageCountAttribute(long recordsCount) {
             final int pageCount = (int) Math.ceil((double) recordsCount / pageSize);
             request.setAttribute(RequestAttributes.PAGE_COUNT, pageCount);
         }

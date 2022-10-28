@@ -10,6 +10,7 @@ import com.provider.sorting.TariffOrderRule;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -41,11 +42,20 @@ public interface TariffService {
      * @param offset offset
      * @param limit limit
      * @param orderRules order rules that define the order of tariffs
+     * @param locale desired locale
+     * @param serviceIds if not empty, only tariffs containing specific services will be selected;
+     *                   if empty, tariffs are selected independent of their services
+     * @param activeOnly if true, only tariffs with 'ACTIVE' status will be selected,
+     *                   otherwise all tariffs will be selected
      * @return {@code List<TariffDto>} containing all the tariffs found
      * @throws DBException if {@link com.provider.dao.TariffDao} throws DBException
      */
-    @NotNull List<TariffDto> findTariffsPage(long offset, int limit, @NotNull String locale, boolean activeOnly,
-                                             @NotNull TariffOrderRule @NotNull... orderRules) throws DBException;
+    @NotNull List<TariffDto> findTariffsPage(long offset,
+                                             int limit,
+                                             @NotNull String locale,
+                                             @NotNull Set<TariffOrderRule> orderRules,
+                                             @NotNull Set<Integer> serviceIds,
+                                             boolean activeOnly) throws DBException;
 
     /**
      * Returns optional containing tariff if found
@@ -80,4 +90,15 @@ public interface TariffService {
      */
     boolean insertTariff(@NotNull Tariff tariff, @NotNull TariffDuration tariffDuration, @NotNull Set<Integer> serviceIds)
             throws ValidationException, DBException;
+
+    /**
+     * Returns Map where key - service, value - service tariffs count; if there is no localization provided,
+     * the default version will be returned
+     * @param locale desired locale
+     * @param activeOnly find active tariffs only if true, all tariffs otherwise
+     * @return Map of services and their tariff occasions count
+     * @throws DBException if {@link com.provider.dao.ServiceDao} throws it
+     */
+    @NotNull Map<Service, Integer> findAllServicesTariffsCount(@NotNull String locale, boolean activeOnly)
+            throws DBException;
 }

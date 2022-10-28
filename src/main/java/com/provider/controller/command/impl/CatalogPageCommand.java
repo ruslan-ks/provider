@@ -3,11 +3,13 @@ package com.provider.controller.command.impl;
 import com.provider.constants.Paths;
 import com.provider.constants.attributes.RequestAttributes;
 import com.provider.constants.params.CatalogParams;
+import com.provider.controller.command.CommandUtil;
 import com.provider.controller.command.FrontCommand;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.controller.command.result.CommandResult;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.dto.TariffDto;
+import com.provider.entity.product.Service;
 import com.provider.entity.product.Subscription;
 import com.provider.entity.user.User;
 import com.provider.entity.user.UserAccount;
@@ -24,10 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CatalogPageCommand extends FrontCommand {
@@ -50,11 +49,16 @@ public class CatalogPageCommand extends FrontCommand {
 
     @Override
     public @NotNull CommandResult execute() throws DBException, ServletException, IOException, CommandParamException {
+        // Order rule
         final String tariffOrderByFieldParam = getParam(CatalogParams.ORDER_BY_FIELD)
                 .orElse(DEFAULT_TARIFF_ORDER_BY_FIELD);
         final TariffOrderByField tariffOrderByField = parseTariffOrderByField(tariffOrderByFieldParam);
         final boolean isOrderDesc = getParam(CatalogParams.IS_ORDER_DESC).isPresent();
         final TariffOrderRule tariffOrderRule = TariffOrderRule.of(tariffOrderByField, isOrderDesc);
+
+        // Filter rules
+        final Set<String> serviceIdFilterParams = getParamValues(CatalogParams.SERVICE_ID_FILTER);
+        final Set<Integer> serviceIdFilters = CommandUtil.parseIntParams(serviceIdFilterParams);
 
         final TariffService tariffService = serviceFactory.getTariffService();
 
@@ -63,11 +67,21 @@ public class CatalogPageCommand extends FrontCommand {
         final long offset = paginationHelper.getOffset();
 
         final String locale = getLocale();
-        final List<TariffDto> tariffDtoList = tariffService.findTariffsPage(offset, pageSize, locale, true,
-                tariffOrderRule);
+        final List<TariffDto> tariffDtoList = tariffService.findTariffsPage(offset, pageSize, locale,
+                Set.of(tariffOrderRule), serviceIdFilters, true);
         request.setAttribute(RequestAttributes.TARIFFS, tariffDtoList);
 
-        paginationHelper.setPageCountAttribute(tariffService.countActiveTariffs());
+        // Set service tariffs count
+        final Map<Service, Integer> serviceTariffCount = tariffService.findAllServicesTariffsCount(locale, true);
+        request.setAttribute(RequestAttributes.SERVICE_COUNT_MAP, serviceTariffCount);
+
+        final int recordsCount = serviceTariffCount.entrySet().stream()
+                        .filter(e -> serviceIdFilters.contains(e.getKey().getId()))
+                        .map(Map.Entry::getValue)
+                        .reduce(Integer::sum)
+                        .orElse(tariffService.countActiveTariffs());
+        paginationHelper.computeAndSetPageCountAttribute(recordsCount);
+        logger.trace("Records count: " + recordsCount);
 
         // Adding user active subscription tariff ids to request scope
         final Optional<User> user = getSessionUser();

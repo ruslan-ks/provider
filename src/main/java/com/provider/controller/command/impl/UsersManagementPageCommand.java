@@ -31,7 +31,7 @@ public class UsersManagementPageCommand extends AdminCommand {
         request.setAttribute(RequestAttributes.USERS, users);
 
         final long userCount = userService.getUsersCount();
-        paginationHelper.setPageCountAttribute(userCount);
+        paginationHelper.computeAndSetPageCountAttribute(userCount);
 
         return newCommandResult(Paths.USERS_MANAGEMENT_JSP);
     }

@@ -26,6 +26,7 @@ public abstract class TariffDao extends EntityDao<Integer, Tariff> {
     public abstract @NotNull Optional<TariffDto> findFullInfoByKey(int id, @NotNull String locale)
             throws DBException;
 
+    // TODO: javadoc for new params
     /**
      * Returns DTO containing Tariff, TariffDuration and {@code List<Service>}.
      * If there is no translation for the specified {@code locale}, the default one will be returned.
@@ -35,8 +36,12 @@ public abstract class TariffDao extends EntityDao<Integer, Tariff> {
      * @return List of TariffDto
      * @throws DBException if SQLException occurred
      */
-    public abstract @NotNull List<TariffDto> findFullInfoPage(long offset, int limit, @NotNull String locale,
-            boolean activeOnly, @NotNull TariffOrderRule @NotNull... orderRules) throws DBException;
+    public abstract @NotNull List<TariffDto> findFullInfoPage(long offset, int limit,
+                                                              @NotNull String locale,
+                                                              @NotNull Set<TariffOrderRule> orderRules,
+                                                              @NotNull Set<Integer> serviceIds,
+                                                              boolean activeOnly)
+            throws DBException;
 
     /**
      * Adds tariff service link

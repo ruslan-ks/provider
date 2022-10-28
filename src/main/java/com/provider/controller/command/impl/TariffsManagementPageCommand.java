@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
 
 public class TariffsManagementPageCommand extends AdminCommand {
@@ -30,11 +31,12 @@ public class TariffsManagementPageCommand extends AdminCommand {
         final String locale = getLocale();
         final TariffService tariffService = serviceFactory.getTariffService();
 
-        final List<TariffDto> tariffsList = tariffService.findTariffsPage(offset, pageSize, locale, false);
+        final List<TariffDto> tariffsList = tariffService.findTariffsPage(offset, pageSize, locale,
+                Collections.emptySet(), Collections.emptySet(), false);    // no order, no filters
         request.setAttribute(RequestAttributes.TARIFFS, tariffsList);
 
         final int tariffsCount = tariffService.countAllTariffs();
-        paginationHelper.setPageCountAttribute(tariffsCount);
+        paginationHelper.computeAndSetPageCountAttribute(tariffsCount);
 
         final List<Service> serviceList = tariffService.findAllServices(locale);
         request.setAttribute(RequestAttributes.SERVICES, serviceList);

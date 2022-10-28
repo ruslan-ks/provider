@@ -3,7 +3,10 @@ package com.provider.dao.postgres;
 import com.provider.dao.ServiceDao;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.product.Service;
+import com.provider.entity.product.Tariff;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,6 +14,8 @@ import java.sql.Statement;
 import java.util.*;
 
 public class PostgresServiceDao extends ServiceDao {
+    private static final Logger logger = LoggerFactory.getLogger(PostgresServiceDao.class);
+
     PostgresServiceDao() {}
 
     private static final String SQL_FIND_BY_ID =
@@ -43,6 +48,25 @@ public class PostgresServiceDao extends ServiceDao {
             final ResultSet resultSet = preparedStatement.executeQuery();
             return fetchAll(resultSet);
         } catch (SQLException ex) {
+            logger.error("Failed to find all services", ex);
+            throw new DBException(ex);
+        }
+    }
+
+    private static final String SQL_FIND_ALL =
+            "SELECT " +
+                    "id AS service_id, " +
+                    "name AS service_name, " +
+                    "description AS description " +
+                    "FROM services";
+
+    @Override
+    public @NotNull List<Service> findAll() throws DBException {
+        try (var statement = connection.createStatement();
+             var resultSet = statement.executeQuery(SQL_FIND_ALL)) {
+            return fetchAll(resultSet);
+        } catch (SQLException ex) {
+            logger.error("Failed to find all services!", ex);
             throw new DBException(ex);
         }
     }
@@ -66,6 +90,7 @@ public class PostgresServiceDao extends ServiceDao {
                 return Optional.of(fetchOne(resultSet));
             }
         } catch (SQLException ex) {
+            logger.error("Failed to find service by key!", ex);
             throw new DBException(ex);
         }
         return Optional.empty();
@@ -90,6 +115,8 @@ public class PostgresServiceDao extends ServiceDao {
                 throw new DBException("Service was inserted, but no keys were generated");
             }
         } catch (SQLException ex) {
+            logger.error("Failed to insert service! Service {}", service);
+            logger.error("Failed to insert service!", ex);
             throw new DBException(ex);
         }
         return false;
@@ -108,25 +135,51 @@ public class PostgresServiceDao extends ServiceDao {
             preparedStatement.setString(i, locale);
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException ex) {
+            logger.error("Failed to insert service translation! Service translation: {}", service);
+            logger.error("Failed to insert service translation!", ex);
             throw new DBException(ex);
         }
     }
 
-    private static final String SQL_FIND_ALL =
-            "SELECT " +
-                    "id AS service_id, " +
-                    "name AS service_name, " +
-                    "description AS description " +
-            "FROM services";
-
     @Override
-    public @NotNull List<Service> findAll() throws DBException {
-        try (var statement = connection.createStatement();
-             var resultSet = statement.executeQuery(SQL_FIND_ALL)) {
-            return fetchAll(resultSet);
+    public @NotNull Map<Service, Integer> findAllServicesTariffsCount(@NotNull String locale, boolean activeOnly)
+            throws DBException {
+        try (var preparedStatement = connection.prepareStatement(
+                getFindServicesTariffsCountSql(activeOnly))) {
+            preparedStatement.setString(1, locale);
+            final ResultSet resultSet = preparedStatement.executeQuery();
+            final Map<Service, Integer> servicesTariffsCount = new HashMap<>();
+            while (resultSet.next()) {
+                final Service service = fetchOne(resultSet);
+                final int count = resultSet.getInt("service_count");
+                servicesTariffsCount.put(service, count);
+            }
+            return servicesTariffsCount;
         } catch (SQLException ex) {
+            logger.error("Failed to obtain services tariffs count", ex);
             throw new DBException(ex);
         }
+    }
+
+    private static @NotNull String getFindServicesTariffsCountSql(boolean activeOnly) {
+        final String selectAndJoinQueryPart =
+                "SELECT " +
+                        "s.id AS service_id, " +
+                        "coalesce(st.name, s.name) AS service_name, " +
+                        "coalesce(st.description, s.description) AS service_description, " +
+                        "count(ts.tariff_id) AS service_count " +
+                "FROM services s " +
+                "INNER JOIN tariff_services ts " +
+                        "ON s.id = ts.service_id " +
+                "INNER JOIN tariffs t ON t.id = ts.tariff_id " +
+                "LEFT JOIN service_translations st " +
+                        "ON s.id = st.service_id AND st.locale = ? ";
+        final String wherePart = "WHERE t.status = '" + Tariff.Status.ACTIVE + "' ";
+        final String groupByPart = "GROUP BY s.id, st.name, st.description";
+        if (activeOnly) {
+            return selectAndJoinQueryPart + wherePart + groupByPart;
+        }
+        return selectAndJoinQueryPart + groupByPart;
     }
 
     @Override
@@ -137,6 +190,8 @@ public class PostgresServiceDao extends ServiceDao {
             final String description = resultSet.getString("service_description");
             return entityFactory.newService(id, name, description);
         } catch (SQLException ex) {
+            logger.error("Failed to fetch one service! ResultSet: {}", resultSet);
+            logger.error("Failed to fetch one service!", ex);
             throw new DBException(ex);
         }
     }
@@ -148,6 +203,8 @@ public class PostgresServiceDao extends ServiceDao {
                 serviceList.add(fetchOne(resultSet));
             }
         } catch (SQLException ex) {
+            logger.error("Failed to fetch all services! ResultSet: {}", resultSet);
+            logger.error("Failed to fetch all services!", ex);
             throw new DBException(ex);
         }
         return serviceList;

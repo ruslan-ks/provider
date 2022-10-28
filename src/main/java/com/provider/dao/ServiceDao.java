@@ -5,6 +5,7 @@ import com.provider.entity.product.Service;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public abstract class ServiceDao extends EntityDao<Integer, Service> {
@@ -45,4 +46,14 @@ public abstract class ServiceDao extends EntityDao<Integer, Service> {
      * @throws DBException if SQLException occurred(also if there is no primary service record);
      */
     public abstract boolean insertTranslation(@NotNull Service service, @NotNull String locale) throws DBException;
+
+    /**
+     * Counts for each service counts how many tariffs include this service.<br>
+     * If there is no localization for specified locale, returns the default one
+     * @param locale desired locale
+     * @param activeOnly if true, only tariffs with 'ACTIVE' status will be count, otherwise all tariffs will be count
+     * @return Map where key - service, value - amount of tariffs that include this service
+     */
+    public abstract @NotNull Map<Service, Integer> findAllServicesTariffsCount(@NotNull String locale,
+                                                                               boolean activeOnly) throws DBException;
 }

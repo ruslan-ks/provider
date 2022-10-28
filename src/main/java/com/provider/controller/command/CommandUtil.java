@@ -7,7 +7,9 @@ import com.provider.entity.user.User;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Utility class
@@ -54,9 +56,11 @@ public class CommandUtil {
         }
     }
 
-    public static List<Integer> parseIntParams(@NotNull List<String> values) throws CommandParamException {
+    public static Set<Integer> parseIntParams(@NotNull Collection<String> values) throws CommandParamException {
         try {
-            return values.stream().map(Integer::parseInt).toList();
+            return values.stream()
+                    .map(Integer::parseInt)
+                    .collect(Collectors.toSet());
         } catch (NumberFormatException ex) {
             throw new CommandParamException("Failed to parse int parameter list: invalid number format: " + values);
         }

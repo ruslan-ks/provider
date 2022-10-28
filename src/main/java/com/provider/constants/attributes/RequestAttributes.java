@@ -26,11 +26,18 @@ public class RequestAttributes {
     public static final String TARIFFS = "tariffs";
 
     /**
-     * Attribute of type {@code Map<String, String>}, where
+     * Attribute of type {@code Map<String, String>}, where<br>
      * key: order defining enum value string representation obtained via .name(),
      * value: title that should be shown to user
      */
     public static final String TARIFF_ORDER_BY_FIELDS = "tariffOrderByFields";
+
+    /**
+     * Attribute of type {@code Map<Service, Integer>}, where<br>
+     * key: service,<br>
+     * value: count of tariffs that include this service
+     */
+    public static final String SERVICE_COUNT_MAP = "serviceCountMap";
 
     /**
      * Attribute of type {@code Iterable<Integer>}

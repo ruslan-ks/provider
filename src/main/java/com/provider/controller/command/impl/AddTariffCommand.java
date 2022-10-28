@@ -26,8 +26,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,7 +43,7 @@ public class AddTariffCommand extends AdminCommand {
             throws DBException, ServletException, IOException, CommandParamException {
         final Map<String, String> params = getRequiredParams(TITLE, DESCRIPTION, USD_PRICE, STATUS, DURATION_MONTHS,
                 DURATION_MINUTES);
-        final List<String> tariffServiceIdParams = getRequiredParamValues(SERVICE_IDS);
+        final Set<String> tariffServiceIdParams = getRequiredParamValues(SERVICE_IDS);
 
         // File uploading
         final var uploadPath = java.nio.file.Paths.get((String) request.getServletContext()
@@ -70,7 +68,7 @@ public class AddTariffCommand extends AdminCommand {
         final BigDecimal usdPrice = CommandUtil.parseBigDecimalParam(params.get(USD_PRICE));
         final int months = CommandUtil.parseIntParam(params.get(DURATION_MONTHS));
         final int minutes = CommandUtil.parseIntParam(params.get(DURATION_MINUTES));
-        final Set<Integer> serviceIds = new HashSet<>(CommandUtil.parseIntParams(tariffServiceIdParams));
+        final Set<Integer> serviceIds = CommandUtil.parseIntParams(tariffServiceIdParams);
 
         final Tariff tariff = entityFactory.newTariff(0, title, description, status, usdPrice, uploadedImageFileName);
         final TariffDuration tariffDuration = entityFactory.newTariffDuration(0, months, minutes);
