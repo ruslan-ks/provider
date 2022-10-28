@@ -101,4 +101,15 @@ public interface TariffService {
      */
     @NotNull Map<Service, Integer> findAllServicesTariffsCount(@NotNull String locale, boolean activeOnly)
             throws DBException;
+
+    /**
+     * Returns distinct tariffs that include specific services count
+     * @param serviceIds service ids
+     * @param activeOnly if true, only active tariffs will be countered
+     * @return count of distinct tariffs that include specific services
+     * @throws DBException if {@link com.provider.dao.TariffDao} throw is
+     * @throws IllegalArgumentException if {@link com.provider.dao.TariffDao} throws it
+     */
+    int countDistinctTariffsIncludingServices(@NotNull Set<Integer> serviceIds, boolean activeOnly)
+            throws DBException;
 }

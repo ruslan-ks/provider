@@ -49,16 +49,8 @@ public class CatalogPageCommand extends FrontCommand {
 
     @Override
     public @NotNull CommandResult execute() throws DBException, ServletException, IOException, CommandParamException {
-        // Order rule
-        final String tariffOrderByFieldParam = getParam(CatalogParams.ORDER_BY_FIELD)
-                .orElse(DEFAULT_TARIFF_ORDER_BY_FIELD);
-        final TariffOrderByField tariffOrderByField = parseTariffOrderByField(tariffOrderByFieldParam);
-        final boolean isOrderDesc = getParam(CatalogParams.IS_ORDER_DESC).isPresent();
-        final TariffOrderRule tariffOrderRule = TariffOrderRule.of(tariffOrderByField, isOrderDesc);
-
-        // Filter rules
-        final Set<String> serviceIdFilterParams = getParamValues(CatalogParams.SERVICE_ID_FILTER);
-        final Set<Integer> serviceIdFilters = CommandUtil.parseIntParams(serviceIdFilterParams);
+        final TariffOrderRule tariffOrderRule = getTariffOrderRule();
+        final Set<Integer> serviceIdFilters = getServiceIdFilters();
 
         final TariffService tariffService = serviceFactory.getTariffService();
 
@@ -71,35 +63,53 @@ public class CatalogPageCommand extends FrontCommand {
                 Set.of(tariffOrderRule), serviceIdFilters, true);
         request.setAttribute(RequestAttributes.TARIFFS, tariffDtoList);
 
-        // Set service tariffs count
-        final Map<Service, Integer> serviceTariffCount = tariffService.findAllServicesTariffsCount(locale, true);
-        request.setAttribute(RequestAttributes.SERVICE_COUNT_MAP, serviceTariffCount);
+        // Set service tariffs count map
+        final Map<Service, Integer> serviceTariffCountMap = tariffService.findAllServicesTariffsCount(locale, true);
+        request.setAttribute(RequestAttributes.SERVICE_COUNT_MAP, serviceTariffCountMap);
 
-        final int recordsCount = serviceTariffCount.entrySet().stream()
-                        .filter(e -> serviceIdFilters.contains(e.getKey().getId()))
-                        .map(Map.Entry::getValue)
-                        .reduce(Integer::sum)
-                        .orElse(tariffService.countActiveTariffs());
+        final int recordsCount = computeTariffsCount(serviceIdFilters, tariffService);
         paginationHelper.computeAndSetPageCountAttribute(recordsCount);
         logger.trace("Records count: " + recordsCount);
 
         // Adding user active subscription tariff ids to request scope
         final Optional<User> user = getSessionUser();
         if (user.isPresent()) {
-            final AccountService accountService = serviceFactory.getAccountService();
-            final UserAccount userAccount = accountService.findUserAccount(user.get())
-                    .orElseThrow(() -> new RuntimeException("User account not found! User: " + user.get()));
-            final SubscriptionService subscriptionService = serviceFactory.getSubscriptionService();
-            final List<Subscription> activeSubscriptions = subscriptionService.findActiveSubscriptions(userAccount);
-            final Set<Integer> activeSubscriptionTariffIds = activeSubscriptions.stream()
-                    .map(Subscription::getTariffId)
-                    .collect(Collectors.toSet());
+            final Set<Integer> activeSubscriptionTariffIds = getUserActiveSubscriptionTariffIds(user.get());
             request.setAttribute(RequestAttributes.USER_SUBSCRIBED_TARIFF_IDS, activeSubscriptionTariffIds);
         }
 
         request.setAttribute(RequestAttributes.TARIFF_ORDER_BY_FIELDS, TARIFF_ORDER_BY_FIELD_STRING_MAP);
 
         return newCommandResult(Paths.CATALOG_JSP);
+    }
+
+    private @NotNull TariffOrderRule getTariffOrderRule() throws CommandParamException {
+        final String tariffOrderByFieldParam = getParam(CatalogParams.ORDER_BY_FIELD)
+                .orElse(DEFAULT_TARIFF_ORDER_BY_FIELD);
+        final TariffOrderByField tariffOrderByField = parseTariffOrderByField(tariffOrderByFieldParam);
+        final boolean isOrderDesc = getParam(CatalogParams.IS_ORDER_DESC).isPresent();
+        return TariffOrderRule.of(tariffOrderByField, isOrderDesc);
+    }
+
+    private @NotNull Set<Integer> getServiceIdFilters() throws CommandParamException {
+        return CommandUtil.parseIntParams(getParamValues(CatalogParams.SERVICE_ID_FILTER));
+    }
+
+    private int computeTariffsCount(@NotNull Set<Integer> chosenServiceIdFilters, @NotNull TariffService tariffService) throws DBException {
+        return chosenServiceIdFilters.isEmpty()
+                ? tariffService.countActiveTariffs()
+                : tariffService.countDistinctTariffsIncludingServices(chosenServiceIdFilters, true);
+    }
+
+    private @NotNull Set<Integer> getUserActiveSubscriptionTariffIds(@NotNull User user) throws DBException {
+        final AccountService accountService = serviceFactory.getAccountService();
+        final UserAccount userAccount = accountService.findUserAccount(user)
+                .orElseThrow(() -> new RuntimeException("User account not found! User: " + user));
+        final SubscriptionService subscriptionService = serviceFactory.getSubscriptionService();
+        final List<Subscription> activeSubscriptions = subscriptionService.findActiveSubscriptions(userAccount);
+        return activeSubscriptions.stream()
+                .map(Subscription::getTariffId)
+                .collect(Collectors.toSet());
     }
 
     private static TariffOrderByField parseTariffOrderByField(@NotNull String value) throws CommandParamException {

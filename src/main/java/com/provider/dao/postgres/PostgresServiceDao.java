@@ -4,6 +4,7 @@ import com.provider.dao.ServiceDao;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.product.Service;
 import com.provider.entity.product.Tariff;
+import com.provider.util.Checks;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class PostgresServiceDao extends ServiceDao {
     private static final Logger logger = LoggerFactory.getLogger(PostgresServiceDao.class);
@@ -180,6 +182,40 @@ public class PostgresServiceDao extends ServiceDao {
             return selectAndJoinQueryPart + wherePart + groupByPart;
         }
         return selectAndJoinQueryPart + groupByPart;
+    }
+
+    private static final String SQL_COUNT_DISTINCT_TARIFFS_INCLUDING_SERVICES =
+            "SELECT " +
+                    "count(DISTINCT ts.tariff_id) " +
+            "FROM tariff_services ts " +
+            "INNER JOIN tariffs t " +
+                    "ON t.id = ts.tariff_id ";
+
+    @Override
+    public int countDistinctTariffsIncludingServices(@NotNull Set<Integer> serviceIds, boolean activeOnly)
+            throws DBException {
+        if (serviceIds.isEmpty()) {
+            throw new IllegalArgumentException("Service id set is empty!");
+        }
+        serviceIds.forEach(Checks::throwIfInvalidId);
+
+        final String statusCondition = activeOnly ? "t.status = '" + Tariff.Status.ACTIVE.name() + "' AND " : "";
+        final String servicesCondition = serviceIds.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(", ", "ts.service_id IN (", ")"));
+        final String query = SQL_COUNT_DISTINCT_TARIFFS_INCLUDING_SERVICES + "WHERE " + statusCondition +
+                servicesCondition;
+        try (var statement = connection.createStatement()) {
+            final ResultSet resultSet = statement.executeQuery(query);
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+            throw new RuntimeException("Failed to obtain any result set rows");
+        } catch (SQLException ex) {
+            logger.error("Failed to count distinct tariffs that include services! service ids: {}", serviceIds);
+            logger.error("Failed to count distinct tariffs that include some services!", ex);
+            throw new DBException(ex);
+        }
     }
 
     @Override

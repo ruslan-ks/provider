@@ -54,7 +54,7 @@
                         <input type="checkbox" name="${CatalogParams.SERVICE_ID_FILTER}" value="${serviceCountEntry.key.id}"
                                id="filterBtnCheck${status.index}" class="btn-check" ${checked}>
                         <label class="btn btn-outline-primary w-100" for="filterBtnCheck${status.index}">
-                                ${serviceCountEntry.key.name} <span class="badge bg-success">${serviceCountEntry.value}</span>
+                                ${serviceCountEntry.key.name} <span class="badge bg-dark">${serviceCountEntry.value}</span>
                         </label>
                         <br>
                     </c:forEach>

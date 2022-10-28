@@ -164,4 +164,16 @@ public class TariffServiceImpl extends AbstractService implements TariffService 
             throw new DBException(ex);
         }
     }
+
+    @Override
+    public int countDistinctTariffsIncludingServices(@NotNull Set<Integer> serviceIds, boolean activeOnly) throws DBException {
+        final ServiceDao serviceDao = daoFactory.newServiceDao();
+        try (var connection = connectionSupplier.get()) {
+            serviceDao.setConnection(connection);
+            return serviceDao.countDistinctTariffsIncludingServices(serviceIds, activeOnly);
+        } catch (SQLException ex) {
+            logger.error("Failed to close connection", ex);
+            throw new DBException(ex);
+        }
+    }
 }

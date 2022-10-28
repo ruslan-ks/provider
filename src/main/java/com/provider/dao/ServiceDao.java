@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public abstract class ServiceDao extends EntityDao<Integer, Service> {
     /**
@@ -56,4 +57,14 @@ public abstract class ServiceDao extends EntityDao<Integer, Service> {
      */
     public abstract @NotNull Map<Service, Integer> findAllServicesTariffsCount(@NotNull String locale,
                                                                                boolean activeOnly) throws DBException;
+
+    /**
+     * Returns count of distinct tariffs that include services with provided id
+     * @param serviceIds service id set
+     * @param activeOnly if true, only tariffs with 'ACTIVE' status are countered
+     * @return count of distinct tariffs that include services with provided id
+     * @throws IllegalArgumentException if {@code serviceIds} is empty or if at least one value is <= 0
+     */
+    public abstract int countDistinctTariffsIncludingServices(@NotNull Set<Integer> serviceIds, boolean activeOnly)
+            throws DBException;
 }
