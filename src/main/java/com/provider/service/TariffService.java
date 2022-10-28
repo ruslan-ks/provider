@@ -65,6 +65,16 @@ public interface TariffService {
     @NotNull Optional<Tariff> findTariffById(int tariffId) throws DBException;
 
     /**
+     * Returns tariff dto if found.<br>
+     * If there is no localization for desired locale, returns the default value
+     * @param tariffId tariff id
+     * @param locale desired locale
+     * @return otional of tariff dto if foun, empty otherwise
+     * @throws DBException if {@link com.provider.dao.TariffDao} throws it
+     */
+    @NotNull Optional<TariffDto> findTariffFullInfoById(int tariffId, @NotNull String locale) throws DBException;
+
+    /**
      * Returns tariff count
      * @return tariff count
      * @throws DBException if {@link com.provider.dao.TariffDao} throws DBException

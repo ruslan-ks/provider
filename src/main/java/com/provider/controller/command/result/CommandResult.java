@@ -16,6 +16,8 @@ public interface CommandResult {
         SUCCESS
     }
 
+    CommandResult NO_VIEW = CommandResultImpl.of("");
+
     /**
      * Returns resulting page location
      */

@@ -79,4 +79,9 @@ public class CommandParams {
      * Unsubscribe action command
      */
     public static final String UNSUBSCRIBE = "unsubscribe";
+
+    /**
+     * Download pdf command
+     */
+    public static final String DOWNLOAD_TARIFF_PDF = "downloadTariffPdf";
 }

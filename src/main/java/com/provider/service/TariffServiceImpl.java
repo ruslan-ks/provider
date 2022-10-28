@@ -83,6 +83,18 @@ public class TariffServiceImpl extends AbstractService implements TariffService 
     }
 
     @Override
+    public @NotNull Optional<TariffDto> findTariffFullInfoById(int tariffId, @NotNull String locale)
+            throws DBException {
+        final TariffDao tariffDao = daoFactory.newTariffDao();
+        try (var connection = connectionSupplier.get()) {
+            tariffDao.setConnection(connection);
+            return tariffDao.findFullInfoByKey(tariffId, locale);
+        } catch (SQLException ex) {
+            throw new DBException(ex);
+        }
+    }
+
+    @Override
     public int countAllTariffs() throws DBException {
         final TariffDao tariffDao = daoFactory.newTariffDao();
         try (var connection = connectionSupplier.get()) {

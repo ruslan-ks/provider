@@ -36,6 +36,9 @@ public class FrontControllerServlet extends HttpServlet {
         logger.debug("GET Request - Front Controller Servlet");
         final Optional<CommandResult> result = handleRequest(request, response);
         if (result.isPresent()) {
+            if (result.get() == CommandResult.NO_VIEW) {
+                return;
+            }
             logger.debug("Forward after GET Request - Front Controller Servlet");
             request.getRequestDispatcher(result.get().getViewLocation())
                     .forward(request, response);
@@ -48,6 +51,9 @@ public class FrontControllerServlet extends HttpServlet {
         logger.debug("POST Request - Front Controller Servlet");
         final Optional<CommandResult> result = handleRequest(request, response);
         if (result.isPresent()) {
+            if (result.get() == CommandResult.NO_VIEW) {
+                return;
+            }
             logger.debug("Redirect after POST Request - Front Controller Servlet");
             response.sendRedirect(result.get().getViewLocation());
         }
