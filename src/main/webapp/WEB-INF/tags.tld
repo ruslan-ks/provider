@@ -134,4 +134,9 @@
         <function-class>com.provider.functions.Util</function-class>
         <function-signature>boolean contains(java.lang.String[], java.lang.String)</function-signature>
     </function>
+    <function>
+        <name>isExpired</name>
+        <function-class>com.provider.functions.TimeFunctions</function-class>
+        <function-signature>boolean isExpired(java.time.Instant)</function-signature>
+    </function>
 </taglib>

@@ -27,4 +27,8 @@ public class TimeFunctions {
     public static Date toDate(Instant instant) {
         return Date.from(instant);
     }
+
+    public static boolean isExpired(Instant instant) {
+        return Instant.now().isAfter(instant);
+    }
 }

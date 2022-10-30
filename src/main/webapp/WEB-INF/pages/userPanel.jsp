@@ -35,12 +35,20 @@
                             <input type="submit" value="<fmt:message key="subscription.unsubscribeBtn"/>"
                                    class="btn btn-danger w-100">
                         </form>
+                        <c:set var="nextPaymentTime"
+                               value="${pro:nextPaymentTime(subscriptionDto.subscription, subscriptionDto.tariffDto.duration)}"/>
+                        <c:if test="${pro:isExpired(nextPaymentTime)}">
+                            <div class="alert alert-danger" role="alert"
+                                    title="<fmt:message key="subscription.expiredTip"/>">
+                                <strong><fmt:message key="subscription.expired"/></strong>
+                            </div>
+                        </c:if>
                         <fmt:message key="subscription.lastPayment"/>
                         <strong><pro:date instant="${subscriptionDto.subscription.lastPaymentTime}"/></strong>
                         <br>
                         <fmt:message key="subscription.nextPayment"/>
                         <strong>
-                            <pro:date instant="${pro:nextPaymentTime(subscriptionDto.subscription, subscriptionDto.tariffDto.duration)}"/>
+                            <pro:date instant="${nextPaymentTime}"/>
                         </strong>
                     </pro:tariffCard>
                 </div>
