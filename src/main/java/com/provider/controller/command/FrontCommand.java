@@ -66,10 +66,11 @@ public abstract class FrontCommand {
 
     /**
      * Returns current session
+     *
      * @return current session
      */
-    protected final @NotNull Optional<HttpSession> getSession() {
-        return Optional.ofNullable(request.getSession());
+    protected final @NotNull HttpSession getSession() {
+        return request.getSession();
     }
 
     /**
@@ -77,7 +78,8 @@ public abstract class FrontCommand {
      * @return Optional containing signed-in user if session is present and user attribute is saved to the session
      */
     protected final @NotNull Optional<User> getSessionUser() {
-        return getSession().map(s -> (User) s.getAttribute(SessionAttributes.SIGNED_USER));
+        return Optional.ofNullable(getSession().getAttribute(SessionAttributes.SIGNED_USER))
+                .map(obj -> (User) obj);
     }
 
     /**
@@ -85,8 +87,8 @@ public abstract class FrontCommand {
      * @return locale obtained from UserSettings object that resides in the session scope
      */
     protected final @NotNull String getLocale() {
-        final Optional<String> localeOptional = getSession()
-                .map(s -> s.getAttribute(SessionAttributes.USER_SETTINGS))
+        final Optional<String> localeOptional = Optional.ofNullable(getSession()
+                        .getAttribute(SessionAttributes.USER_SETTINGS))
                 .map(obj -> (UserSettings) obj)
                 .map(UserSettings::getLocale);
         if (localeOptional.isEmpty()) {
@@ -166,19 +168,50 @@ public abstract class FrontCommand {
         return CommandResultImpl.of(location);
     }
 
+    /**
+     * Returns new PaginationHelper object
+     * @return new PaginationHelper object
+     * @throws CommandParamException if pagination parameters parsing fails
+     */
     protected PaginationHelper getPaginationHelper() throws CommandParamException {
         return new PaginationHelper();
     }
 
+    /**
+     * Useful class for pagination implementation<br>
+     * When instantiating this class, pagination request parameters are obtained and parsed.<br>
+     * Pagination parameter names constants are declared in {@link com.provider.constants.params.PaginationParams}<br>
+     * If no parameter found, default value is used<br><br>
+     * Pagination parameters: <br>
+     * - Page number: name: {@code PaginationParams.PAGE_NUMBER}, default value: 1<br>
+     * - Page size: name: {@code PaginationParams.PAGE_SIZE}, default value: constructor argument - {@code defaultPageSize}
+     * or 5 if no arg constructor used<br><br>
+     * Page size and offset can be obtained via getters<br>
+     * For appropriate pagination, {@code computeAndSetPageCountAttribute} method must be called after object creation
+     */
     protected class PaginationHelper {
         private static final Logger logger = LoggerFactory.getLogger(PaginationHelper.class);
-
-        private static final int DEFAULT_PAGE_SIZE = 5;
 
         private final int pageNumber;
         private final int pageSize;
 
+        /**
+         * Creates new PaginationHelper with default page size of 5
+         * @throws CommandParamException if pagination parameters parsing fails
+         */
         PaginationHelper() throws CommandParamException {
+            this(5);
+        }
+
+        /**
+         * Creates new PaginationHelper with page size specified
+         * @param defaultPageSize default page size, used if page size request parameter is missing
+         * @throws CommandParamException if pagination parameters parsing fails
+         */
+        PaginationHelper(int defaultPageSize) throws CommandParamException {
+            if (defaultPageSize < 1) {
+                throw new IllegalArgumentException("defaultPageSize < 1: " + defaultPageSize);
+            }
             final String pageNumberParam = getParam(PaginationParams.PAGE_NUMBER).orElse("1");
             pageNumber = CommandUtil.parseIntParam(pageNumberParam);
             if (pageNumber <= 0) {
@@ -186,7 +219,7 @@ public abstract class FrontCommand {
                 throw new CommandParamException("Invalid param: '" + PaginationParams.PAGE_NUMBER + "' == " +
                         pageNumber + " <= 0");
             }
-            final String pageSizeParam = getParam(PaginationParams.PAGE_SIZE).orElse(String.valueOf(DEFAULT_PAGE_SIZE));
+            final String pageSizeParam = getParam(PaginationParams.PAGE_SIZE).orElse(String.valueOf(defaultPageSize));
             pageSize = CommandUtil.parseIntParam(pageSizeParam);
             if (pageSize < 1) {
                 logger.warn("Invalid param '{}' == {} < 1", PaginationParams.PAGE_SIZE, pageSize);
@@ -203,6 +236,10 @@ public abstract class FrontCommand {
             return (long) (pageNumber - 1) * pageSize;
         }
 
+        /**
+         * Computes and sets page count attribute based on records count and page size
+         * @param recordsCount general records count
+         */
         public void computeAndSetPageCountAttribute(long recordsCount) {
             final int pageCount = (int) Math.ceil((double) recordsCount / pageSize);
             request.setAttribute(RequestAttributes.PAGE_COUNT, pageCount);

@@ -16,7 +16,7 @@ public class SignOutCommand extends MemberCommand {
 
     @Override
     protected @NotNull CommandResult executeAuthorized(@NotNull User user) {
-        getSession().ifPresent(s -> s.removeAttribute(SessionAttributes.SIGNED_USER));
+        getSession().removeAttribute(SessionAttributes.SIGNED_USER);
         return newCommandResult(Paths.SIGN_IN_JSP);
     }
 }

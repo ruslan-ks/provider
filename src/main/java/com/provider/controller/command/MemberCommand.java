@@ -38,7 +38,7 @@ public abstract class MemberCommand extends UserAccessCommand {
     @Override
     protected @NotNull CommandResult executeDenied() {
         if (isMember) {
-            getSession().orElseThrow().removeAttribute(SessionAttributes.SIGNED_USER);
+            getSession().removeAttribute(SessionAttributes.SIGNED_USER);
 
             final CommandResult commandResult = newCommandResult(Paths.SIGN_IN_JSP);
             if (!isActive) {

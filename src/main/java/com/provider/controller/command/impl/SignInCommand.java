@@ -13,7 +13,6 @@ import com.provider.entity.user.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +36,6 @@ public class SignInCommand extends FrontCommand {
 
         final UserService userService = serviceFactory.getUserService();
         final Optional<User> userOptional = userService.authenticate(login, password);
-        final Optional<HttpSession> sessionOptional = getSession();
 
         final CommandResult failedCommandResult = newCommandResult(Paths.SIGN_IN_JSP);
         if (userOptional.isEmpty()) {
@@ -48,13 +46,9 @@ public class SignInCommand extends FrontCommand {
             // User is not active - he was suspended, he's not allowed to sign in
             logger.warn("Authentication failed: user is SUSPENDED: user: {}", userOptional.get());
             return failedCommandResult.addMessage(CommandResult.MessageType.FAIL, Messages.YOU_WERE_SUSPENDED);
-        } else if (sessionOptional.isEmpty()) {
-            // There is no session, we just cannot save this guy
-            logger.warn("Authentication failed: failed to obtain session! user: {}", userOptional.get());
-            return failedCommandResult.addMessage(CommandResult.MessageType.FAIL, Messages.SESSIONS_NOT_ALLOWED);
         } else {
             // Success
-            sessionOptional.get().setAttribute(SessionAttributes.SIGNED_USER, userOptional.get());
+            getSession().setAttribute(SessionAttributes.SIGNED_USER, userOptional.get());
             logger.debug("User authenticated: {}", userOptional.get());
             return newCommandResult(Paths.USER_PANEL_PAGE);
         }
