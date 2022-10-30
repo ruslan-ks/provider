@@ -31,6 +31,13 @@ public interface Subscription extends Entity {
      */
     void setId(long id);
 
+    /**
+     * Does exactly what you think
+     * @param lastPaymentTime time to be set
+     * @throws IllegalArgumentException if new lastPaymentTime is before current value
+     */
+    void setLastPaymentTime(@NotNull Instant lastPaymentTime);
+
     long getUserAccountId();
 
     int getTariffId();

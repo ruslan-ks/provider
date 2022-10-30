@@ -4,6 +4,7 @@ import com.provider.dao.SubscriptionDao;
 import com.provider.dao.UserAccountDao;
 import com.provider.dao.exception.DBException;
 import com.provider.dao.transaction.Transaction;
+import com.provider.entity.dto.SubscriptionDto;
 import com.provider.entity.dto.SubscriptionTariffDto;
 import com.provider.entity.product.Subscription;
 import com.provider.entity.product.Tariff;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.SQLException;
 import java.time.*;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class SubscriptionServiceImpl extends AbstractService implements SubscriptionService {
     private static final Logger logger = LoggerFactory.getLogger(SubscriptionServiceImpl.class);
@@ -87,7 +89,7 @@ public class SubscriptionServiceImpl extends AbstractService implements Subscrip
     }
 
     private boolean hasActiveStatus(@NotNull SubscriptionTariffDto subscriptionTariffDto) {
-        return (subscriptionTariffDto.getSubscription().getStatus() == Subscription.Status.ACTIVE);
+        return hasActiveStatus(subscriptionTariffDto.getSubscription());
     }
 
     @Override
@@ -145,6 +147,58 @@ public class SubscriptionServiceImpl extends AbstractService implements Subscrip
         } catch (SQLException  ex) {
             logger.error("Failed to close connection", ex);
             throw new DBException(ex);
+        }
+    }
+
+    @Override
+    public List<SubscriptionDto> findAllExpiredActiveSubscriptions() throws DBException {
+        try (var connection = connectionSupplier.get()) {
+            final SubscriptionDao subscriptionDao = daoFactory.newSubscriptionDao();
+            subscriptionDao.setConnection(connection);
+            return subscriptionDao.findAllExpiredActiveSubscriptions();
+        } catch (SQLException  ex) {
+            logger.error("Failed to close connection", ex);
+            throw new DBException(ex);
+        }
+    }
+
+    @Override
+    public void renewAllExpiredActiveSubscriptions(@NotNull Consumer<SubscriptionDto> renewedConsumer,
+                                                   @NotNull Consumer<SubscriptionDto> notEnoughMoneyConsumer)
+            throws DBException {
+        final List<SubscriptionDto> expiredSubscriptionDtoList = findAllExpiredActiveSubscriptions();
+        final SubscriptionDao subscriptionDao = daoFactory.newSubscriptionDao();
+        final UserAccountDao userAccountDao = daoFactory.newUserAccountDao();
+        for (var subscriptionDto : expiredSubscriptionDtoList) {
+            final Subscription subscription = subscriptionDto.getSubscription();
+            final Tariff tariff = subscriptionDto.getTariff();
+            try (var transaction = Transaction.of(connectionSupplier.get(), subscriptionDao,
+                    userAccountDao)) {
+                try {
+                    final UserAccount userAccount = userAccountDao.findByKey(subscription.getUserAccountId())
+                            .orElseThrow();
+                    if (hasEnoughMoneyToPay(userAccount, tariff)) {
+                        userAccount.withdraw(tariff.getUsdPrice());
+                        subscription.setLastPaymentTime(Instant.now());
+                        final boolean subscriptionUpdated = subscriptionDao.update(subscription);
+                        final boolean accountUpdated = userAccountDao.update(userAccount);
+                        if (subscriptionUpdated && accountUpdated) {
+                            transaction.commit();
+                            renewedConsumer.accept(subscriptionDto);
+                        } else {
+                            transaction.rollback();
+                        }
+                    } else {
+                        notEnoughMoneyConsumer.accept(subscriptionDto);
+                        // rollback?
+                    }
+                } catch (Throwable ex) {
+                    logger.error("Failed to execute transaction: {}", transaction);
+                    logger.error("Failed to execute transaction!", ex);
+                    transaction.rollback();
+                    throw ex;
+                }
+            }
         }
     }
 }

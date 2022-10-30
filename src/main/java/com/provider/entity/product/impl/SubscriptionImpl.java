@@ -12,7 +12,7 @@ public class SubscriptionImpl implements Subscription {
     private final long userAccountId;
     private final int tariffId;
     private final Instant startTime;
-    private final Instant lastPaymentTime;
+    private Instant lastPaymentTime;
     private Status status;
 
     SubscriptionImpl(long id, long userAccountId, int tariffId, @NotNull Instant startTime,
@@ -41,6 +41,15 @@ public class SubscriptionImpl implements Subscription {
             throw new IllegalArgumentException("Failed to set id! Illegal new id! New id is <= 0: id = " + id);
         }
         this.id = id;
+    }
+
+    @Override
+    public void setLastPaymentTime(@NotNull Instant lastPaymentTime) {
+        if (lastPaymentTime.isBefore(this.lastPaymentTime)) {
+            throw new IllegalArgumentException(lastPaymentTime + " is before current value(" + this.lastPaymentTime +
+                    ")");
+        }
+        this.lastPaymentTime = lastPaymentTime;
     }
 
     @Override

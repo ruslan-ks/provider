@@ -2,12 +2,11 @@ package com.provider.dao.postgres;
 
 import com.provider.dao.SubscriptionDao;
 import com.provider.dao.exception.DBException;
-import com.provider.entity.dto.SimpleSubscriptionTariffDto;
-import com.provider.entity.dto.SimpleTariffDto;
-import com.provider.entity.dto.SubscriptionTariffDto;
-import com.provider.entity.dto.TariffDto;
+import com.provider.entity.dto.*;
 import com.provider.entity.product.Service;
 import com.provider.entity.product.Subscription;
+import com.provider.entity.product.Tariff;
+import com.provider.entity.product.TariffDuration;
 import com.provider.util.Checks;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -183,6 +182,56 @@ public class PostgresSubscriptionDao extends SubscriptionDao {
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException ex) {
             logger.error("Failed to update subscription!", ex);
+            throw new DBException(ex);
+        }
+    }
+
+    private static final String SQL_FIND_EXPIRED_ACTIVE_SUBSCRIPTIONS =
+            """ 
+            SELECT
+                *
+            FROM (
+                SELECT
+                    s.id AS subscription_id,
+                    s.status AS subscription_status,
+                    s.user_account_id AS user_account_id,
+                    s.start_time AS subscription_start_time,
+                    s.last_payment_time AS subscription_last_payment_time,
+                    t.id AS tariff_id,
+                    t.title AS tariff_title,
+                    t.usd_price AS tariff_usd_price,
+                    t.description AS tariff_description,
+                    t.status AS tariff_status,
+                    t.image_file_name AS tariff_image_file_name,
+                    td.months AS tariff_duration_months,
+                    td.minutes AS tariff_duration_minutes,
+                    s.last_payment_time + INTERVAL '1' MONTH * td.months + INTERVAL '1' MINUTE * td.minutes AS renewal_time
+                FROM
+                    subscriptions s
+                INNER JOIN tariffs t
+                    ON t.id = s.tariff_id
+                INNER JOIN tariff_durations td
+                    ON td.tariff_id = t.id
+                ) tbl
+            WHERE subscription_status = 'ACTIVE' AND renewal_time < (now() AT TIME ZONE 'UTC')
+            """;
+
+    @Override
+    public List<SubscriptionDto> findAllExpiredActiveSubscriptions() throws DBException {
+        final var tariffDao = new PostgresTariffDao();
+        final var tariffDurationDao = new PostgresTariffDurationDao();
+        try (var statement = connection.createStatement()) {
+            final ResultSet resultSet = statement.executeQuery(SQL_FIND_EXPIRED_ACTIVE_SUBSCRIPTIONS);
+            final List<SubscriptionDto> subscriptionDtoList = new ArrayList<>();
+            while (resultSet.next()) {
+                final Subscription subscription = fetchOne(resultSet);
+                final Tariff tariff = tariffDao.fetchOne(resultSet);
+                final TariffDuration tariffDuration = tariffDurationDao.fetchOne(resultSet);
+                subscriptionDtoList.add(SimpleSubscriptionDto.of(tariff, tariffDuration, subscription));
+            }
+            return subscriptionDtoList;
+        } catch (SQLException ex) {
+            logger.error("Failed to obtain expired active subscriptions!", ex);
             throw new DBException(ex);
         }
     }

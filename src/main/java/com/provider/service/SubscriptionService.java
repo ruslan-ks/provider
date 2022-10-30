@@ -1,6 +1,7 @@
 package com.provider.service;
 
 import com.provider.dao.exception.DBException;
+import com.provider.entity.dto.SubscriptionDto;
 import com.provider.entity.dto.SubscriptionTariffDto;
 import com.provider.entity.product.Subscription;
 import com.provider.entity.product.Tariff;
@@ -10,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.function.Consumer;
 
 public interface SubscriptionService {
     /**
@@ -69,4 +71,23 @@ public interface SubscriptionService {
      * @return true if db changes were made successfully
      */
     boolean unsubscribe(@NotNull Subscription subscription) throws DBException;
+
+    /**
+     * Reruns list of subscriptions that need to be renewed
+     * @return list of subscriptions that need to be renewed. Active subscriptions only
+     * @throws DBException if {@link com.provider.dao.SubscriptionDao} throws it
+     */
+    List<SubscriptionDto> findAllExpiredActiveSubscriptions() throws DBException;
+
+    /**
+     * Renews all expired active subscriptions
+     * @param renewedConsumer is called when subscription is renewed successfully
+     * @param notEnoughMoneyConsumer is called when subscription if failed to renew, cause user account
+     *                               does not have enough money
+     * @throws DBException if {@link com.provider.dao.SubscriptionDao} or {@link com.provider.dao.UserAccountDao}
+     * throws it
+     */
+    void renewAllExpiredActiveSubscriptions(@NotNull Consumer<SubscriptionDto> renewedConsumer,
+            @NotNull Consumer<SubscriptionDto> notEnoughMoneyConsumer)
+            throws DBException;
 }

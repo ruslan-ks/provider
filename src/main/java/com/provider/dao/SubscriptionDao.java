@@ -1,6 +1,7 @@
 package com.provider.dao;
 
 import com.provider.dao.exception.DBException;
+import com.provider.entity.dto.SubscriptionDto;
 import com.provider.entity.dto.SubscriptionTariffDto;
 import com.provider.entity.product.Subscription;
 import org.jetbrains.annotations.NotNull;
@@ -38,4 +39,10 @@ public abstract class SubscriptionDao extends EntityDao<Integer, Subscription> {
      * @throws IllegalArgumentException if {@code subscription.getId() <= 0}
      */
     public abstract boolean update(@NotNull Subscription subscription) throws DBException;
+
+    /**
+     * Returns list of subscriptions that are expired(next payment time >= now) and active
+     * @return list of subscriptions that are expired(next payment time >= now) and active
+     */
+    public abstract List<SubscriptionDto> findAllExpiredActiveSubscriptions() throws DBException;
 }
