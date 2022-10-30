@@ -38,14 +38,10 @@ public class UnsubscribeCommand extends MemberCommand {
         final int tariffId = CommandUtil.parseIntParam(tariffIdParam);
 
         final AccountService accountService = serviceFactory.getAccountService();
-        final Optional<UserAccount> userAccount = accountService.findUserAccount(user);
-        if (userAccount.isEmpty()) {
-            logger.warn("Failed to unsubscribe! User account not found! User: {}", user);
-            throw new RuntimeException("User account not found! User: " + user);
-        }
+        final UserAccount userAccount = accountService.findUserAccount(user);
 
         final SubscriptionService subscriptionService = serviceFactory.getSubscriptionService();
-        final List<Subscription> subscriptionList = subscriptionService.findActiveSubscriptions(userAccount.get());
+        final List<Subscription> subscriptionList = subscriptionService.findActiveSubscriptions(userAccount);
 
         final Optional<Subscription> activeSubscription = subscriptionList.stream()
                 .filter(s -> s.getTariffId() == tariffId)
@@ -54,13 +50,13 @@ public class UnsubscribeCommand extends MemberCommand {
         final CommandResult commandResult = newCommandResult(Paths.USER_PANEL_PAGE);
         if (activeSubscription.isEmpty()) {
             logger.warn("Failed to unsubscribe! Subscription not found! User: {}, user account: {}, tariff id: {}",
-                    user, userAccount.get(), tariffId);
+                    user, userAccount, tariffId);
             return commandResult.addMessage(CommandResult.MessageType.FAIL, Messages.UNSUBSCRIBE_FAIL);
         }
 
         final boolean unsubscribed = subscriptionService.unsubscribe(activeSubscription.get());
         if (unsubscribed) {
-            logger.info("Unsubscribed: user: {}, account: {}, subscription: {}", user, userAccount.get(),
+            logger.info("Unsubscribed: user: {}, account: {}, subscription: {}", user, userAccount,
                     activeSubscription.get());
             return commandResult.addMessage(CommandResult.MessageType.SUCCESS, Messages.UNSUBSCRIBE_SUCCESS);
         }

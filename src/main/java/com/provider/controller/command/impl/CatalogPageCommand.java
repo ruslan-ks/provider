@@ -103,8 +103,7 @@ public class CatalogPageCommand extends FrontCommand {
 
     private @NotNull Set<Integer> getUserActiveSubscriptionTariffIds(@NotNull User user) throws DBException {
         final AccountService accountService = serviceFactory.getAccountService();
-        final UserAccount userAccount = accountService.findUserAccount(user)
-                .orElseThrow(() -> new RuntimeException("User account not found! User: " + user));
+        final UserAccount userAccount = accountService.findUserAccount(user);
         final SubscriptionService subscriptionService = serviceFactory.getSubscriptionService();
         final List<Subscription> activeSubscriptions = subscriptionService.findActiveSubscriptions(userAccount);
         return activeSubscriptions.stream()

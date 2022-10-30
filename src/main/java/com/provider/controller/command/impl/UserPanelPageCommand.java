@@ -27,8 +27,7 @@ public class UserPanelPageCommand extends MemberCommand {
         final List<UserAccount> userAccountList = accountService.findUserAccounts(user.getId());
         request.setAttribute(RequestAttributes.USER_ACCOUNTS, userAccountList);
 
-        final UserAccount userUsdAccount = accountService.findUserAccount(user)
-                .orElseThrow(() -> new RuntimeException("User account not found! user: " + user));
+        final UserAccount userUsdAccount = accountService.findUserAccount(user);
 
         final SubscriptionService subscriptionService = serviceFactory.getSubscriptionService();
         final List<SubscriptionTariffDto> userActiveSubscriptionDtoList =

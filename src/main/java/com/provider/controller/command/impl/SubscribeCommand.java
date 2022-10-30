@@ -41,8 +41,7 @@ public class SubscribeCommand extends MemberCommand {
                         tariffId));
 
         final AccountService accountService = serviceFactory.getAccountService();
-        final UserAccount userAccount = accountService.findUserAccount(user)
-                .orElseThrow(() -> new RuntimeException("Failed to obtain user account! user: " + user));
+        final UserAccount userAccount = accountService.findUserAccount(user);
 
         final SubscriptionService subscriptionService = serviceFactory.getSubscriptionService();
 

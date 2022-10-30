@@ -70,7 +70,8 @@ public class AccountServiceImpl extends AbstractService implements AccountServic
     }
 
     @Override
-    public @NotNull Optional<UserAccount> findUserAccount(@NotNull User user) throws DBException {
-        return findUserAccount(user, Currency.USD);
+    public @NotNull UserAccount findUserAccount(@NotNull User user) throws DBException {
+        return findUserAccount(user, Currency.USD)
+                .orElseThrow(() -> new RuntimeException("Failed to find user USD account! user: " + user));
     }
 }
