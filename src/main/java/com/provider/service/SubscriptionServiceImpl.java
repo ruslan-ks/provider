@@ -167,17 +167,18 @@ public class SubscriptionServiceImpl extends AbstractService implements Subscrip
                                                    @NotNull Consumer<SubscriptionDto> notEnoughMoneyConsumer)
             throws DBException {
         final List<SubscriptionDto> expiredSubscriptionDtoList = findAllExpiredActiveSubscriptions();
+        logger.debug("Obtained expired subscriptions");
+        logger.trace("Expired subscriptions: {}", expiredSubscriptionDtoList);
         final SubscriptionDao subscriptionDao = daoFactory.newSubscriptionDao();
         final UserAccountDao userAccountDao = daoFactory.newUserAccountDao();
         for (var subscriptionDto : expiredSubscriptionDtoList) {
             final Subscription subscription = subscriptionDto.getSubscription();
             final Tariff tariff = subscriptionDto.getTariff();
-            try (var transaction = Transaction.of(connectionSupplier.get(), subscriptionDao,
-                    userAccountDao)) {
-                try {
-                    final UserAccount userAccount = userAccountDao.findByKey(subscription.getUserAccountId())
-                            .orElseThrow();
-                    if (hasEnoughMoneyToPay(userAccount, tariff)) {
+            final UserAccount userAccount = subscriptionDto.getUserAccount();
+            if (hasEnoughMoneyToPay(userAccount, tariff)) {
+                try (var transaction = Transaction.of(connectionSupplier.get(), subscriptionDao,
+                        userAccountDao)) {
+                    try {
                         userAccount.withdraw(tariff.getUsdPrice());
                         subscription.setLastPaymentTime(Instant.now());
                         final boolean subscriptionUpdated = subscriptionDao.update(subscription);
@@ -187,17 +188,18 @@ public class SubscriptionServiceImpl extends AbstractService implements Subscrip
                             renewedConsumer.accept(subscriptionDto);
                         } else {
                             transaction.rollback();
+                            logger.error("Failed to renew subscription: {}", subscription);
                         }
-                    } else {
-                        notEnoughMoneyConsumer.accept(subscriptionDto);
-                        // rollback?
+                    } catch (Throwable ex) {
+                        logger.error("Failed to execute transaction: {}", transaction);
+                        logger.error("Failed to execute transaction!", ex);
+                        logger.error("Failed to renew subscription: {}", subscription);
+                        transaction.rollback();
+                        throw ex;
                     }
-                } catch (Throwable ex) {
-                    logger.error("Failed to execute transaction: {}", transaction);
-                    logger.error("Failed to execute transaction!", ex);
-                    transaction.rollback();
-                    throw ex;
                 }
+            } else {
+                notEnoughMoneyConsumer.accept(subscriptionDto);
             }
         }
     }

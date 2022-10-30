@@ -19,10 +19,10 @@ public class PostgresUserAccountDao extends UserAccountDao {
 
     private static final String SQL_FIND_BY_ID =
             "SELECT " +
-                    "id AS id, " +
+                    "id AS user_account_id, " +
                     "user_id AS user_id, " +
-                    "currency AS currency, " +
-                    "amount AS amount " +
+                    "currency AS user_account_currency, " +
+                    "amount AS user_account_amount " +
             "FROM user_accounts " +
             "WHERE id = ?";
 
@@ -59,10 +59,10 @@ public class PostgresUserAccountDao extends UserAccountDao {
 
     private static final String SQL_FIND_BY_USER_ID =
             "SELECT " +
-                    "id AS id, " +
+                    "id AS user_account_id, " +
                     "user_id AS user_id, " +
-                    "currency AS currency, " +
-                    "amount AS amount " +
+                    "currency AS user_account_currency, " +
+                    "amount AS user_account_amount " +
             "FROM user_accounts " +
             "WHERE user_id = ?";
 
@@ -100,10 +100,10 @@ public class PostgresUserAccountDao extends UserAccountDao {
     @Override
     protected @NotNull UserAccount fetchOne(@NotNull ResultSet resultSet) throws DBException {
         try {
-            final long id = resultSet.getLong("id");
+            final long id = resultSet.getLong("user_account_id");
             final long userId = resultSet.getLong("user_id");
-            final String currencyString = resultSet.getString("currency");
-            final BigDecimal amount = resultSet.getBigDecimal("amount");
+            final String currencyString = resultSet.getString("user_account_currency");
+            final BigDecimal amount = resultSet.getBigDecimal("user_account_amount");
             return entityFactory.newUserAccount(id, userId, Currency.valueOf(currencyString), amount);
         } catch (SQLException ex) {
             throw new DBException(ex);
