@@ -1,9 +1,7 @@
 package com.provider.controller.listeners;
 
 import com.provider.constants.attributes.AppAttributes;
-import com.provider.service.ServiceFactory;
-import com.provider.service.ServiceFactoryImpl;
-import com.provider.service.UserService;
+import com.provider.service.*;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
 import com.provider.entity.user.impl.UserImpl;
@@ -19,6 +17,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -26,6 +27,8 @@ import java.util.stream.Stream;
 @WebListener
 public class AppListener implements ServletContextListener {
     private static final Logger logger = LoggerFactory.getLogger(AppListener.class);
+
+    private final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
@@ -35,7 +38,32 @@ public class AppListener implements ServletContextListener {
         tryCreateRootUser();
         tryCreateTestUsers();
 
+        startSubscriptionRenewalExecutor();
+
         logger.info("Application context initialized");
+    }
+
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+        scheduledExecutorService.shutdown();
+    }
+
+    private void startSubscriptionRenewalExecutor() {
+        scheduledExecutorService.scheduleAtFixedRate(() -> {
+            final SubscriptionService subscriptionService;
+            try {
+                logger.info("Trying to renew expired subscriptions...");
+                subscriptionService = ServiceFactoryImpl.newInstance().getSubscriptionService();
+                subscriptionService.renewAllExpiredActiveSubscriptions(
+                        (s) -> logger.info("+++ Renewed subscription: {}", s),
+                        (s) -> logger.warn("--- Cannot renew subscription! Not enough money! subscription: {}", s));
+                logger.info("Subscription renewal finished.");
+            } catch (DBException ex) {
+                logger.error("Failed to renew subscriptions", ex);
+                throw new RuntimeException(ex);
+            }
+        }, 1, 1, TimeUnit.MINUTES);
+        logger.info("Started scheduled subscription renewal executor service");
     }
 
     private void setAppLocales(@NotNull ServletContext servletContext) {

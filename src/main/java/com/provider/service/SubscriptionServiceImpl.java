@@ -167,8 +167,6 @@ public class SubscriptionServiceImpl extends AbstractService implements Subscrip
                                                    @NotNull Consumer<SubscriptionDto> notEnoughMoneyConsumer)
             throws DBException {
         final List<SubscriptionDto> expiredSubscriptionDtoList = findAllExpiredActiveSubscriptions();
-        logger.debug("Obtained expired subscriptions");
-        logger.trace("Expired subscriptions: {}", expiredSubscriptionDtoList);
         final SubscriptionDao subscriptionDao = daoFactory.newSubscriptionDao();
         final UserAccountDao userAccountDao = daoFactory.newUserAccountDao();
         for (var subscriptionDto : expiredSubscriptionDtoList) {
