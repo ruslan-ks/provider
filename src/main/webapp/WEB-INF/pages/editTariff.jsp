@@ -100,7 +100,7 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-4 ms-auto">
-                            <input type="submit" value="Save" class="btn btn-primary w-100">
+                            <input type="submit" value="<fmt:message key="tariff.edit.saveBtn"/>" class="btn btn-primary w-100">
                         </div>
                     </div>
                 </form>
@@ -120,7 +120,7 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-4 ms-auto">
-                            <input type="submit" value="Save" class="btn btn-primary w-100">
+                            <input type="submit" value="<fmt:message key="tariff.edit.saveBtn"/>" class="btn btn-primary w-100">
                         </div>
                     </div>
                 </form>

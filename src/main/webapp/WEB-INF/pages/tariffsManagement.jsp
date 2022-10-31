@@ -192,7 +192,7 @@
                                    readonly hidden aria-label="tariff id">
                             <input type="text" name="${EditParams.LOCALE}" aria-label="edit locale"
                                    value="${settings.locale}" readonly hidden>
-                            <input type="submit" class="btn btn-link" value="edit">
+                            <input type="submit" class="btn btn-link" value="<fmt:message key="tariff.editBtn"/>">
                         </form>
                     </td>
                 </tr>
