@@ -21,7 +21,7 @@
     <c:set var="users" value="${requestScope[RequestAttributes.USERS]}" scope="page"/>
 
     <div class="container-md x-md-auto my-md-3 p-sm-3 rounded rounded-1 shadow">
-        <form method="post" action="${Paths.ADD_USER}" class="needs-validation" novalidate>
+        <form method="post" action="${Paths.ADD_USER}" class="needs-validation" novalidate autocomplete="off">
             <div class="mb-3 row">
                 <label for="inoutLogin" class="col-md-2 col-form-label"><fmt:message key="user.login"/></label>
                 <div class="col-sm-10">
