@@ -2,7 +2,6 @@ package com.provider.controller.command.impl;
 
 import com.provider.constants.Messages;
 import com.provider.constants.Paths;
-import com.provider.constants.attributes.AppAttributes;
 import com.provider.controller.command.AdminCommand;
 import com.provider.controller.command.CommandUtil;
 import com.provider.controller.command.exception.CommandParamException;
@@ -46,8 +45,7 @@ public class AddTariffCommand extends AdminCommand {
         final Set<String> tariffServiceIdParams = getRequiredParamValues(SERVICE_IDS);
 
         // File uploading
-        final var uploadPath = java.nio.file.Paths.get((String) request.getServletContext()
-                .getAttribute(AppAttributes.TARIFF_IMAGE_UPLOAD_PATH));
+        final var uploadPath = getImageUploadPath();
         final Part imagePart = request.getPart(IMAGE);
         final FileUploader fileUploader = ImageUploader.newInstance();
         final String uploadedImageFileName;

@@ -1,5 +1,6 @@
 package com.provider.controller.command;
 
+import com.provider.constants.attributes.AppAttributes;
 import com.provider.constants.attributes.RequestAttributes;
 import com.provider.constants.attributes.SessionAttributes;
 import com.provider.constants.params.PaginationParams;
@@ -22,6 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -166,6 +169,16 @@ public abstract class FrontCommand {
      */
     protected @NotNull CommandResult newCommandResult(@NotNull String location) {
         return CommandResultImpl.of(location);
+    }
+
+    /**
+     * Returns image upload path - directory where all images are uploaded
+     * @return image upload path
+     */
+    protected @NotNull Path getImageUploadPath() {
+        final var uploadPathString = (String) request.getServletContext()
+                .getAttribute(AppAttributes.TARIFF_IMAGE_UPLOAD_PATH);
+        return Paths.get(uploadPathString);
     }
 
     /**

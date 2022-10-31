@@ -17,9 +17,6 @@ public class Messages {
 
     public static final String INVALID_LOGIN_OR_PASS = "Invalid login or password";
 
-    public static final String SESSIONS_NOT_ALLOWED = "Sessions are not allowed. " +
-            "Please turn on the cookies and try again";
-
     public static final String SERVICE_INSERT_SUCCESS = "Service inserted successfully";
 
     public static final String SERVICE_INSERT_FAIL = "Failed to insert service";
@@ -51,4 +48,8 @@ public class Messages {
     public static final String UNSUBSCRIBE_SUCCESS = "You successfully unsubscribed!";
 
     public static final String UNSUBSCRIBE_FAIL = "Failed to unsubscribe!";
+
+    public static final String TARIFF_EDIT_SUCCESS = "Tariff successfully edited!";
+
+    public static final String TARIFF_EDIT_FAIL = "Failed to edit tariff!";
 }

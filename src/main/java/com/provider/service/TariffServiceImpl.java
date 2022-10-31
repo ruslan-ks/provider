@@ -18,10 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public class TariffServiceImpl extends AbstractService implements TariffService {
     private static final Logger logger = LoggerFactory.getLogger(TariffServiceImpl.class);
@@ -186,6 +183,59 @@ public class TariffServiceImpl extends AbstractService implements TariffService 
         } catch (SQLException ex) {
             logger.error("Failed to close connection", ex);
             throw new DBException(ex);
+        }
+    }
+
+    @Override
+    public boolean updateTariff(@NotNull final Tariff tariff) throws DBException, ValidationException {
+        throwIfInvalid(tariff.getTitle(), tariff.getDescription(), tariff.getImageFileName());
+        final TariffDao tariffDao = daoFactory.newTariffDao();
+        try (var connection = connectionSupplier.get()) {
+            tariffDao.setConnection(connection);
+            tariffDao.findByKey(tariff.getId())
+                    .orElseThrow(NoSuchElementException::new);
+            return tariffDao.update(tariff);
+        } catch (SQLException ex) {
+            logger.error("Failed to close connection!", ex);
+            throw new DBException(ex);
+        }
+    }
+
+    @Override
+    public boolean upsertTariffTranslation(@NotNull final Tariff tariff, @NotNull String locale)
+            throws DBException, ValidationException {
+        throwIfInvalid(tariff.getTitle(), tariff.getDescription(), tariff.getImageFileName());
+        final TariffDao tariffDao = daoFactory.newTariffDao();
+        try (var transaction = Transaction.of(connectionSupplier.get(), tariffDao)) {
+            try {
+                final Tariff foundTariff = tariffDao.findByKey(tariff.getId())
+                        .orElseThrow(NoSuchElementException::new);
+                foundTariff.setStatus(tariff.getStatus());
+                foundTariff.setImageFileName(tariff.getImageFileName());
+                final boolean tariffUpdated = tariffDao.update(foundTariff);
+                final boolean translationUpserted = tariffDao.upsertTranslation(tariff, locale);
+                if (tariffUpdated && translationUpserted) {
+                    transaction.commit();
+                    return true;
+                }
+            } catch (Throwable ex) {
+                logger.error("Failed to execute transaction", ex);
+                logger.error("Failed to upsert tariff translation: {}", tariff);
+                transaction.rollback();
+                throw ex;
+            }
+            transaction.rollback();
+        }
+        return false;
+    }
+
+    private void throwIfInvalid(@NotNull String title, @NotNull String description,
+                                        @NotNull String imageFileName) throws ValidationException {
+        final TariffValidator validator = validatorFactory.getTariffValidator();
+        if (!validator.isValidTitle(title)
+                || !validator.isValidDescription(description)
+                || !validator.isValidImageFileName(imageFileName)) {
+            throw new ValidationException("Invalid Tariff property values");
         }
     }
 }

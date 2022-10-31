@@ -1,8 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.provider.constants.attributes.RequestAttributes" %>
+<%@ page import="com.provider.constants.attributes.SessionAttributes" %>
 <%@ page import="com.provider.constants.params.ServiceParams" %>
 <%@ page import="com.provider.constants.params.PaginationParams" %>
 <%@ page import="com.provider.constants.params.TariffParams" %>
+<%@ page import="com.provider.constants.params.CommandParams" %>
+<%@ page import="com.provider.constants.params.EditParams" %>
 <%@ page import="com.provider.constants.Regex" %>
 <%@ page import="com.provider.constants.Paths" %>
 <%@ taglib prefix="pro" uri="http://provider.com" %>
@@ -14,8 +17,10 @@
 </head>
 <body>
     <pro:header/>
+    <c:set var="settings" value="${sessionScope[SessionAttributes.USER_SETTINGS]}" scope="page"/>
     <div class="container-md my-5 p-sm-3">
         <div class="row">
+            <%-- New service form --%>
             <form method="post" action="${pageContext.request.contextPath}/${Paths.ADD_SERVICE}"
                   class="col p-3 border-0 shadow needs-validation" novalidate>
                 <h5><fmt:message key="service.addService"/></h5>
@@ -42,6 +47,8 @@
                     </div>
                 </div>
             </form>
+
+            <%-- Services table --%>
             <div class="col">
                 <table class="table table-striped">
                     <tr>
@@ -61,6 +68,7 @@
         </div>
 
         <div class="border border-0 shadow p-sm-4">
+            <%-- New tariff form --%>
             <form method="post" action="${pageContext.request.contextPath}/${Paths.ADD_TARIFF}"
                   enctype="multipart/form-data" id="addTariffForm" class="row needs-validation" novalidate>
                 <div class="row">
@@ -158,6 +166,7 @@
                 <th><fmt:message key="tariff.status"/></th>
                 <th><fmt:message key="tariff.duration"/></th>
                 <th><fmt:message key="services"/></th>
+                <th></th>
             </tr>
             <c:forEach var="tariffDto" items="${requestScope[RequestAttributes.TARIFFS]}">
                 <tr>
@@ -174,6 +183,17 @@
                         <c:forEach var="service" items="${tariffDto.services}">
                             [${service.id}] ${service.name}<br>
                         </c:forEach>
+                    </td>
+                    <td>
+                        <form action="">
+                            <input type="text" name="${CommandParams.COMMAND}"
+                                   value="${CommandParams.EDIT_TARIFF_PAGE}" readonly hidden aria-label="command">
+                            <input type="number" name="${TariffParams.ID}" value="${tariffDto.tariff.id}"
+                                   readonly hidden aria-label="tariff id">
+                            <input type="text" name="${EditParams.LOCALE}" aria-label="edit locale"
+                                   value="${settings.locale}" readonly hidden>
+                            <input type="submit" class="btn btn-link" value="edit">
+                        </form>
                     </td>
                 </tr>
             </c:forEach>

@@ -10,6 +10,7 @@ import com.provider.entity.product.Tariff;
 import com.provider.entity.product.TariffDuration;
 import com.provider.sorting.TariffOrderByField;
 import com.provider.sorting.TariffOrderRule;
+import com.provider.util.Checks;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -289,6 +290,53 @@ public class PostgresTariffDao extends TariffDao {
             throw new DBException("Failed to get tariffs count from db. Query: " + SQL_COUNT_ALL);
         } catch (SQLException ex) {
             logger.error("Failed to count tariffs", ex);
+            throw new DBException(ex);
+        }
+    }
+
+    private static final String SQL_UPDATE = "UPDATE tariffs " +
+            "SET title = ?, description = ?, status = ?, image_file_name = ? " +
+            "WHERE id = ?";
+
+    @Override
+    public boolean update(@NotNull Tariff tariff) throws DBException {
+        Checks.throwIfInvalidId(tariff.getId());
+        try (var preparedStatement = connection.prepareStatement(SQL_UPDATE)) {
+            int i = 1;
+            preparedStatement.setString(i++, tariff.getTitle());
+            preparedStatement.setString(i++, tariff.getDescription());
+            preparedStatement.setString(i++, tariff.getStatus().name());
+            preparedStatement.setString(i++, tariff.getImageFileName());
+            preparedStatement.setInt(i, tariff.getId());
+            return preparedStatement.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            logger.error("Failed to update tariff: {}", tariff);
+            logger.error("Failed to update tariff!", ex);
+            throw new DBException(ex);
+        }
+    }
+
+    private static final String SQL_UPSERT = """
+            INSERT INTO tariff_translations(tariff_id, locale, title, description)
+            VALUES (?, ?, ?, ?)
+            ON CONFLICT (tariff_id, locale) DO UPDATE
+                SET title = excluded.title,
+                    description = excluded.description;
+            """;
+
+    @Override
+    public boolean upsertTranslation(@NotNull Tariff tariff, @NotNull String locale) throws DBException {
+        Checks.throwIfInvalidId(tariff.getId());
+        try (var preparedStatement = connection.prepareStatement(SQL_UPSERT)) {
+            int i = 1;
+            preparedStatement.setInt(i++, tariff.getId());
+            preparedStatement.setString(i++, locale);
+            preparedStatement.setString(i++, tariff.getTitle());
+            preparedStatement.setString(i, tariff.getDescription());
+            return preparedStatement.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            logger.error("Failed to upsert tariff translation: {}", tariff);
+            logger.error("Failed to upsert tariff translation!", ex);
             throw new DBException(ex);
         }
     }

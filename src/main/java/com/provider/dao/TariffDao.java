@@ -75,4 +75,25 @@ public abstract class TariffDao extends EntityDao<Integer, Tariff> {
      * @throws DBException if SQLException occurred
      */
     public abstract int countActive() throws DBException;
+
+    /**
+     * Updates tariff data: title, description, status, imageFileName.<br>
+     * Tariff <strong> price, duration and included services are never updated</strong>
+     * @param tariff tariff to be updated
+     * @return true if tariff data was successfully updated
+     * @throws DBException if SQLException occurred
+     * @throws IllegalArgumentException if tariff id is <= 0
+     */
+    public abstract boolean update(@NotNull Tariff tariff) throws DBException;
+
+    /**
+     * Updates tariff localization data only - title and description
+     * Creates new localization record if one does not exist in the database
+     * @param tariff tariff to be updated
+     * @param locale locale
+     * @return true if tariff data was successfully updated
+     * @throws DBException if SQLException occurred
+     * @throws IllegalArgumentException if tariff id is <= 0
+     */
+    public abstract boolean upsertTranslation(@NotNull Tariff tariff, @NotNull String locale) throws DBException;
 }

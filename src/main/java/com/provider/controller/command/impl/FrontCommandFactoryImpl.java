@@ -49,6 +49,9 @@ public class FrontCommandFactoryImpl implements FrontCommandFactory {
         mutableTmpMap.put(SUBSCRIBE, SubscribeCommand.class);
         mutableTmpMap.put(UNSUBSCRIBE, UnsubscribeCommand.class);
         mutableTmpMap.put(DOWNLOAD_TARIFF_PDF, DownloadTariffPdfCommand.class);
+        mutableTmpMap.put(EDIT_TARIFF_PAGE, EditTariffPageCommand.class);
+        mutableTmpMap.put(EDIT_TARIFF, EditTariffCommand.class);
+        mutableTmpMap.put(CHANGE_TARIFF_IMAGE, ChangeTariffImageCommand.class);
 
         commandClassMap = Collections.unmodifiableMap(mutableTmpMap);
     }

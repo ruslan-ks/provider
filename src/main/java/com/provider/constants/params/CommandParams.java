@@ -84,4 +84,19 @@ public class CommandParams {
      * Download pdf command
      */
     public static final String DOWNLOAD_TARIFF_PDF = "downloadTariffPdf";
+
+    /**
+     * Edit tariff page command
+     */
+    public static final String EDIT_TARIFF_PAGE = "editTariffPage";
+
+    /**
+     * Edit tariff command
+     */
+    public static final String EDIT_TARIFF = "editTariff";
+
+    /**
+     * Change tariff image command
+     */
+    public static final String CHANGE_TARIFF_IMAGE = "changeTariffImage";
 }

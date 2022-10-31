@@ -43,6 +43,11 @@ public class Paths {
     public static final String CATALOG_JSP = "/WEB-INF/pages/catalog.jsp";
 
     /**
+     * Edit tariff jsp
+     */
+    public static final String EDIT_TARIFF_JSP = "/WEB-INF/pages/editTariff.jsp";
+
+    /**
      * Front controller servlet
      */
     public static final String CONTROLLER = "controller";
@@ -121,5 +126,14 @@ public class Paths {
      */
     public static final String SUBSCRIBE = CONTROLLER + "?" + CommandParams.COMMAND + "=" + CommandParams.SUBSCRIBE;
 
+    /**
+     * Unsubscribe action command
+     */
     public static final String UNSUBSCRIBE = CONTROLLER + "?" + CommandParams.COMMAND + "=" + CommandParams.UNSUBSCRIBE;
+
+    /**
+     * Edit tariff page command
+     */
+    public static final String EDIT_TARIFF_PAGE = CONTROLLER + "?" + CommandParams.COMMAND + "="
+            + CommandParams.EDIT_TARIFF_PAGE;
 }

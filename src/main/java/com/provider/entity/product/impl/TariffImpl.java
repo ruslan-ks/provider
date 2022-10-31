@@ -9,11 +9,11 @@ import java.util.Objects;
 
 public class TariffImpl implements Tariff {
     private int id;
-    private final String title;
-    private final String description;
+    private String title;
+    private String description;
     private Status status;
     private final BigDecimal usdPrice;
-    private final String imageFileName;
+    private String imageFileName;
 
     protected TariffImpl(int id, @NotNull String title, @NotNull String description, @NotNull Status status,
                          @NotNull BigDecimal usdPrice, @NotNull String imageFileName) {
@@ -52,8 +52,18 @@ public class TariffImpl implements Tariff {
     }
 
     @Override
+    public void setTitle(@NotNull String title) {
+        this.title = title;
+    }
+
+    @Override
     public @NotNull String getDescription() {
         return description;
+    }
+
+    @Override
+    public void setDescription(@NotNull String description) {
+        this.description = description;
     }
 
     @Override
@@ -63,10 +73,13 @@ public class TariffImpl implements Tariff {
 
     @Override
     public void setStatus(@NotNull Status newStatus) {
+        if (newStatus == status) {
+            return;
+        }
         if (!Status.FLOW.contains(Pair.of(status, newStatus))) {
             throw new IllegalStateException();
         }
-        this.status = newStatus;
+        status = newStatus;
     }
 
     @Override
@@ -77,6 +90,11 @@ public class TariffImpl implements Tariff {
     @Override
     public @NotNull String getImageFileName() {
         return imageFileName;
+    }
+
+    @Override
+    public void setImageFileName(@NotNull String imageFileName) {
+        this.imageFileName = imageFileName;
     }
 
     @Override

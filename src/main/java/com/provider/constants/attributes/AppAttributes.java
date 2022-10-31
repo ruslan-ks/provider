@@ -13,7 +13,7 @@ public class AppAttributes {
     public static final String LOCALE_LANG_MAP = "localeLangMap";
 
     /**
-     * Path to the directory where tariff images are uploaded
+     * <strong>Real</strong> path to the directory where tariff images are uploaded
      * Parameter type: {@code java.lang.String}
      */
     public static final String TARIFF_IMAGE_UPLOAD_PATH = "tariffImageUploadPath";

@@ -122,4 +122,32 @@ public interface TariffService {
      */
     int countDistinctTariffsIncludingServices(@NotNull Set<Integer> serviceIds, boolean activeOnly)
             throws DBException;
+
+    /**
+     * Updates tariff data: title, description, status, imageFileName.<br>
+     * Tariff <strong> price, duration and included services are never updated</strong>
+     * @param tariff tariff to be updated
+     * @return true if tariff data was successfully updated
+     * @throws DBException if {@link com.provider.dao.TariffDao} throws it
+     * @throws ValidationException if tariff has any invalid fields
+     * (according to {@link com.provider.validation.TariffValidator})
+     * @throws IllegalArgumentException if tariff id is <= 0
+     * @throws java.util.NoSuchElementException if tariff does not exist
+     */
+    boolean updateTariff(@NotNull Tariff tariff) throws DBException, ValidationException;
+
+    /**
+     * Updates tariff localization data: title, description, status, imageFileName.<br>
+     * Tariff <strong> price, duration and included services are never updated</strong>
+     * Creates new localization record if one does not exist in the database
+     * @param tariff tariff WITH TRANSLATED CONTENT to be updated
+     * @param locale locale
+     * @return true if tariff data was successfully updated
+     * @throws DBException if {@link com.provider.dao.TariffDao} throws it
+     * @throws ValidationException if tariff has any invalid fields
+     * (according to {@link com.provider.validation.TariffValidator})
+     * @throws IllegalArgumentException if tariff id is <= 0
+     * @throws java.util.NoSuchElementException if tariff does not exist
+     */
+    boolean upsertTariffTranslation(@NotNull Tariff tariff, @NotNull String locale) throws DBException, ValidationException;
 }

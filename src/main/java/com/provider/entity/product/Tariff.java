@@ -36,7 +36,11 @@ public interface Tariff extends Entity {
 
     @NotNull String getTitle();
 
+    void setTitle(@NotNull String title);
+
     @NotNull String getDescription();
+
+    void setDescription(@NotNull String description);
 
     @NotNull Status getStatus();
 
@@ -51,4 +55,6 @@ public interface Tariff extends Entity {
     @NotNull BigDecimal getUsdPrice();
 
     @NotNull String getImageFileName();
+
+    void setImageFileName(@NotNull String imageFileName);
 }

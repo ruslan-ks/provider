@@ -48,4 +48,9 @@ public class RequestAttributes {
      * Attribute of type Iterable<{@link com.provider.entity.dto.SubscriptionTariffDto}>
      */
     public static final String USER_ACTIVE_SUBSCRIPTION_DTOS = "userSubscriptionDtos";
+
+    /**
+     * Attribute of type {@link com.provider.entity.dto.TariffDto}
+     */
+    public static final String TARIFF_DTO = "tariffDto";
 }
