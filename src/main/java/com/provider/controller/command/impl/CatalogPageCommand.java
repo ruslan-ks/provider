@@ -43,6 +43,8 @@ public class CatalogPageCommand extends FrontCommand {
 
     private static final String DEFAULT_TARIFF_ORDER_BY_FIELD = TariffOrderByField.TITLE.name();
 
+    private static final int DEFAULT_PAGE_SIZE = 3;
+
     public CatalogPageCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
         super(request, response);
     }
@@ -54,7 +56,7 @@ public class CatalogPageCommand extends FrontCommand {
 
         final TariffService tariffService = serviceFactory.getTariffService();
 
-        final PaginationHelper paginationHelper = getPaginationHelper();
+        final PaginationHelper paginationHelper = getPaginationHelper(DEFAULT_PAGE_SIZE);
         final int pageSize = paginationHelper.getPageSize();
         final long offset = paginationHelper.getOffset();
 

@@ -191,6 +191,19 @@ public abstract class FrontCommand {
     }
 
     /**
+     * Returns new PaginationHelper object
+     * @param defaultPageSize default page records count - it is applied if there is no pageSize parameter specified
+     * @return new PaginationHelper object
+     * @throws CommandParamException if pagination parameters parsing fails
+     */
+    protected PaginationHelper getPaginationHelper(int defaultPageSize) throws CommandParamException {
+        if (defaultPageSize < 1) {
+            throw new IllegalArgumentException();
+        }
+        return new PaginationHelper(defaultPageSize);
+    }
+
+    /**
      * Useful class for pagination implementation<br>
      * When instantiating this class, pagination request parameters are obtained and parsed.<br>
      * Pagination parameter names constants are declared in {@link com.provider.constants.params.PaginationParams}<br>

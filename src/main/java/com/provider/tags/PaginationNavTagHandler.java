@@ -54,10 +54,13 @@ public class PaginationNavTagHandler extends SimpleTagSupport implements Dynamic
                 ? navItem(pageNumber - 1, PREVIOUS)
                 : disabledNavItem(PREVIOUS));
 
-        writer.write(navItem(pageNumber, String.valueOf(pageNumber), ACTIVE_STYLE_CLASS));
-
-        for (int itemIndex = pageNumber + 1; itemIndex <= pageCount && itemIndex <= itemsCount; ++itemIndex) {
-            writer.write(navItem(itemIndex, String.valueOf(itemIndex)));
+        int startIndex = Math.max(1, pageNumber - 2);
+        for (int itemIndex = startIndex; itemIndex <= pageCount && itemIndex <= (itemsCount + startIndex - 1); itemIndex++) {
+            if (itemIndex == pageNumber) {
+                writer.write(navItem(pageNumber, String.valueOf(pageNumber), ACTIVE_STYLE_CLASS));
+            } else {
+                writer.write(navItem(itemIndex, String.valueOf(itemIndex)));
+            }
         }
 
         writer.write(pageNumber < pageCount && pageNumber < itemsCount
