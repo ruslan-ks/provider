@@ -38,6 +38,8 @@ public class PaginationNavTagHandler extends SimpleTagSupport implements Dynamic
 
     @Override
     public void doTag() throws IOException {
+        setHref();
+
         final int pageNumber = getPageNumber();
         final JspWriter writer = getJspContext().getOut();
 
@@ -64,6 +66,20 @@ public class PaginationNavTagHandler extends SimpleTagSupport implements Dynamic
 
         writer.write("</ul>");
         writer.write("</nav>");
+    }
+
+    private void setHref() {
+        final PageContext pageContext = (PageContext) getJspContext();
+        final String contextPath = pageContext.getServletContext().getContextPath();
+        final String servletPart = (String) pageContext.getRequest()
+                .getAttribute("jakarta.servlet.forward.servlet_path");
+        String queryPart = (String) pageContext.getRequest()
+                .getAttribute("jakarta.servlet.forward.query_string");
+        queryPart = queryPart != null && !queryPart.isBlank()
+                ? "?" + queryPart
+                : "";
+
+        href = contextPath + servletPart + queryPart;
     }
 
     private int getPageNumber() {
@@ -97,11 +113,6 @@ public class PaginationNavTagHandler extends SimpleTagSupport implements Dynamic
     @SuppressWarnings("unused")
     public void setPageCount(int pageCount) {
         this.pageCount = pageCount;
-    }
-
-    @SuppressWarnings("unused")
-    public void setHref(String href) {
-        this.href = href;
     }
 
     @SuppressWarnings("unused")

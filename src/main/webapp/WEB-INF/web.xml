@@ -15,6 +15,7 @@
         <param-name>defaultLocale</param-name>
         <param-value>en</param-value>
     </context-param>
+
     <!-- JSP mappings are placed here. Servlet mappings are configured using annotations -->
     <servlet>
         <servlet-name>signInJsp</servlet-name>

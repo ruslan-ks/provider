@@ -85,16 +85,9 @@
         </div>
     </div>
 
-    <%--
-    URL with parameters should be passed to the pro:paginationNav,
-    so all the filtering and ordering params will be saved
-    --%>
-    <c:set var="urlWithParams"
-           value="${pageContext.request.contextPath}${requestScope['jakarta.servlet.forward.servlet_path']}?${requestScope['jakarta.servlet.forward.query_string']}"/>
     <div class="row">
         <div class="col-2 col-lg-3 col-md-5 col-sm mx-auto">
             <pro:paginationNav pageCount="${requestScope[RequestAttributes.PAGE_COUNT]}"
-                               href="${urlWithParams}"
                                pageParam="${PaginationParams.PAGE_NUMBER}"/>
         </div>
     </div>

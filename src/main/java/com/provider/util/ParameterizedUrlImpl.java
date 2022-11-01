@@ -19,10 +19,12 @@ public class ParameterizedUrlImpl implements ParameterizedUrl {
             final String[] urlParts =  url.split("[?]");
             requestUri = urlParts[0];
 
-            final String[] urlParams = urlParts[1].split("&");
-            Arrays.stream(urlParams)
-                    .map(ParameterizedUrlImpl::splitParam)
-                    .forEach(params::add);
+            if (urlParts.length > 1) {
+                final String[] urlParams = urlParts[1].split("&");
+                Arrays.stream(urlParams)
+                        .map(ParameterizedUrlImpl::splitParam)
+                        .forEach(params::add);
+            }
         } else {
             requestUri = url;
         }

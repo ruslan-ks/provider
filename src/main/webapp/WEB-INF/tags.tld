@@ -31,12 +31,6 @@
             <type>int</type>
         </attribute>
         <attribute>
-            <name>href</name>
-            <required>true</required>
-            <rtexprvalue>true</rtexprvalue>
-            <type>java.lang.String</type>
-        </attribute>
-        <attribute>
             <!-- Page parameter name - request parameter that will contain page number -->
             <name>pageParam</name>
             <required>true</required>

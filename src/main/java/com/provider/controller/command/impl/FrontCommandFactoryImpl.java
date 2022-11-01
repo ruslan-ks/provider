@@ -60,15 +60,13 @@ public class FrontCommandFactoryImpl implements FrontCommandFactory {
     public @NotNull FrontCommand getCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,
                                             @NotNull ServletConfig config)
             throws IllegalCommandException {
-        final String commandParam = request.getParameter(CommandParams.COMMAND);
-        if (commandParam == null) {
-            throw new IllegalCommandException("Parameter '" + CommandParams.COMMAND + "' is null");
+        final Optional<String> commandParam = Optional.ofNullable(request.getParameter(CommandParams.COMMAND));
+        if (commandParam.isEmpty()) {
+            return new CatalogPageCommand(request, response);
         }
-
-        final Optional<Class<? extends FrontCommand>> foundCommandClass =
-                Optional.ofNullable(commandClassMap.get(commandParam));
+        final Optional<Class<? extends FrontCommand>> foundCommandClass = commandParam.map(commandClassMap::get);
         if (foundCommandClass.isEmpty()) {
-            throw new IllegalCommandException("Unknown command: " + commandParam);
+            throw new IllegalCommandException("Illegal command: " + commandParam);
         }
         try {
             return foundCommandClass.get()
