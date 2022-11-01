@@ -3,7 +3,10 @@ package com.provider.dao.postgres;
 import com.provider.dao.UserDao;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
+import com.provider.util.Checks;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,6 +16,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class PostgresUserDao extends UserDao {
+    private static final Logger logger = LoggerFactory.getLogger(PostgresUserDao.class);
+
     PostgresUserDao() {}
 
     private static final String SQL_USER_FIELDS = "id AS id, " +
@@ -59,6 +64,8 @@ public class PostgresUserDao extends UserDao {
                 throw new DBException("Table users has been updated, but no generated keys returned");
             }
         } catch (SQLException ex) {
+            logger.error("Failed to insert user: {}", user);
+            logger.error("Failed to insert user!", ex);
             throw new DBException(ex);
         }
         return false;
@@ -79,7 +86,8 @@ public class PostgresUserDao extends UserDao {
                 return Optional.of(fetchOne(resultSet));
             }
         } catch (SQLException ex) {
-
+            logger.error("Failed to find user by login! Login: {}", login);
+            logger.error("Failed to find user by login!", ex);
             throw new DBException(ex);
         }
         return Optional.empty();
@@ -95,9 +103,7 @@ public class PostgresUserDao extends UserDao {
 
     @Override
     public List<User> findPage(long offset, int limit) throws DBException {
-        if (offset < 0 || limit <= 0) {
-            throw new IllegalArgumentException("Invalid range: offset: " + offset + ", limit: " + limit);
-        }
+        Checks.throwIfInvalidOffsetOrLimit(offset, limit);
         try (var preparedStatement = connection.prepareStatement(SQL_FIND_PAGE)) {
             int i = 1;
             preparedStatement.setLong(i++, offset);
@@ -105,6 +111,7 @@ public class PostgresUserDao extends UserDao {
             final ResultSet resultSet = preparedStatement.executeQuery();
             return fetchAll(resultSet);
         } catch (SQLException ex) {
+            logger.error("Failed to find users page!", ex);
             throw new DBException(ex);
         }
     }
@@ -119,6 +126,7 @@ public class PostgresUserDao extends UserDao {
                 return resultSet.getLong(1);
             }
         } catch (SQLException ex) {
+            logger.error("Failed to get user count!", ex);
             throw new DBException(ex);
         }
         throw new DBException("Couldn't get users count");
@@ -136,6 +144,7 @@ public class PostgresUserDao extends UserDao {
 
     @Override
     public boolean update(@NotNull User user) throws DBException {
+        Checks.throwIfInvalidId(user.getId());
         try (var preparedStatement = connection.prepareStatement(SQL_UPDATE)) {
             int i = 1;
             preparedStatement.setString(i++, user.getName());
@@ -146,6 +155,8 @@ public class PostgresUserDao extends UserDao {
             preparedStatement.setLong(i, user.getId());
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException ex) {
+            logger.error("Failed to update user: {}", user);
+            logger.error("Failed to update user!", ex);
             throw new DBException(ex);
         }
     }
@@ -162,18 +173,15 @@ public class PostgresUserDao extends UserDao {
             final User.Status status = User.Status.valueOf(resultSet.getString("status"));
             return entityFactory.newUser(id, name, surname, login, phone, role, status);
         } catch (SQLException ex) {
+            logger.error("Failed to fetch user data!", ex);
             throw new DBException(ex);
         }
     }
 
-    private @NotNull List<User> fetchAll(@NotNull ResultSet resultSet) throws DBException {
+    private @NotNull List<User> fetchAll(@NotNull ResultSet resultSet) throws DBException, SQLException {
         final List<User> userList = new ArrayList<>();
-        try {
-            while (resultSet.next()) {
-                userList.add(fetchOne(resultSet));
-            }
-        } catch (SQLException ex) {
-            throw new DBException(ex);
+        while (resultSet.next()) {
+            userList.add(fetchOne(resultSet));
         }
         return userList;
     }

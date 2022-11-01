@@ -25,4 +25,15 @@ public class Checks {
             throw new IllegalArgumentException("Invalid id: " + id);
         }
     }
+
+    /**
+     * Throws IllegalArgumentException if offset or limit are invalid
+     * @param offset offset to be checked
+     * @param limit limit to be checked
+     */
+    public static void throwIfInvalidOffsetOrLimit(long offset, int limit) {
+        if (offset < 0 || limit <= 0) {
+            throw new IllegalArgumentException("Invalid page: offset: " + offset + ", limit: " + limit);
+        }
+    }
 }

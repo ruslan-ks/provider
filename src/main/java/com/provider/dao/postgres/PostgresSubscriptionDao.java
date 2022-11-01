@@ -131,7 +131,8 @@ public class PostgresSubscriptionDao extends SubscriptionDao {
             "ORDER BY sub.last_payment_time DESC";
 
     @Override
-    public List<SubscriptionTariffDto> findSubscriptionsFullInfo(long userAccountId, @NotNull String locale) throws DBException {
+    public List<SubscriptionTariffDto> findSubscriptionsFullInfo(long userAccountId, @NotNull String locale)
+            throws DBException {
         Checks.throwIfInvalidId(userAccountId);
         try (var preparedStatement = connection.prepareStatement(SQL_FIND_FULL_INFO_BY_USER_ACCOUNT)) {
             int i = 1;

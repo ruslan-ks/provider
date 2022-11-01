@@ -5,12 +5,15 @@ import com.provider.dao.exception.DBException;
 import com.provider.entity.user.UserPassword;
 import com.provider.entity.user.hashing.PasswordHashing;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 
 public class PostgresUserPasswordDao extends UserPasswordDao {
+    private static final Logger logger = LoggerFactory.getLogger(PostgresUserPasswordDao.class);
 
     PostgresUserPasswordDao() {}
 
@@ -27,6 +30,7 @@ public class PostgresUserPasswordDao extends UserPasswordDao {
             preparedStatement.setString(i, userPassword.getHashMethod().name());
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException ex) {
+            logger.error("Failed to insert user password!", ex);
             throw new DBException(ex);
         }
     }
@@ -54,6 +58,7 @@ public class PostgresUserPasswordDao extends UserPasswordDao {
             final String hashMethod = resultSet.getString("hash_method");
             return newUserPasswordInstance(userId, hash, salt, PasswordHashing.HashMethod.valueOf(hashMethod));
         } catch (SQLException ex) {
+            logger.error("Failed to fetch user password data!", ex);
             throw new DBException(ex);
         }
     }

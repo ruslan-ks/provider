@@ -4,12 +4,15 @@ import com.provider.dao.TariffDurationDao;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.product.TariffDuration;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 
 public class PostgresTariffDurationDao extends TariffDurationDao {
+    private static final Logger logger = LoggerFactory.getLogger(PostgresTariffDurationDao.class);
 
     private static final String SQL_FIND_BY_ID =
             "SELECT " +
@@ -35,6 +38,8 @@ public class PostgresTariffDurationDao extends TariffDurationDao {
             preparedStatement.setInt(i, tariffDuration.getMinutes());
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException ex) {
+            logger.error("Failed to insert tariff duration: {}", tariffDuration);
+            logger.error("Failed to insert tariff duration!", ex);
             throw new DBException(ex);
         }
     }
@@ -47,6 +52,7 @@ public class PostgresTariffDurationDao extends TariffDurationDao {
             final int minutes = resultSet.getInt("tariff_duration_minutes");
             return entityFactory.newTariffDuration(tariffId, months, minutes);
         } catch (SQLException ex) {
+            logger.error("Failed to fetch one TariffDuration!", ex);
             throw new DBException(ex);
         }
     }

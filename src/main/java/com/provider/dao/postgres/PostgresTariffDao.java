@@ -57,11 +57,11 @@ public class PostgresTariffDao extends TariffDao {
                     "COALESCE(st.name, s.name) AS service_name, " +
                     "COALESCE(st.description, s.description) AS service_description " +
             "FROM tariffs t " +
-            "LEFT JOIN tariff_durations td " +
+            "INNER JOIN tariff_durations td " +
                     "ON td.tariff_id = t.id " +
-            "LEFT JOIN tariff_services ts " +
+            "INNER JOIN tariff_services ts " +
                     "ON ts.tariff_id = t.id " +
-            "LEFT JOIN services s " +
+            "INNER JOIN services s " +
                     "ON s.id = ts.service_id " +
             "LEFT JOIN tariff_translations tt " +
                     "ON tt.tariff_id = t.id AND tt.locale = ? " +
@@ -71,6 +71,7 @@ public class PostgresTariffDao extends TariffDao {
 
     @Override
     public @NotNull Optional<TariffDto> findFullInfoByKey(int id, @NotNull String locale) throws DBException {
+        Checks.throwIfInvalidId(id);
         try (var preparedStatement = connection.prepareStatement(SQL_FIND_FULL_INFO_BY_ID)) {
             int i = 1;
             preparedStatement.setString(i++, locale);
@@ -116,6 +117,7 @@ public class PostgresTariffDao extends TariffDao {
                                                      @NotNull Set<TariffOrderRule> orderRules,
                                                      @NotNull Set<Integer> serviceIds,
                                                      boolean activeOnly) throws DBException {
+        Checks.throwIfInvalidOffsetOrLimit(offset, limit);
         final PostgresQueryBuilder queryBuilder = PostgresQueryBuilder.of("tariffs t")
                 .addSelect(TARIFF_AND_DURATION_FIELDS, true)
                 .addInnerJoin("tariff_durations td", "td.tariff_id = t.id")
@@ -216,9 +218,8 @@ public class PostgresTariffDao extends TariffDao {
 
     @Override
     public boolean addServices(int tariffId, @NotNull Set<Integer> serviceIds) throws DBException {
-        if (tariffId <= 0) {
-            throw new IllegalArgumentException("tariffId <= 0: tariffId = " + tariffId);
-        }
+        Checks.throwIfInvalidId(tariffId);
+        serviceIds.forEach(Checks::throwIfInvalidId);
         try (var preparedStatement = connection.prepareStatement(SQL_ADD_SERVICE)) {
             for (var serviceId : serviceIds) {
                 int i = 1;
@@ -241,7 +242,7 @@ public class PostgresTariffDao extends TariffDao {
                     "COALESCE(st.name, s.name) AS service_name, " +
                     "COALESCE(st.description, s.description) AS service_description " +
             "FROM tariff_services ts " +
-            "LEFT JOIN services s " +
+            "INNER JOIN services s " +
                     "ON s.id = ts.service_id " +
             "LEFT JOIN service_translations st " +
                     "ON st.service_id = s.id AND st.locale = ? " +
@@ -250,9 +251,7 @@ public class PostgresTariffDao extends TariffDao {
 
     @Override
     public List<Service> findTariffServices(int tariffId, @NotNull String locale) throws DBException {
-        if (tariffId <= 0) {
-            throw new IllegalArgumentException();
-        }
+        Checks.throwIfInvalidId(tariffId);
         try (var preparedStatement = connection.prepareStatement(SQL_FIND_TARIFF_SERVICES)) {
             int i = 1;
             preparedStatement.setString(i++, locale);
@@ -316,7 +315,7 @@ public class PostgresTariffDao extends TariffDao {
         }
     }
 
-    private static final String SQL_UPSERT = """
+    private static final String SQL_UPSERT_TRANSLATION = """
             INSERT INTO tariff_translations(tariff_id, locale, title, description)
             VALUES (?, ?, ?, ?)
             ON CONFLICT (tariff_id, locale) DO UPDATE
@@ -327,7 +326,7 @@ public class PostgresTariffDao extends TariffDao {
     @Override
     public boolean upsertTranslation(@NotNull Tariff tariff, @NotNull String locale) throws DBException {
         Checks.throwIfInvalidId(tariff.getId());
-        try (var preparedStatement = connection.prepareStatement(SQL_UPSERT)) {
+        try (var preparedStatement = connection.prepareStatement(SQL_UPSERT_TRANSLATION)) {
             int i = 1;
             preparedStatement.setInt(i++, tariff.getId());
             preparedStatement.setString(i++, locale);

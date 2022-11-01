@@ -11,13 +11,6 @@ import java.util.Set;
 
 public abstract class ServiceDao extends EntityDao<Integer, Service> {
     /**
-     * Returns all existing services
-     * @return list of services obtained via 'SELECT *'
-     * @throws DBException if SQLException occurred
-     */
-    public abstract @NotNull List<Service> findAll() throws DBException;
-
-    /**
      * Returns all existing services translated to the specified language if translation exists
      * @param locale desired language
      * @return list of services translated to the specified language if translation exists

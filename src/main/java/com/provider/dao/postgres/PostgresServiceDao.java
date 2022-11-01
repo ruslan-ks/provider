@@ -55,35 +55,19 @@ public class PostgresServiceDao extends ServiceDao {
         }
     }
 
-    private static final String SQL_FIND_ALL =
-            "SELECT " +
-                    "id AS service_id, " +
-                    "name AS service_name, " +
-                    "description AS description " +
-                    "FROM services";
-
-    @Override
-    public @NotNull List<Service> findAll() throws DBException {
-        try (var statement = connection.createStatement();
-             var resultSet = statement.executeQuery(SQL_FIND_ALL)) {
-            return fetchAll(resultSet);
-        } catch (SQLException ex) {
-            logger.error("Failed to find all services!", ex);
-            throw new DBException(ex);
-        }
-    }
-
     private static final String SQL_FIND_BY_ID_LOCALIZED =
             "SELECT " +
                     "s.id AS service_id, " +
                     "COALESCE(st.name, s.name) AS service_name, " +
                     "COALESCE(st.description, s.description) AS service_description " +
             "FROM services s " +
-                    "LEFT JOIN service_translations st ON st.service_id = s.id AND st.locale = ? " +
+            "LEFT JOIN service_translations st " +
+                    "ON st.service_id = s.id AND st.locale = ? " +
             "WHERE s.id = ?";
 
     public @NotNull Optional<Service> findByKey(@NotNull Integer key, @NotNull String locale)
             throws DBException {
+        Checks.throwIfInvalidId(key);
         try (var preparedStatement = connection.prepareStatement(SQL_FIND_BY_ID_LOCALIZED)) {
             preparedStatement.setString(1, locale);
             preparedStatement.setInt(2, key);
@@ -117,7 +101,7 @@ public class PostgresServiceDao extends ServiceDao {
                 throw new DBException("Service was inserted, but no keys were generated");
             }
         } catch (SQLException ex) {
-            logger.error("Failed to insert service! Service {}", service);
+            logger.error("Failed to insert service! Service: {}", service);
             logger.error("Failed to insert service!", ex);
             throw new DBException(ex);
         }
