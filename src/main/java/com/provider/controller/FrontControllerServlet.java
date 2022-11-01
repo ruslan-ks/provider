@@ -1,8 +1,8 @@
 package com.provider.controller;
 
+import com.provider.constants.Paths;
 import com.provider.controller.command.FrontCommand;
 import com.provider.controller.command.FrontCommandFactory;
-import com.provider.controller.command.exception.CommandAccessException;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.controller.command.exception.IllegalCommandException;
 import com.provider.controller.command.impl.FrontCommandFactoryImpl;
@@ -11,6 +11,7 @@ import com.provider.dao.exception.DBException;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,16 +71,26 @@ public class FrontControllerServlet extends HttpServlet {
         try {
             final FrontCommand frontCommand = frontCommandFactory.getCommand(request, response, getServletConfig());
             return Optional.of(frontCommand.execute());
-        } catch (CommandAccessException ex) {
-            logger.debug("Controller caught exception", ex);
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         } catch (IllegalCommandException | CommandParamException ex) {
-            logger.debug("Controller caught exception", ex);
+            logger.warn("Controller caught exception", ex);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            forwardToBadRequestPage(request, response);
         } catch (DBException ex) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             logger.error("Front controller servlet caught exception", ex);
+            forwardToInternalServerErrorPage(request, response);
         }
         return Optional.empty();
+    }
+
+    private void forwardToBadRequestPage(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response)
+            throws ServletException, IOException {
+        request.getRequestDispatcher(Paths.BAD_REQUEST_ERROR_JSP).forward(request, response);
+    }
+
+    private void forwardToInternalServerErrorPage(@NotNull HttpServletRequest request,
+                                                  @NotNull HttpServletResponse response)
+            throws ServletException, IOException {
+        request.getRequestDispatcher(Paths.INTERNAL_SERVER_ERROR_JSP).forward(request, response);
     }
 }

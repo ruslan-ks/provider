@@ -70,6 +70,10 @@
         <name>date</name>
         <path>/WEB-INF/tags/date.tag</path>
     </tag-file>
+    <tag-file>
+        <name>error</name>
+        <path>/WEB-INF/tags/error.tag</path>
+    </tag-file>
 
     <function>
         <name>isAdminOrHigher</name>

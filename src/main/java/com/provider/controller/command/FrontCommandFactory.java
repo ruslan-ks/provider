@@ -1,8 +1,6 @@
 package com.provider.controller.command;
 
-import com.provider.controller.command.exception.CommandAccessException;
 import com.provider.controller.command.exception.CommandParamException;
-import com.provider.controller.command.exception.FrontCommandException;
 import com.provider.controller.command.exception.IllegalCommandException;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,5 +20,5 @@ public interface FrontCommandFactory {
      */
     @NotNull FrontCommand getCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,
                                      @NotNull ServletConfig config)
-            throws IllegalCommandException, CommandAccessException, CommandParamException;
+            throws IllegalCommandException, CommandParamException;
 }

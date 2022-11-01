@@ -136,4 +136,14 @@ public class Paths {
      */
     public static final String EDIT_TARIFF_PAGE = CONTROLLER + "?" + CommandParams.COMMAND + "="
             + CommandParams.EDIT_TARIFF_PAGE;
+
+    /**
+     * Bad request(400) error jsp
+     */
+    public static final String BAD_REQUEST_ERROR_JSP = "/WEB-INF/error/400.jsp";
+
+    /**
+     * Internal server error(500) jsp
+     */
+    public static final String INTERNAL_SERVER_ERROR_JSP = "/WEB-INF/error/500.jsp";
 }

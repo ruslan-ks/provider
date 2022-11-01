@@ -66,7 +66,7 @@ public class FrontCommandFactoryImpl implements FrontCommandFactory {
         }
         final Optional<Class<? extends FrontCommand>> foundCommandClass = commandParam.map(commandClassMap::get);
         if (foundCommandClass.isEmpty()) {
-            throw new IllegalCommandException("Illegal command: " + commandParam);
+            throw new IllegalCommandException("Illegal command: " + commandParam.get());
         }
         try {
             return foundCommandClass.get()
