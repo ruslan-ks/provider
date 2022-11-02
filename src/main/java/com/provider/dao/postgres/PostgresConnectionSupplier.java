@@ -16,27 +16,30 @@ import java.sql.SQLException;
 public class PostgresConnectionSupplier implements ConnectionSupplier {
     private static final Logger logger = LoggerFactory.getLogger(PostgresConnectionSupplier.class);
 
-    private final Context context;
+    private static final String DATASOURCE_NAME = "java:/comp/env/jdbc/postgres/provider";
 
-    PostgresConnectionSupplier() throws DBException {
+    private static DataSource dataSource;
+
+    static {
         try {
-            context = new InitialContext();
+            final Context context = new InitialContext();
+            dataSource = (DataSource) context.lookup(DATASOURCE_NAME);
+            if (dataSource == null) {
+                logger.error("Failed to obtain DataSource object!");
+            }
         } catch (NamingException ex) {
-            logger.error("Naming exception!", ex);
-            throw new DBException(ex);
+            logger.error("Failed to obtain DataSource!", ex);
         }
     }
 
     @Override
     public @NotNull Connection get() throws DBException {
-        final DataSource dataSource;
+        if (dataSource == null) {
+            throw new DBException("dataSource == null");
+        }
         try {
-            dataSource = (DataSource) context.lookup( "java:/comp/env/jdbc/postgres/provider");
-            if (dataSource == null) {
-                throw new DBException("Couldn't get DataSource object from context");
-            }
             return dataSource.getConnection();
-        } catch (NamingException | SQLException ex) {
+        } catch (SQLException ex) {
             logger.error("Failed to obtain connection!", ex);
             throw new DBException(ex);
         }

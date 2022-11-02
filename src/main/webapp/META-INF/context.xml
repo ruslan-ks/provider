@@ -8,5 +8,5 @@
           password="ruslan"
           maxTotal="20"
           maxIdle="10"
-          maxWaitMillis="-1"/>
+          maxWait="10000"/>
 </Context>
