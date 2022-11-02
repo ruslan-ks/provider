@@ -9,6 +9,7 @@ import com.provider.service.exception.ValidationException;
 import com.provider.sorting.TariffOrderRule;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -150,4 +151,11 @@ public interface TariffService {
      * @throws java.util.NoSuchElementException if tariff does not exist
      */
     boolean upsertTariffTranslation(@NotNull Tariff tariff, @NotNull String locale) throws DBException, ValidationException;
+
+    /**
+     * Writes tariff data into the output stream in pdf format
+     * @param tariffDto tariff dto
+     * @param os output stream where tariff data will be written
+     */
+    void writeTariffPdf(@NotNull TariffDto tariffDto, @NotNull OutputStream os);
 }
