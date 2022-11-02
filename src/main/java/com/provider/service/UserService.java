@@ -73,7 +73,7 @@ public interface UserService {
      * @param user user to be checked
      * @return true is user has root rights
      */
-    boolean hasRootRights(@NotNull User user);
+    boolean isRoot(@NotNull User user);
 
     /**
      * Returns users of specified range sorted by id

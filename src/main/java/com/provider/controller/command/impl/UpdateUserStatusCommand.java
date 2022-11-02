@@ -4,6 +4,7 @@ import com.provider.constants.Paths;
 import com.provider.constants.params.UserParams;
 import com.provider.controller.command.AdminCommand;
 import com.provider.controller.command.CommandUtil;
+import com.provider.controller.command.exception.UserAccessRightsException;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.controller.command.result.CommandResult;
 import com.provider.dao.exception.DBException;
@@ -16,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 
 public class UpdateUserStatusCommand extends AdminCommand {
     private static final Logger logger = LoggerFactory.getLogger(UpdateUserStatusCommand.class);
@@ -27,19 +28,26 @@ public class UpdateUserStatusCommand extends AdminCommand {
 
     @Override
     protected @NotNull CommandResult executeAuthorized(@NotNull User user)
-            throws DBException, CommandParamException {
+            throws DBException, CommandParamException, UserAccessRightsException {
         final Map<String, String> paramMap = getRequiredParams(UserParams.ID, UserParams.STATUS);
         final UserService userService = serviceFactory.getUserService();
         final long userId = CommandUtil.parseLongParam(paramMap.get(UserParams.ID));
         final User.Status newStatus = CommandUtil.parseUserStatusParam(paramMap.get(UserParams.STATUS));
 
-        final CommandResult commandResult = newCommandResult(Paths.USERS_MANAGEMENT_PAGE);
-        boolean statusUpdated = false;
-        try {
-            statusUpdated = userService.updateUserStatus(userId, newStatus);
-        } catch (NoSuchElementException ex) {
-            logger.warn("Failed to update user status! User does not exist! User id: {}", userId);
+        final Optional<User> userToUpdate = userService.findUserById(userId);
+        if (userToUpdate.isEmpty()) {
+            throw new CommandParamException("User not found! user id: " + userId);
         }
+        final User.Role userToUpdateRole = userToUpdate.get().getRole();
+        if (!userService.rolesAllowedForCreation(user).contains(userToUpdateRole)) {
+            logger.warn("User {} is not allowed to update user {} with role {}", user, userToUpdate.get(),
+                    userToUpdateRole);
+            throw new UserAccessRightsException("User '" + user + "' is not allowed to update user with role '" +
+                    userToUpdateRole + "'");
+        }
+
+        final CommandResult commandResult = newCommandResult(Paths.USERS_MANAGEMENT_PAGE);
+        boolean statusUpdated = userService.updateUserStatus(userId, newStatus);
         if (statusUpdated) {
             logger.info("User status changed: user id: {}, new status: {}", userId, newStatus);
             return commandResult.addMessage(CommandResult.MessageType.SUCCESS, "User status changed successfully");

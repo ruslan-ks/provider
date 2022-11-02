@@ -6,6 +6,7 @@ import com.provider.constants.params.UserParams;
 import com.provider.controller.command.AdminCommand;
 import com.provider.controller.command.CommandUtil;
 import com.provider.controller.command.exception.CommandParamException;
+import com.provider.controller.command.exception.UserAccessRightsException;
 import com.provider.controller.command.result.CommandResult;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
@@ -28,7 +29,7 @@ public class AddUserCommand extends AdminCommand {
 
     @Override
     protected @NotNull CommandResult executeAuthorized(@NotNull User user)
-            throws DBException, CommandParamException {
+            throws DBException, CommandParamException, UserAccessRightsException {
         final Map<String, String> params = getRequiredParams(UserParams.LOGIN, UserParams.PASSWORD,
                 UserParams.NAME, UserParams.SURNAME, UserParams.PHONE, UserParams.ROLE);
 
@@ -41,7 +42,7 @@ public class AddUserCommand extends AdminCommand {
         final User.Role role = CommandUtil.parseUserRoleParam(params.get(UserParams.ROLE));
 
         if (!userService.rolesAllowedForCreation(user).contains(role)) {
-            throw new CommandParamException();
+            throw new UserAccessRightsException("User '" + user + "' is not allowed to create role '" + role + "'");
         }
         final User newUser = entityFactory.newUser(0, name, surname, login, phone, role, User.Status.ACTIVE);
 

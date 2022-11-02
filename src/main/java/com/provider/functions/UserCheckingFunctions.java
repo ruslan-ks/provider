@@ -26,7 +26,7 @@ public class UserCheckingFunctions {
     public static boolean hasRootRights(@NotNull User user) {
         try {
             final UserService userService = serviceFactory.getUserService();
-            return userService.hasRootRights(user);
+            return userService.isRoot(user);
         } catch (DBException ex) {
             throw new RuntimeException(ex);
         }

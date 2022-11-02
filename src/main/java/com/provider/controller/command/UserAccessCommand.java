@@ -1,6 +1,7 @@
 package com.provider.controller.command;
 
 import com.provider.controller.command.exception.CommandParamException;
+import com.provider.controller.command.exception.UserAccessRightsException;
 import com.provider.controller.command.result.CommandResult;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
@@ -22,7 +23,7 @@ public abstract class UserAccessCommand extends FrontCommand {
 
     @Override
     public final @NotNull CommandResult execute()
-            throws DBException, ServletException, IOException, CommandParamException {
+            throws DBException, ServletException, IOException, CommandParamException, UserAccessRightsException {
         final Optional<User> user = getSessionUser();
         if (user.isPresent() && hasAccessRights(user.get())) {
             return executeAuthorized(user.get());
@@ -44,7 +45,7 @@ public abstract class UserAccessCommand extends FrontCommand {
      * @param user signed-in user guaranteed to be existing user
      */
     protected abstract @NotNull CommandResult executeAuthorized(@NotNull User user)
-            throws DBException, ServletException, IOException, CommandParamException;
+            throws DBException, ServletException, IOException, CommandParamException, UserAccessRightsException;
 
     /**
      * Called if access is denied.

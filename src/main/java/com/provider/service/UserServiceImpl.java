@@ -149,7 +149,7 @@ public class UserServiceImpl extends AbstractService implements UserService {
     }
 
     @Override
-    public boolean hasRootRights(@NotNull User user) {
+    public boolean isRoot(@NotNull User user) {
         return user.getRole().equals(User.Role.ROOT);
     }
 

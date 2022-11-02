@@ -58,11 +58,11 @@
                 </div>
             </div>
             <div class="mb-3 row">
-                <label for="inputRole" class="col-md-2 col-form-label"><fmt:message key="user.role"/></label>
+                <label for="selectRole" class="col-md-2 col-form-label"><fmt:message key="user.role"/></label>
                 <div class="col-sm-10">
                     <select name="${UserParams.ROLE}"
                             class="form-select"
-                            id="inputRole">
+                            id="selectRole">
                         <c:forEach var="role" items="${pro:rolesAllowedForCreation(signedUser)}">
                             <option value="${role}">${role}</option>
                         </c:forEach>
@@ -96,17 +96,19 @@
                     <td>${user.phone}</td>
                     <td>${user.role}</td>
                     <td>
-                        <form method="post" action="${pageContext.request.contextPath}/${Paths.UPDATE_USER_STATUS}">
-                            <input type="number" name="${UserParams.ID}" value="${user.id}" aria-label="id"
-                                   readonly hidden>
-                            <select onchange="this.form.submit()" name="${UserParams.STATUS}" class="form-select"
-                                    aria-label="User status">
-                                <c:forEach var="status" items="${pro:allUserStatuses()}">
-                                    <c:set var="selected" value="${status eq user.status ? 'selected' : ''}"/>
-                                    <option value="${status}" ${selected}>${status}</option>
-                                </c:forEach>
-                            </select>
-                        </form>
+                        <c:if test="${pro:rolesAllowedForCreation(signedUser).contains(user.role)}">
+                            <form method="post" action="${pageContext.request.contextPath}/${Paths.UPDATE_USER_STATUS}">
+                                <input type="number" name="${UserParams.ID}" value="${user.id}" aria-label="id"
+                                       readonly hidden>
+                                <select onchange="this.form.submit()" name="${UserParams.STATUS}" class="form-select"
+                                        aria-label="User status">
+                                    <c:forEach var="status" items="${pro:allUserStatuses()}">
+                                        <c:set var="selected" value="${status eq user.status ? 'selected' : ''}"/>
+                                        <option value="${status}" ${selected}>${status}</option>
+                                    </c:forEach>
+                                </select>
+                            </form>
+                        </c:if>
                     </td>
                 </tr>
             </c:forEach>

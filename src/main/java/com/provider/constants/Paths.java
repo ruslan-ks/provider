@@ -146,4 +146,9 @@ public class Paths {
      * Internal server error(500) jsp
      */
     public static final String INTERNAL_SERVER_ERROR_JSP = "/WEB-INF/error/500.jsp";
+
+    /**
+     * Unauthorized(401) error jsp
+     */
+    public static final String UNAUTHORIZED_ERROR_JSP = "/WEB-INF/error/401.jsp";
 }

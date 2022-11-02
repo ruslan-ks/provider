@@ -4,6 +4,7 @@ import com.provider.constants.attributes.AppAttributes;
 import com.provider.constants.attributes.RequestAttributes;
 import com.provider.constants.attributes.SessionAttributes;
 import com.provider.constants.params.PaginationParams;
+import com.provider.controller.command.exception.UserAccessRightsException;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.controller.command.result.CommandResult;
 import com.provider.controller.command.result.CommandResultImpl;
@@ -65,7 +66,7 @@ public abstract class FrontCommand {
      * @return CommandResult - object containing result data - page location for redirect/forward and so on
      */
     public abstract @NotNull CommandResult execute()
-            throws DBException, ServletException, IOException, CommandParamException;
+            throws DBException, ServletException, IOException, CommandParamException, UserAccessRightsException;
 
     /**
      * Returns current session

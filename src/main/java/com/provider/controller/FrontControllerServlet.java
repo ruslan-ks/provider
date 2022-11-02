@@ -5,6 +5,7 @@ import com.provider.controller.command.FrontCommand;
 import com.provider.controller.command.FrontCommandFactory;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.controller.command.exception.IllegalCommandException;
+import com.provider.controller.command.exception.UserAccessRightsException;
 import com.provider.controller.command.impl.FrontCommandFactoryImpl;
 import com.provider.controller.command.result.CommandResult;
 import com.provider.dao.exception.DBException;
@@ -72,9 +73,13 @@ public class FrontControllerServlet extends HttpServlet {
             final FrontCommand frontCommand = frontCommandFactory.getCommand(request, response, getServletConfig());
             return Optional.of(frontCommand.execute());
         } catch (IllegalCommandException | CommandParamException ex) {
-            logger.warn("Controller caught exception", ex);
+            logger.warn("Bad request", ex);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             forwardToBadRequestPage(request, response);
+        } catch (UserAccessRightsException ex) {
+            logger.warn("Unauthorized", ex);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            forwardToUnauthorizedPage(request, response);
         } catch (DBException ex) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             logger.error("Front controller servlet caught exception", ex);
@@ -92,5 +97,11 @@ public class FrontControllerServlet extends HttpServlet {
                                                   @NotNull HttpServletResponse response)
             throws ServletException, IOException {
         request.getRequestDispatcher(Paths.INTERNAL_SERVER_ERROR_JSP).forward(request, response);
+    }
+
+    private void forwardToUnauthorizedPage(@NotNull HttpServletRequest request,
+                                                  @NotNull HttpServletResponse response)
+            throws ServletException, IOException {
+        request.getRequestDispatcher(Paths.UNAUTHORIZED_ERROR_JSP).forward(request, response);
     }
 }
