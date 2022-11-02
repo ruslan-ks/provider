@@ -1,5 +1,6 @@
 package com.provider.controller.listeners;
 
+import com.provider.constants.AppInitParams;
 import com.provider.constants.attributes.AppAttributes;
 import com.provider.service.*;
 import com.provider.dao.exception.DBException;
@@ -12,10 +13,11 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -82,10 +84,12 @@ public class AppListener implements ServletContextListener {
     }
 
     private void setTariffImagesUploadPath(@NotNull ServletContext servletContext) {
-        final String tariffImageDir = "upload" + File.separator + "images";
-        final String tariffImagesUploadPath = servletContext.getRealPath("") + File.separator + tariffImageDir;
-        servletContext.setAttribute(AppAttributes.TARIFF_IMAGE_UPLOAD_PATH, tariffImagesUploadPath);
-        servletContext.setAttribute(AppAttributes.TARIFF_IMAGE_DIR, tariffImageDir);
+        //final String tariffImagesUploadPath = servletContext.getRealPath("") + File.separator + tariffImageDir;
+        final String fileUploadDir = servletContext.getInitParameter(AppInitParams.FILE_UPLOAD_DIR);
+        final Path imageUploadPath = Paths.get(fileUploadDir, "images");
+
+        servletContext.setAttribute(AppAttributes.TARIFF_IMAGE_UPLOAD_PATH, imageUploadPath.toString());
+        servletContext.setAttribute(AppAttributes.TARIFF_IMAGE_DIR, fileUploadDir);
     }
 
     public void tryCreateRootUser() {

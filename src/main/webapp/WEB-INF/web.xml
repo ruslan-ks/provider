@@ -3,17 +3,28 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
          version="5.0">
+    <!-- Properties file where keys - locale names, values - UI language names -->
     <context-param>
         <param-name>localesPropertiesFilePath</param-name>
         <param-value>/WEB-INF/locales.properties</param-value>
     </context-param>
+
+    <!-- Default timezone used when displaying date and time values on UI -->
     <context-param>
         <param-name>defaultUserTimezone</param-name>
         <param-value>GMT+2</param-value>
     </context-param>
+
+    <!-- Default user locale -->
     <context-param>
         <param-name>defaultLocale</param-name>
         <param-value>en</param-value>
+    </context-param>
+
+    <!-- Directory where all uploaded files must be stored(directly or in subdirectories). Subdirectories may be created -->
+    <context-param>
+        <param-name>fileUploadDir</param-name>
+        <param-value>/home/provider/upload</param-value>
     </context-param>
 
     <error-page>
@@ -32,6 +43,7 @@
         <error-code>500</error-code>
         <location>/WEB-INF/error/500.jsp</location>
     </error-page>
+
     <!-- JSP mappings are placed here. Servlet mappings are configured using annotations -->
     <servlet>
         <servlet-name>signInJsp</servlet-name>
