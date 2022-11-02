@@ -107,10 +107,9 @@
         <function-signature>java.lang.Iterable allTariffStatuses()</function-signature>
     </function>
     <function>
-        <name>tariffImagePath</name>
+        <name>tariffImageUrl</name>
         <function-class>com.provider.functions.ImagePath</function-class>
-        <function-signature>java.lang.String tariffImagePath(java.lang.String, jakarta.servlet.ServletContext)
-        </function-signature>
+        <function-signature>java.lang.String tariffImageUrl(java.lang.String)</function-signature>
     </function>
     <function>
         <name>nextPaymentTime</name>

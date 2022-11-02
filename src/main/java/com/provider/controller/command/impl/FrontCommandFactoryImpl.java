@@ -52,6 +52,7 @@ public class FrontCommandFactoryImpl implements FrontCommandFactory {
         mutableTmpMap.put(EDIT_TARIFF_PAGE, EditTariffPageCommand.class);
         mutableTmpMap.put(EDIT_TARIFF, EditTariffCommand.class);
         mutableTmpMap.put(CHANGE_TARIFF_IMAGE, ChangeTariffImageCommand.class);
+        mutableTmpMap.put(TARIFF_IMAGE, TariffImageCommand.class);
 
         commandClassMap = Collections.unmodifiableMap(mutableTmpMap);
     }

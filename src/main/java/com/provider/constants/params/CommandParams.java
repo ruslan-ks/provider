@@ -99,4 +99,9 @@ public class CommandParams {
      * Change tariff image command
      */
     public static final String CHANGE_TARIFF_IMAGE = "changeTariffImage";
+
+    /**
+     * Tariff image command - writes image data to the response body
+     */
+    public static final String TARIFF_IMAGE = "tariffImage";
 }

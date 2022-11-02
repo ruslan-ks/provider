@@ -171,7 +171,7 @@
             <c:forEach var="tariffDto" items="${requestScope[RequestAttributes.TARIFFS]}">
                 <tr>
                     <td>${tariffDto.tariff.id}</td>
-                    <td><img src="${pro:tariffImagePath(tariffDto.tariff.imageFileName, pageContext.servletContext)}"
+                    <td><img src="${pro:tariffImageUrl(tariffDto.tariff.imageFileName)}"
                              alt="Image" style="width: 100px; height: 80px;"></td>
                     <td>${tariffDto.tariff.title}</td>
                     <td>${tariffDto.tariff.description}</td>
