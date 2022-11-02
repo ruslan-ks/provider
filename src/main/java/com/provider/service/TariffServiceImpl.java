@@ -32,6 +32,7 @@ public class TariffServiceImpl extends AbstractService implements TariffService 
             serviceDao.setConnection(connection);
             return serviceDao.findAll(locale);
         } catch (SQLException ex) {
+            logFailedToCloseConnection(logger, ex);
             throw new DBException(ex);
         }
     }
@@ -48,6 +49,7 @@ public class TariffServiceImpl extends AbstractService implements TariffService 
             serviceDao.setConnection(connection);
             return serviceDao.insert(service);
         } catch (SQLException ex) {
+            logFailedToCloseConnection(logger, ex);
             throw new DBException(ex);
         }
     }
@@ -64,6 +66,7 @@ public class TariffServiceImpl extends AbstractService implements TariffService 
             tariffDao.setConnection(connection);
             return tariffDao.findFullInfoPage(offset, limit, locale, orderRules, serviceIds, activeOnly);
         } catch (SQLException ex) {
+            logFailedToCloseConnection(logger, ex);
             throw new DBException(ex);
         }
     }
@@ -75,6 +78,7 @@ public class TariffServiceImpl extends AbstractService implements TariffService 
             tariffDao.setConnection(connection);
             return tariffDao.findByKey(tariffId);
         } catch (SQLException ex) {
+            logFailedToCloseConnection(logger, ex);
             throw new DBException(ex);
         }
     }
@@ -87,6 +91,7 @@ public class TariffServiceImpl extends AbstractService implements TariffService 
             tariffDao.setConnection(connection);
             return tariffDao.findFullInfoByKey(tariffId, locale);
         } catch (SQLException ex) {
+            logFailedToCloseConnection(logger, ex);
             throw new DBException(ex);
         }
     }
@@ -98,6 +103,7 @@ public class TariffServiceImpl extends AbstractService implements TariffService 
             tariffDao.setConnection(connection);
             return tariffDao.countAll();
         } catch (SQLException ex) {
+            logFailedToCloseConnection(logger, ex);
             throw new DBException(ex);
         }
     }
@@ -109,6 +115,7 @@ public class TariffServiceImpl extends AbstractService implements TariffService 
             tariffDao.setConnection(connection);
             return tariffDao.countActive();
         } catch (SQLException ex) {
+            logFailedToCloseConnection(logger, ex);
             throw new DBException(ex);
         }
     }
@@ -142,6 +149,8 @@ public class TariffServiceImpl extends AbstractService implements TariffService 
             } catch (Throwable ex) {
                 transaction.rollback();
                 logger.error("Tariff insertion transaction failed", ex);
+                logger.error("Tariff insertion transaction failed! Tariff: {}, tariffDuration: {}, serviceIds: {}",
+                        tariff, tariffDuration, serviceIds);
                 throw ex;
             }
             transaction.rollback();
@@ -169,7 +178,7 @@ public class TariffServiceImpl extends AbstractService implements TariffService 
             serviceDao.setConnection(connection);
             return serviceDao.findAllServicesTariffsCount(locale, activeOnly);
         } catch (SQLException ex) {
-            logger.error("Failed to close connection", ex);
+            logFailedToCloseConnection(logger, ex);
             throw new DBException(ex);
         }
     }
@@ -181,7 +190,7 @@ public class TariffServiceImpl extends AbstractService implements TariffService 
             serviceDao.setConnection(connection);
             return serviceDao.countDistinctTariffsIncludingServices(serviceIds, activeOnly);
         } catch (SQLException ex) {
-            logger.error("Failed to close connection", ex);
+            logFailedToCloseConnection(logger, ex);
             throw new DBException(ex);
         }
     }
@@ -196,7 +205,7 @@ public class TariffServiceImpl extends AbstractService implements TariffService 
                     .orElseThrow(NoSuchElementException::new);
             return tariffDao.update(tariff);
         } catch (SQLException ex) {
-            logger.error("Failed to close connection!", ex);
+            logFailedToCloseConnection(logger, ex);
             throw new DBException(ex);
         }
     }

@@ -71,7 +71,7 @@ public class SubscriptionServiceImpl extends AbstractService implements Subscrip
             subscriptionDao.setConnection(connection);
             return activeSubscriptionExists(subscriptionDao, userAccount, tariff);
         } catch (SQLException ex) {
-            logger.error("Failed to close connection!", ex);
+            logFailedToCloseConnection(logger, ex);
             throw new DBException(ex);
         }
     }
@@ -102,7 +102,7 @@ public class SubscriptionServiceImpl extends AbstractService implements Subscrip
                     .filter(this::hasActiveStatus)
                     .toList();
         } catch (SQLException ex) {
-            logger.error("Failed to close connection!", ex);
+            logFailedToCloseConnection(logger, ex);
             throw new DBException(ex);
         }
     }
@@ -119,7 +119,7 @@ public class SubscriptionServiceImpl extends AbstractService implements Subscrip
                     .filter(this::hasActiveStatus)
                     .toList();
         } catch (SQLException ex) {
-            logger.error("Failed to close connection!", ex);
+            logFailedToCloseConnection(logger, ex);
             throw new DBException(ex);
         }
     }
@@ -145,7 +145,7 @@ public class SubscriptionServiceImpl extends AbstractService implements Subscrip
             subscription.setStatus(Subscription.Status.INACTIVE);
             return subscriptionDao.update(subscription);
         } catch (SQLException  ex) {
-            logger.error("Failed to close connection", ex);
+            logFailedToCloseConnection(logger, ex);
             throw new DBException(ex);
         }
     }
@@ -157,7 +157,7 @@ public class SubscriptionServiceImpl extends AbstractService implements Subscrip
             subscriptionDao.setConnection(connection);
             return subscriptionDao.findAllExpiredActiveSubscriptions();
         } catch (SQLException  ex) {
-            logger.error("Failed to close connection", ex);
+            logFailedToCloseConnection(logger, ex);
             throw new DBException(ex);
         }
     }

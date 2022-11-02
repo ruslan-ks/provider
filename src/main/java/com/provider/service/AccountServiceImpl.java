@@ -8,6 +8,8 @@ import com.provider.entity.user.UserAccount;
 import com.provider.service.exception.ValidationException;
 import com.provider.validation.MoneyValidator;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -15,6 +17,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class AccountServiceImpl extends AbstractService implements AccountService {
+    private static final Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
+
     AccountServiceImpl() throws DBException {}
 
     @Override
@@ -24,6 +28,7 @@ public class AccountServiceImpl extends AbstractService implements AccountServic
             userAccountDao.setConnection(connection);
             return userAccountDao.findAll(userId);
         } catch (SQLException ex) {
+            logFailedToCloseConnection(logger, ex);
             throw new DBException(ex);
         }
     }
@@ -35,6 +40,7 @@ public class AccountServiceImpl extends AbstractService implements AccountServic
             userAccountDao.setConnection(connection);
             return userAccountDao.findByKey(accountId);
         } catch (SQLException ex) {
+            logFailedToCloseConnection(logger, ex);
             throw new DBException(ex);
         }
     }
@@ -52,6 +58,7 @@ public class AccountServiceImpl extends AbstractService implements AccountServic
             userAccountDao.setConnection(connection);
             return userAccountDao.update(account);
         } catch (SQLException ex) {
+            logFailedToCloseConnection(logger, ex);
             throw new DBException(ex);
         }
     }

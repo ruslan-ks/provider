@@ -41,6 +41,7 @@ public class UserServiceImpl extends AbstractService implements UserService {
             userDao.setConnection(connection);
             return userDao.findByKey(id);
         } catch (SQLException ex) {
+            logFailedToCloseConnection(logger, ex);
             throw new DBException(ex);
         }
     }
@@ -52,6 +53,7 @@ public class UserServiceImpl extends AbstractService implements UserService {
             userDao.setConnection(connection);
             return userDao.findByLogin(login);
         } catch (SQLException ex) {
+            logFailedToCloseConnection(logger, ex);
             throw new DBException(ex);
         }
     }
@@ -63,6 +65,7 @@ public class UserServiceImpl extends AbstractService implements UserService {
             userPasswordDao.setConnection(connection);
             return userPasswordDao.findByKey(userId);
         } catch (SQLException ex) {
+            logFailedToCloseConnection(logger, ex);
             throw new DBException(ex);
         }
     }
@@ -121,11 +124,9 @@ public class UserServiceImpl extends AbstractService implements UserService {
             return Optional.empty();
         }
         final Optional<UserPassword> foundPasswordOptional = findUserPassword(foundUser.get().getId());
-        if (foundPasswordOptional.isEmpty()) {
-            logger.error("Password not found! User: {}", foundUser.get());
-            throw new RuntimeException("Password not found! User: " + foundUser.get());
-        }
-        final UserPassword foundPassword = foundPasswordOptional.get();
+        final UserPassword foundPassword = foundPasswordOptional
+                .orElseThrow(() -> new RuntimeException("Password not found! User: " + foundUser.get()));
+
         final PasswordHashing passwordHashing = PasswordHashing.getInstance(foundPassword.getHashMethod());
         final UserPassword hashedUserProvidedPassword = passwordHashing.hash(password, foundPassword.getSalt());
 
@@ -162,6 +163,7 @@ public class UserServiceImpl extends AbstractService implements UserService {
             userDao.setConnection(connection);
             return userDao.findPage(offset, limit);
         } catch (SQLException ex) {
+            logFailedToCloseConnection(logger, ex);
             throw new DBException(ex);
         }
     }
@@ -173,6 +175,7 @@ public class UserServiceImpl extends AbstractService implements UserService {
             userDao.setConnection(connection);
             return userDao.getUserCount();
         } catch (SQLException ex) {
+            logFailedToCloseConnection(logger, ex);
             throw new DBException(ex);
         }
     }
@@ -189,18 +192,18 @@ public class UserServiceImpl extends AbstractService implements UserService {
             user.setStatus(status);
             return userDao.update(user);
         } catch (SQLException ex) {
+            logFailedToCloseConnection(logger, ex);
             throw new DBException(ex);
         }
     }
 
     @Override
     public @NotNull Set<User.Role> rolesAllowedForCreation(@NotNull User user) {
-        switch (user.getRole()) {
-            case ROOT:
-                return Set.of(User.Role.ADMIN, User.Role.MEMBER);
-            case ADMIN:
-                return Set.of(User.Role.MEMBER);
-        }
-        throw new IllegalArgumentException();
+        return switch (user.getRole()) {
+            case ROOT -> Set.of(User.Role.ADMIN, User.Role.MEMBER);
+            case ADMIN -> Set.of(User.Role.MEMBER);
+            default -> throw new IllegalArgumentException("No roles are allowed to be created by '" + user.getRole() +
+                    "'");
+        };
     }
 }
