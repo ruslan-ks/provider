@@ -51,8 +51,8 @@ public class ParameterizedUrlImpl implements ParameterizedUrl {
     public @NotNull String getString() {
         final String paramString = params.stream()
                 .map(pair -> pair.getKey() + "=" + pair.getValue())
-                .collect(Collectors.joining("&", "?", ""));
-        return requestUri + paramString;
+                .collect(Collectors.joining("&"));
+        return requestUri + (paramString.isBlank() ? "" : "?" + paramString);
     }
 
     @Override
