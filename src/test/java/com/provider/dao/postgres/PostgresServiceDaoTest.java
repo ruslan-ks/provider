@@ -1,14 +1,11 @@
 package com.provider.dao.postgres;
 
-import com.provider.dao.ConnectionSupplier;
-import com.provider.dao.DaoTestUtil;
 import com.provider.dao.ServiceDao;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.EntityFactory;
 import com.provider.entity.SimpleEntityFactory;
 import com.provider.entity.product.Service;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -19,22 +16,16 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class PostgresServiceDaoTest {
+class PostgresServiceDaoTest extends PostgresDaoTestBase {
     private static final EntityFactory entityFactory = SimpleEntityFactory.newInstance();
 
-    @BeforeEach
-    public void prepare() throws DBException, SQLException {
-        clearAllServices();
-    }
-
     @AfterEach
-    public void cleanUp() throws DBException, SQLException {
+    public void cleanUp() throws SQLException {
         clearAllServices();
     }
 
-    private void clearAllServices() throws DBException, SQLException {
-        try (var connection = getConnectionSupplier().get();
-             var statement = connection.createStatement()) {
+    private void clearAllServices() throws SQLException {
+        try (var statement = connection.createStatement()) {
             statement.executeUpdate("DELETE FROM services WHERE TRUE");
         }
     }
@@ -43,7 +34,7 @@ class PostgresServiceDaoTest {
     @MethodSource("com.provider.dao.DaoTestData#getServiceStream")
     public void testInsertAndFindByKey(Service service) throws DBException {
         final ServiceDao serviceDao = getServiceDao();
-        serviceDao.setConnection(getConnectionSupplier().get());
+        serviceDao.setConnection(connection);
 
         final boolean inserted = serviceDao.insert(service);
         assertTrue(inserted);
@@ -59,7 +50,7 @@ class PostgresServiceDaoTest {
     public void testInsertAndFindTranslation(String serviceName, String translatedServiceName, String lang)
             throws DBException {
         final ServiceDao serviceDao = getServiceDao();
-        serviceDao.setConnection(getConnectionSupplier().get());
+        serviceDao.setConnection(connection);
 
         final Service service = entityFactory.newService(0, serviceName, serviceName + " description");
         serviceDao.insert(service);
@@ -88,7 +79,7 @@ class PostgresServiceDaoTest {
     @MethodSource("com.provider.dao.DaoTestData#getServiceStream")
     public void testFindNotExistingTranslation(Service service) throws DBException {
         final ServiceDao serviceDao = getServiceDao();
-        serviceDao.setConnection(getConnectionSupplier().get());
+        serviceDao.setConnection(connection);
 
         serviceDao.insert(service);
 
@@ -99,9 +90,5 @@ class PostgresServiceDaoTest {
 
     private ServiceDao getServiceDao() {
         return new PostgresServiceDao();
-    }
-
-    private ConnectionSupplier getConnectionSupplier() {
-        return DaoTestUtil.getPostgresConnectionSupplier();
     }
 }

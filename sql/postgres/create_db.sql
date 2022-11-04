@@ -2,7 +2,7 @@
 --CREATE DATABASE provider;
 --COMMENT ON DATABASE provider IS 'Java Provider project database';
 
-\c provider;
+--\c provider;
 
 BEGIN;
 
