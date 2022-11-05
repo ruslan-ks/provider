@@ -48,8 +48,8 @@ public abstract class ServiceDao extends EntityDao<Integer, Service> {
      * @param activeOnly if true, only tariffs with 'ACTIVE' status will be count, otherwise all tariffs will be count
      * @return Map where key - service, value - amount of tariffs that include this service
      */
-    public abstract @NotNull Map<Service, Integer> findAllServicesTariffsCount(@NotNull String locale,
-                                                                               boolean activeOnly) throws DBException;
+    public abstract @NotNull Map<Service, Integer> findServicesTariffsCount(@NotNull String locale,
+                                                                            boolean activeOnly) throws DBException;
 
     /**
      * Returns count of distinct tariffs that include services with provided id

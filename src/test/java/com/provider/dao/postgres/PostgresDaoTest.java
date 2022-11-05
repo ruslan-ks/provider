@@ -1,8 +1,6 @@
 package com.provider.dao.postgres;
 
-import com.provider.dao.ConnectionSupplier;
-import com.provider.dao.ServiceDao;
-import com.provider.dao.ServiceDaoTestBase;
+import com.provider.dao.*;
 import com.provider.dao.exception.DBException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,22 +10,23 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class PostgresDaoTest extends ServiceDaoTestBase {
-    private static final Logger logger = LoggerFactory.getLogger(PostgresDaoTest.class);
+public class PostgresDaoTest extends AbstractServiceDaoTest {
+    private final Logger logger = LoggerFactory.getLogger(PostgresDaoTest.class);
+
+    private final DaoFactory daoFactory = new PostgresTestDaoFactory();
 
     private Connection connection;
 
-    private final ConnectionSupplier connectionSupplier = new PostgresTestConnectionSupplier();
-
     @BeforeEach
     public void setupConnection() throws DBException {
-        connection = connectionSupplier.get();
+        connection = daoFactory.newConnectionSupplier().get();
         logger.debug("Setting up db connection");
     }
 
     @AfterEach
     public void cleanUpAndCloseConnection() throws SQLException {
         clearAllServices();
+        clearAllTariffs();
         connection.close();
         logger.debug("Closing db connection");
     }
@@ -38,9 +37,15 @@ public class PostgresDaoTest extends ServiceDaoTestBase {
         }
     }
 
+    private void clearAllTariffs() throws SQLException {
+        try (var statement = getConnection().createStatement()) {
+            statement.executeUpdate("DELETE FROM tariffs WHERE TRUE");
+        }
+    }
+
     @Override
-    protected ServiceDao getServiceDao() {
-        return new PostgresServiceDao();
+    protected DaoFactory getDaoFactory() {
+        return daoFactory;
     }
 
     @Override

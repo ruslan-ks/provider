@@ -181,7 +181,7 @@ public class TariffServiceImpl extends AbstractService implements TariffService 
         final ServiceDao serviceDao = daoFactory.newServiceDao();
         try (var connection = connectionSupplier.get()) {
             serviceDao.setConnection(connection);
-            return serviceDao.findAllServicesTariffsCount(locale, activeOnly);
+            return serviceDao.findServicesTariffsCount(locale, activeOnly);
         } catch (SQLException ex) {
             logFailedToCloseConnection(logger, ex);
             throw new DBException(ex);

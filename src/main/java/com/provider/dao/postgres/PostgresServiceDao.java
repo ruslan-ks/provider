@@ -128,7 +128,7 @@ public class PostgresServiceDao extends ServiceDao {
     }
 
     @Override
-    public @NotNull Map<Service, Integer> findAllServicesTariffsCount(@NotNull String locale, boolean activeOnly)
+    public @NotNull Map<Service, Integer> findServicesTariffsCount(@NotNull String locale, boolean activeOnly)
             throws DBException {
         try (var preparedStatement = connection.prepareStatement(
                 getFindServicesTariffsCountSql(activeOnly))) {
