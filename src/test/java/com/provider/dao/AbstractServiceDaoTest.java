@@ -20,12 +20,16 @@ public abstract class AbstractServiceDaoTest extends AbstractDaoTest {
     private static final EntityFactory entityFactory = SimpleEntityFactory.newInstance();
 
     /**
-     * Template method that returns ServiceDao implementation
+     * Returns ServiceDao implementation instance
      * @return ServiceDao implementation instance
      */
-    private ServiceDao getServiceDao() {
-        return getDaoFactory().newServiceDao();
-    }
+    protected abstract ServiceDao getServiceDao();
+
+    /**
+     * Returns TariffDao implementation instance
+     * @return TariffDao implementation instance
+     */
+    protected abstract TariffDao getTariffDao();
 
     @ParameterizedTest
     @MethodSource("com.provider.TestData#serviceStream")
@@ -127,9 +131,9 @@ public abstract class AbstractServiceDaoTest extends AbstractDaoTest {
         final List<Tariff> tariffs = TestData.tariffStream()
                 .toList();
 
-        final TariffDao tariffDao = getDaoFactory().newTariffDao();
+        final TariffDao tariffDao = getTariffDao();
         tariffDao.setConnection(getConnection());
-        final ServiceDao serviceDao = getDaoFactory().newServiceDao();
+        final ServiceDao serviceDao = getServiceDao();
         serviceDao.setConnection(getConnection());
 
         for (var service : services) {

@@ -13,13 +13,28 @@ import java.sql.SQLException;
 public class PostgresDaoTest extends AbstractServiceDaoTest {
     private final Logger logger = LoggerFactory.getLogger(PostgresDaoTest.class);
 
-    private final DaoFactory daoFactory = new PostgresTestDaoFactory();
+    private final ConnectionSupplier connectionSupplier = new PostgresTestConnectionSupplier();
 
     private Connection connection;
 
+    @Override
+    protected Connection getConnection() {
+        return connection;
+    }
+
+    @Override
+    protected ServiceDao getServiceDao() {
+        return new PostgresServiceDao();
+    }
+
+    @Override
+    protected TariffDao getTariffDao() {
+        return new PostgresTariffDao();
+    }
+
     @BeforeEach
     public void setupConnection() throws DBException {
-        connection = daoFactory.newConnectionSupplier().get();
+        connection = connectionSupplier.get();
         logger.debug("Setting up db connection");
     }
 
@@ -41,15 +56,5 @@ public class PostgresDaoTest extends AbstractServiceDaoTest {
         try (var statement = getConnection().createStatement()) {
             statement.executeUpdate("DELETE FROM tariffs WHERE TRUE");
         }
-    }
-
-    @Override
-    protected DaoFactory getDaoFactory() {
-        return daoFactory;
-    }
-
-    @Override
-    protected Connection getConnection() {
-        return connection;
     }
 }

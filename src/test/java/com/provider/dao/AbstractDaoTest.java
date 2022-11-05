@@ -10,10 +10,4 @@ public abstract class AbstractDaoTest {
      * @return connection instance
      */
     protected abstract Connection getConnection();
-
-    /**
-     * Returns DaoFactory implementation instance to be used when testing ServiceDao
-     * @return DaoFactory implementation instance to be used when testing ServiceDao
-     */
-    protected abstract DaoFactory getDaoFactory();
 }
