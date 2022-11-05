@@ -6,6 +6,7 @@ import com.provider.entity.EntityFactory;
 import com.provider.entity.SimpleEntityFactory;
 import com.provider.entity.product.Service;
 import com.provider.entity.product.Tariff;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -123,55 +124,86 @@ public abstract class AbstractServiceDaoTest extends AbstractDaoTest {
         assertTrue(obtainedServiceTranslations.containsAll(serviceTranslations));
     }
 
-    @Test
-    public void testFindAllServicesTariffsCount() throws DBException {
-        final Set<Service> services = TestData.serviceStream(10)
-                .collect(Collectors.toSet());
-
-        final List<Tariff> tariffs = TestData.tariffStream()
-                .toList();
-
-        final TariffDao tariffDao = getTariffDao();
-        tariffDao.setConnection(getConnection());
-        final ServiceDao serviceDao = getServiceDao();
-        serviceDao.setConnection(getConnection());
-
-        for (var service : services) {
-            serviceDao.insert(service);
-        }
-
-        final Set<Integer> serviceIds = services.stream()
-                .map(Service::getId)
-                .collect(Collectors.toSet());
-
-        final Map<Tariff, Set<Integer>> tariffServiceIdsMap = new HashMap<>();
-
-        for (int i = 0; i < tariffs.size(); i++) {
-            final var tariff = tariffs.get(i);
-            tariffDao.insert(tariff);
-
-            // tariff 0 - no services
-            // tariff 1: 1 service
-            // tariff 2: 2 services
-            // ...
-            final Set<Integer> tariffServiceIds = serviceIds.stream()
-                    .limit(i)
+    /**
+     * ServiceDao tests that also require TariffDao functionality
+     */
+    @Nested
+    class TariffsServicesTest {
+        @Test
+        public void testFindAllServicesTariffsCount() throws DBException {
+            final Set<Service> services = TestData.serviceStream(10)
                     .collect(Collectors.toSet());
-            tariffDao.addServices(tariff.getId(), tariffServiceIds);
-            tariffServiceIdsMap.put(tariff, tariffServiceIds);
+            final List<Tariff> tariffs = TestData.tariffStream()
+                    .toList();
+
+            final TariffDao tariffDao = getTariffDao();
+            tariffDao.setConnection(getConnection());
+            final ServiceDao serviceDao = getServiceDao();
+            serviceDao.setConnection(getConnection());
+
+            for (var service : services) {
+                serviceDao.insert(service);
+            }
+            final Set<Integer> serviceIds = services.stream()
+                    .map(Service::getId)
+                    .collect(Collectors.toSet());
+
+            final Map<Tariff, Set<Integer>> tariffServiceIdsMap = new HashMap<>();
+            for (int i = 0; i < tariffs.size(); i++) {
+                final var tariff = tariffs.get(i);
+                tariffDao.insert(tariff);
+
+                // tariff 0 - no services
+                // tariff 1: 1 service
+                // tariff 2: 2 services
+                // ...
+                final Set<Integer> tariffServiceIds = serviceIds.stream()
+                        .limit(i)
+                        .collect(Collectors.toSet());
+                tariffDao.addServices(tariff.getId(), tariffServiceIds);
+                tariffServiceIdsMap.put(tariff, tariffServiceIds);
+            }
+
+            // key - service id, value - tariffs with this service count
+            final Map<Integer, Long> expectedServiceTariffCount = tariffServiceIdsMap.values().stream()
+                    .flatMap(Set::stream)
+                    .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+            final Map<Integer, Long> actualServiceTariffTariffCount =
+                    serviceDao.findServicesTariffsCount("notALocale", false)
+                            .entrySet()
+                            .stream()
+                            .collect(Collectors.toMap(e -> e.getKey().getId(), e -> (long) e.getValue()));
+            assertEquals(expectedServiceTariffCount, actualServiceTariffTariffCount);
         }
 
-        // key - service id, value - tariffs with this service count
-        final Map<Integer, Long> expectedServiceTariffCount = tariffServiceIdsMap.values().stream()
-                .flatMap(Set::stream)
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        @Test
+        public void testCountActiveDistinctTariffsIncludingServices() throws DBException {
+            final Set<Service> services = TestData.serviceStream(10)
+                    .collect(Collectors.toSet());
+            final List<Tariff> tariffs = TestData.tariffStream()
+                    .toList();
 
-        final Map<Integer, Long> actualServiceTariffTariffCount =
-                serviceDao.findServicesTariffsCount("notALocale", false)
-                        .entrySet()
-                        .stream()
-                        .collect(Collectors.toMap(e -> e.getKey().getId(), e -> (long) e.getValue()));
+            final TariffDao tariffDao = getTariffDao();
+            tariffDao.setConnection(getConnection());
+            final ServiceDao serviceDao = getServiceDao();
+            serviceDao.setConnection(getConnection());
 
-        assertEquals(expectedServiceTariffCount, actualServiceTariffTariffCount);
+            for (var service : services) {
+                serviceDao.insert(service);
+            }
+            final Set<Integer> serviceIds = services.stream()
+                    .map(Service::getId)
+                    .collect(Collectors.toSet());
+
+            for (var tariff : tariffs) {
+                tariffDao.insert(tariff);
+                tariffDao.addServices(tariff.getId(), serviceIds);  // Add all services to all tariffs
+            }
+
+            final int expectedServicesCount = tariffs.size();
+            final int distinctTariffsIncludingAllServicesCount =
+                    serviceDao.countDistinctTariffsIncludingServices(serviceIds, true);
+            assertEquals(expectedServicesCount, distinctTariffsIncludingAllServicesCount);
+        }
     }
 }
