@@ -1,40 +1,30 @@
-package com.provider.dao.postgres;
+package com.provider.dao;
 
-import com.provider.dao.ServiceDao;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.EntityFactory;
 import com.provider.entity.SimpleEntityFactory;
 import com.provider.entity.product.Service;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.sql.SQLException;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class PostgresServiceDaoTest extends PostgresDaoTestBase {
+public abstract class ServiceDaoTestBase extends AbstractDaoTest {
     private static final EntityFactory entityFactory = SimpleEntityFactory.newInstance();
 
-    @AfterEach
-    public void cleanUp() throws SQLException {
-        clearAllServices();
-    }
-
-    private void clearAllServices() throws SQLException {
-        try (var statement = connection.createStatement()) {
-            statement.executeUpdate("DELETE FROM services WHERE TRUE");
-        }
-    }
+    /**
+     * Template method that returns ServiceDao implementation
+     * @return ServiceDao implementation instance
+     */
+    protected abstract ServiceDao getServiceDao();
 
     @ParameterizedTest
-    @MethodSource("com.provider.dao.DaoTestData#getServiceStream")
+    @MethodSource("com.provider.TestData#getServiceStream")
     public void testInsertAndFindByKey(Service service) throws DBException {
         final ServiceDao serviceDao = getServiceDao();
-        serviceDao.setConnection(connection);
+        serviceDao.setConnection(getConnection());
 
         final boolean inserted = serviceDao.insert(service);
         assertTrue(inserted);
@@ -46,11 +36,11 @@ class PostgresServiceDaoTest extends PostgresDaoTestBase {
     }
 
     @ParameterizedTest
-    @MethodSource("getServicesWithTranslations")
+    @MethodSource("com.provider.TestData#getServiceNamesUkTranslations")
     public void testInsertAndFindTranslation(String serviceName, String translatedServiceName, String lang)
             throws DBException {
         final ServiceDao serviceDao = getServiceDao();
-        serviceDao.setConnection(connection);
+        serviceDao.setConnection(getConnection());
 
         final Service service = entityFactory.newService(0, serviceName, serviceName + " description");
         serviceDao.insert(service);
@@ -66,29 +56,16 @@ class PostgresServiceDaoTest extends PostgresDaoTestBase {
         assertEquals(serviceTranslation, foundTranslation.get());
     }
 
-    private static Stream<Arguments> getServicesWithTranslations() {
-        final String lang = "uk";
-        return Stream.of(
-                Arguments.of("TV", "Телебачення", lang),
-                Arguments.of("Internet", "Інтернет", lang),
-                Arguments.of("Mobile network", "Мобільна мережа", lang)
-        );
-    }
-
     @ParameterizedTest
-    @MethodSource("com.provider.dao.DaoTestData#getServiceStream")
+    @MethodSource("com.provider.TestData#getServiceStream")
     public void testFindNotExistingTranslation(Service service) throws DBException {
         final ServiceDao serviceDao = getServiceDao();
-        serviceDao.setConnection(connection);
+        serviceDao.setConnection(getConnection());
 
         serviceDao.insert(service);
 
         Optional<Service> found = serviceDao.findByKey(service.getId(), "not a language");
         assertTrue(found.isPresent());
         assertEquals(service, found.get());
-    }
-
-    private ServiceDao getServiceDao() {
-        return new PostgresServiceDao();
     }
 }

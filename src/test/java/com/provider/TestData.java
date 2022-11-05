@@ -1,4 +1,4 @@
-package com.provider.dao;
+package com.provider;
 
 import com.provider.entity.EntityFactory;
 import com.provider.entity.SimpleEntityFactory;
@@ -6,6 +6,7 @@ import com.provider.entity.product.Service;
 import com.provider.entity.product.Tariff;
 import com.provider.entity.user.User;
 import com.provider.entity.user.impl.UserImpl;
+import org.junit.jupiter.params.provider.Arguments;
 
 import java.math.BigDecimal;
 import java.util.stream.IntStream;
@@ -14,8 +15,8 @@ import java.util.stream.Stream;
 /**
  * Test data class. Provides data for parameterized tests
  */
-public class DaoTestData {
-    private DaoTestData() {}
+public class TestData {
+    private TestData() {}
 
     private static final EntityFactory entityFactory = SimpleEntityFactory.newInstance();
 
@@ -29,13 +30,26 @@ public class DaoTestData {
     }
 
     /**
+     * Returns stream of arguments of service default name, translated name and language
+     * @return stream of arguments of service default name, translated name and language
+     */
+    public static Stream<Arguments> getServiceNamesUkTranslations() {
+        final String lang = "uk";
+        return Stream.of(
+                Arguments.of("TV", "Телебачення", lang),
+                Arguments.of("Internet", "Інтернет", lang),
+                Arguments.of("Mobile network", "Мобільна мережа", lang)
+        );
+    }
+
+    /**
      * Returns stream of test users
      * @return stream of test user objects
      */
     public static Stream<User> getUserStream() {
         return IntStream.iterate(0, i -> ++i)
                 .limit(8)
-                .mapToObj(DaoTestData::getTestUser);
+                .mapToObj(TestData::getTestUser);
     }
 
     /**
