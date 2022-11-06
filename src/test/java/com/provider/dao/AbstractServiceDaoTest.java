@@ -2,8 +2,6 @@ package com.provider.dao;
 
 import com.provider.TestData;
 import com.provider.dao.exception.DBException;
-import com.provider.entity.EntityFactory;
-import com.provider.entity.SimpleEntityFactory;
 import com.provider.entity.product.Service;
 import com.provider.entity.product.Tariff;
 import org.junit.jupiter.api.Nested;
@@ -18,8 +16,6 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class AbstractServiceDaoTest extends AbstractDaoTest {
-    private static final EntityFactory entityFactory = SimpleEntityFactory.newInstance();
-
     /**
      * Returns ServiceDao implementation instance
      * @return ServiceDao implementation instance
