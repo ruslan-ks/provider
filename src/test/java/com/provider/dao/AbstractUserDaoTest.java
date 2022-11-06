@@ -14,19 +14,11 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class AbstractUserDaoTest extends AbstractDaoTest {
-
-    /**
-     * Returns UserDao implementation instance to be tested
-     * @return UserDao implementation instance to be tested
-     */
-    protected abstract UserDao getUserDao();
+    protected static UserDao userDao;
 
     @ParameterizedTest
     @MethodSource("com.provider.TestData#userStream")
     public void testInsert(User user) throws DBException {
-        final UserDao userDao = getUserDao();
-        userDao.setConnection(getConnection());
-
         final boolean inserted = userDao.insert(user);
         assertTrue(inserted);
         assertNotEquals(0, user.getId());
@@ -35,9 +27,6 @@ public abstract class AbstractUserDaoTest extends AbstractDaoTest {
     @ParameterizedTest
     @MethodSource("com.provider.TestData#userStream")
     public void testInsertAndFindByKey(User user) throws DBException {
-        final UserDao userDao = getUserDao();
-        userDao.setConnection(getConnection());
-
         userDao.insert(user);
 
         final Optional<User> found = userDao.findByKey(user.getId());
@@ -48,9 +37,6 @@ public abstract class AbstractUserDaoTest extends AbstractDaoTest {
     @ParameterizedTest
     @MethodSource("com.provider.TestData#userStream")
     public void testInsertAndFindByLogin(User user) throws DBException {
-        final UserDao userDao = getUserDao();
-        userDao.setConnection(getConnection());
-
         userDao.insert(user);
 
         final Optional<User> found = userDao.findByLogin(user.getLogin());
@@ -61,9 +47,6 @@ public abstract class AbstractUserDaoTest extends AbstractDaoTest {
     @ParameterizedTest
     @MethodSource("com.provider.TestData#userStream")
     public void testUpdateStatus(User user) throws DBException {
-        final UserDao userDao = getUserDao();
-        userDao.setConnection(getConnection());
-
         userDao.insert(user);
 
         final User.Status newStatus = user.getStatus() == User.Status.ACTIVE
@@ -79,9 +62,6 @@ public abstract class AbstractUserDaoTest extends AbstractDaoTest {
 
     @Test
     public void testGetUserCount() throws DBException {
-        final UserDao userDao = getUserDao();
-        userDao.setConnection(getConnection());
-
         final List<User> users = TestData.userStream().toList();
         for (var user : users) {
             userDao.insert(user);
@@ -92,17 +72,13 @@ public abstract class AbstractUserDaoTest extends AbstractDaoTest {
     }
 
     @Test
-    public void testFindPage() throws DBException {
-        final UserDao userDao = getUserDao();
-        userDao.setConnection(getConnection());
-
+    public void testFindPageOfAllPossibleSizes() throws DBException {
         final List<User> users = TestData.userStream()
                 .sorted(Comparator.comparing(User::getId))
                 .toList();
         for (var user : users) {
             userDao.insert(user);
         }
-
         for (int limit = 1; limit < users.size(); limit++) {
             for (int offset = 0; offset < users.size(); offset += limit) {
                 final int subListToIndex = Math.min(offset + limit, users.size());

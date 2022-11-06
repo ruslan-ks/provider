@@ -12,22 +12,16 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class AbstractUserPasswordDaoTest extends AbstractDaoTest {
-
-    protected abstract UserPasswordDao getUserPasswordDao();
-
-    protected abstract UserDao getUserDao();
+    protected static UserPasswordDao userPasswordDao;
+    protected static UserDao userDao;
 
     @ParameterizedTest
     @MethodSource("com.provider.TestData#userStream")
     public void testInsert(User user) throws DBException {
-        final UserDao userDao = getUserDao();
-        userDao.setConnection(getConnection());
         userDao.insert(user);
 
         // password pretends to be hashed, but it's not - hashing is tested separately
         final UserPassword password = passwordFor(user);
-        final UserPasswordDao userPasswordDao = getUserPasswordDao();
-        userPasswordDao.setConnection(getConnection());
         final boolean inserted = userPasswordDao.insert(password);
         assertTrue(inserted);
         assertEquals(user.getId(), password.getUserId());
@@ -36,14 +30,10 @@ public abstract class AbstractUserPasswordDaoTest extends AbstractDaoTest {
     @ParameterizedTest
     @MethodSource("com.provider.TestData#userStream")
     public void testInsertAndFindByKey(User user) throws DBException {
-        final UserDao userDao = getUserDao();
-        userDao.setConnection(getConnection());
         userDao.insert(user);
 
         // password pretends to be hashed, but it's not - hashing is tested separately
         final UserPassword password = passwordFor(user);
-        final UserPasswordDao userPasswordDao = getUserPasswordDao();
-        userPasswordDao.setConnection(getConnection());
         userPasswordDao.insert(password);
 
         final Optional<UserPassword> found = userPasswordDao.findByKey(password.getUserId());

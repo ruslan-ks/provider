@@ -16,24 +16,12 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class AbstractServiceDaoTest extends AbstractDaoTest {
-    /**
-     * Returns ServiceDao implementation instance
-     * @return ServiceDao implementation instance
-     */
-    protected abstract ServiceDao getServiceDao();
-
-    /**
-     * Returns TariffDao implementation instance
-     * @return TariffDao implementation instance
-     */
-    protected abstract TariffDao getTariffDao();
+    protected static ServiceDao serviceDao;
+    protected static TariffDao tariffDao;
 
     @ParameterizedTest
     @MethodSource("com.provider.TestData#serviceStream")
     public void testInsertAndFindByKey(Service service) throws DBException {
-        final ServiceDao serviceDao = getServiceDao();
-        serviceDao.setConnection(getConnection());
-
         final boolean inserted = serviceDao.insert(service);
         assertTrue(inserted);
         assertNotEquals(0, service.getId());
@@ -47,9 +35,6 @@ public abstract class AbstractServiceDaoTest extends AbstractDaoTest {
     @MethodSource("com.provider.TestData#serviceNamesUkTranslations")
     public void testInsertAndFindTranslation(String serviceName, String translatedServiceName, String lang)
             throws DBException {
-        final ServiceDao serviceDao = getServiceDao();
-        serviceDao.setConnection(getConnection());
-
         final Service service = entityFactory.newService(0, serviceName, serviceName + " description");
         serviceDao.insert(service);
         final Service serviceTranslation = entityFactory.newService(service.getId(), translatedServiceName,
@@ -67,9 +52,6 @@ public abstract class AbstractServiceDaoTest extends AbstractDaoTest {
     @ParameterizedTest
     @MethodSource("com.provider.TestData#serviceStream")
     public void testFindNotExistingTranslation(Service service) throws DBException {
-        final ServiceDao serviceDao = getServiceDao();
-        serviceDao.setConnection(getConnection());
-
         serviceDao.insert(service);
 
         Optional<Service> found = serviceDao.findByKey(service.getId(), "not a language");
@@ -83,9 +65,6 @@ public abstract class AbstractServiceDaoTest extends AbstractDaoTest {
      */
     @Test
     public void testFindAllServicesWithUnknownLocale() throws DBException {
-        final ServiceDao serviceDao = getServiceDao();
-        serviceDao.setConnection(getConnection());
-
         final List<Service> services = TestData.serviceStream().toList();
         for (var service : services) {
             serviceDao.insert(service);
@@ -97,9 +76,6 @@ public abstract class AbstractServiceDaoTest extends AbstractDaoTest {
 
     @Test
     public void testFindAllServicesUkTranslations() throws DBException {
-        final ServiceDao serviceDao = getServiceDao();
-        serviceDao.setConnection(getConnection());
-
         final List<Service> services = TestData.serviceStream(10)
                 .toList();
 
@@ -131,11 +107,6 @@ public abstract class AbstractServiceDaoTest extends AbstractDaoTest {
                     .collect(Collectors.toSet());
             final List<Tariff> tariffs = TestData.tariffStream()
                     .toList();
-
-            final TariffDao tariffDao = getTariffDao();
-            tariffDao.setConnection(getConnection());
-            final ServiceDao serviceDao = getServiceDao();
-            serviceDao.setConnection(getConnection());
 
             for (var service : services) {
                 serviceDao.insert(service);
@@ -178,11 +149,6 @@ public abstract class AbstractServiceDaoTest extends AbstractDaoTest {
                     .collect(Collectors.toSet());
             final List<Tariff> tariffs = TestData.tariffStream()
                     .toList();
-
-            final TariffDao tariffDao = getTariffDao();
-            tariffDao.setConnection(getConnection());
-            final ServiceDao serviceDao = getServiceDao();
-            serviceDao.setConnection(getConnection());
 
             for (var service : services) {
                 serviceDao.insert(service);
