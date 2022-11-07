@@ -95,7 +95,7 @@ public class UserAccountImpl implements UserAccount {
         if (o == null || getClass() != o.getClass()) return false;
         UserAccountImpl that = (UserAccountImpl) o;
         return id == that.id && userId == that.userId && currency == that.currency
-                && Objects.equals(amount, that.amount);
+                && amount.compareTo(that.amount) == 0;
     }
 
     @Override

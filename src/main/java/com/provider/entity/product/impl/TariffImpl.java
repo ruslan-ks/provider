@@ -114,7 +114,12 @@ public class TariffImpl implements Tariff {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TariffImpl tariff = (TariffImpl) o;
-        return id == tariff.id && Objects.equals(title, tariff.title) && Objects.equals(description, tariff.description) && status == tariff.status && Objects.equals(usdPrice, tariff.usdPrice) && Objects.equals(imageFileName, tariff.imageFileName);
+        return id == tariff.id
+                && Objects.equals(title, tariff.title)
+                && Objects.equals(description, tariff.description)
+                && status == tariff.status
+                && usdPrice.compareTo(tariff.usdPrice) == 0
+                && Objects.equals(imageFileName, tariff.imageFileName);
     }
 
     @Override
