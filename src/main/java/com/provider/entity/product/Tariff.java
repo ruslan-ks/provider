@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * Tariff(actually tariff plan) entity
  */
-public interface Tariff extends Entity {
+public interface Tariff extends Entity, Cloneable {
     /**
      * Tariff statuses
      */
@@ -57,4 +57,6 @@ public interface Tariff extends Entity {
     @NotNull String getImageFileName();
 
     void setImageFileName(@NotNull String imageFileName);
+
+    Tariff clone();
 }

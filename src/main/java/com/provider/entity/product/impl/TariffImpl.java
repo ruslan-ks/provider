@@ -98,6 +98,15 @@ public class TariffImpl implements Tariff {
     }
 
     @Override
+    public Tariff clone() {
+        try {
+            return (Tariff) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public String toString() {
         return "TariffImpl{" +
                 "id=" + id +

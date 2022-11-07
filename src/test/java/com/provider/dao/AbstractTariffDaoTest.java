@@ -4,9 +4,11 @@ import com.provider.TestData;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.product.Service;
 import com.provider.entity.product.Tariff;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -42,7 +44,7 @@ public abstract class AbstractTariffDaoTest extends AbstractDaoTest {
         tariff.setTitle("New title " + tariff.getId());
         tariff.setDescription("New description " + tariff.getId());
         tariff.setImageFileName("newNotRealImage.png");
-        tariff.setStatus(switchStatus(tariff.getStatus()));
+        tariff.setStatus(revertStatus(tariff.getStatus()));
         tariffDao.update(tariff);
 
         final Optional<Tariff> found = tariffDao.findByKey(tariff.getId());
@@ -50,7 +52,7 @@ public abstract class AbstractTariffDaoTest extends AbstractDaoTest {
         assertEquals(tariff, found.orElseThrow());
     }
 
-    private Tariff.Status switchStatus(Tariff.Status status) {
+    private Tariff.Status revertStatus(Tariff.Status status) {
         return status == Tariff.Status.ACTIVE
                 ? Tariff.Status.HIDDEN
                 : Tariff.Status.ACTIVE;
@@ -76,5 +78,26 @@ public abstract class AbstractTariffDaoTest extends AbstractDaoTest {
         assertFalse(foundTariffServices.isEmpty());
         assertTrue(foundTariffServices.containsAll(services));
         assertEquals(services.size(), foundTariffServices.size());
+    }
+
+    @Test
+    public void testCount() throws DBException {
+        final List<Tariff> tariffs = TestData.tariffStream(16).toList();
+        for (int i = 0; i < tariffs.size(); i++) {
+            final Tariff tariff = tariffs.get(i);
+            if (i % 2 == 0) {
+                tariff.setStatus(revertStatus(tariff.getStatus()));
+            }
+            tariffDao.insert(tariff);
+        }
+
+        final int count = tariffDao.countAll();
+        assertEquals(tariffs.size(), count);
+
+        final long expectedActiveCount = tariffs.stream()
+                .filter(t -> t.getStatus() == Tariff.Status.ACTIVE)
+                .count();
+        final int actualActiveCount = tariffDao.countActive();
+        assertEquals(expectedActiveCount, actualActiveCount);
     }
 }

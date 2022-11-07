@@ -63,6 +63,11 @@ public class TestData {
                 .mapToObj(TestData::user);
     }
 
+    private static User user(int i) {
+        return UserImpl.of(0, "Name" + i, "Surname" + i, "user" + i, String.valueOf(i).repeat(8),
+                User.Role.values()[i % User.Role.values().length], User.Status.ACTIVE);
+    }
+
     /**
      * Returns stream of test Tariff objects
      * @return stream of test Tariff objects
@@ -82,8 +87,15 @@ public class TestData {
         );
     }
 
-    private static User user(int i) {
-        return UserImpl.of(0, "Name" + i, "Surname" + i, "user" + i, String.valueOf(i).repeat(8),
-                User.Role.values()[i % User.Role.values().length], User.Status.ACTIVE);
+    /**
+     * Returns stream of test Tariff objects
+     * @param n tariffs count
+     * @return stream of test Tariff objects
+     */
+    public static Stream<Tariff> tariffStream(int n) {
+        return Stream.iterate(0, i -> ++i)
+                .limit(n)
+                .map(i -> entityFactory.newTariff(0, "Tariff " + i, "Description " + i,
+                        Tariff.Status.ACTIVE, BigDecimal.valueOf(i * 10), "no_image"));
     }
 }
