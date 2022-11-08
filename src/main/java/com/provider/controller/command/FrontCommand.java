@@ -48,7 +48,7 @@ public abstract class FrontCommand {
     /**
      * Service factory that should be used to obtain service objects
      */
-    protected final ServiceFactory serviceFactory = ServiceFactoryImpl.newInstance();
+    protected ServiceFactory serviceFactory = ServiceFactoryImpl.newInstance();
 
     /**
      * Entity factory that should be used to instantiate entities
@@ -58,6 +58,10 @@ public abstract class FrontCommand {
     protected FrontCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
         this.request = request;
         this.response = response;
+    }
+
+    public void setServiceFactory(@NotNull ServiceFactory serviceFactory) {
+        this.serviceFactory = serviceFactory;
     }
 
     /**

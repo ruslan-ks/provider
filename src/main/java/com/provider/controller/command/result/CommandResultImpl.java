@@ -44,4 +44,26 @@ public class CommandResultImpl implements CommandResult {
         messages.add(Pair.of(messageTypeToParam(messageType), message));
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "CommandResultImpl{" +
+                "viewLocation='" + viewLocation + '\'' +
+                ", messages=" + messages +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CommandResultImpl that = (CommandResultImpl) o;
+        return Objects.equals(viewLocation, that.viewLocation)
+                && Objects.equals(messages, that.messages);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(viewLocation, messages);
+    }
 }

@@ -2,6 +2,7 @@ package com.provider.dao;
 
 import com.provider.entity.EntityFactory;
 import com.provider.entity.SimpleEntityFactory;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 
 import java.sql.Connection;
@@ -11,6 +12,11 @@ public abstract class AbstractDaoTest {
     protected static final EntityFactory entityFactory = SimpleEntityFactory.newInstance();
 
     protected static Connection connection;
+
+    @AfterAll
+    static void afterAll() throws SQLException {
+        connection.close();
+    }
 
     @AfterEach
     public void clearAllTables() throws SQLException {
