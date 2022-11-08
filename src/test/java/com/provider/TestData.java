@@ -65,7 +65,7 @@ public class TestData {
 
     private static User user(int i) {
         return UserImpl.of(0, "Name" + i, "Surname" + i, "user" + i, String.valueOf(i).repeat(8),
-                User.Role.values()[i % User.Role.values().length], User.Status.ACTIVE);
+                User.Role.MEMBER, User.Status.ACTIVE);
     }
 
     /**

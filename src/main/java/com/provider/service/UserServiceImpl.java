@@ -9,6 +9,7 @@ import com.provider.entity.user.UserAccount;
 import com.provider.entity.user.UserPassword;
 import com.provider.entity.user.hashing.PasswordHashing;
 import com.provider.service.exception.ValidationException;
+import com.provider.util.Checks;
 import com.provider.validation.UserValidator;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -155,9 +156,7 @@ public class UserServiceImpl extends AbstractService implements UserService {
 
     @Override
     public List<User> findUsersPage(long offset, int limit) throws DBException {
-        if (offset < 0 || limit <= 0) {
-            throw new IllegalArgumentException("Invalid range: offset: " + offset + ", limit: " + limit);
-        }
+        Checks.throwIfInvalidOffsetOrLimit(offset, limit);
         try (var connection = connectionSupplier.get()) {
             final UserDao userDao = daoFactory.newUserDao();
             userDao.setConnection(connection);
@@ -199,11 +198,6 @@ public class UserServiceImpl extends AbstractService implements UserService {
 
     @Override
     public @NotNull Set<User.Role> rolesAllowedForCreation(@NotNull User user) {
-        return switch (user.getRole()) {
-            case ROOT -> Set.of(User.Role.ADMIN, User.Role.MEMBER);
-            case ADMIN -> Set.of(User.Role.MEMBER);
-            default -> throw new IllegalArgumentException("No roles are allowed to be created by '" + user.getRole() +
-                    "'");
-        };
+        return User.Role.rolesAllowedForCreation(user.getRole());
     }
 }

@@ -3,6 +3,9 @@ package com.provider.entity.user;
 import com.provider.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+import java.util.Set;
+
 /**
  * User entity
  */
@@ -11,7 +14,15 @@ public interface User extends Entity {
         ROOT,
         ADMIN,
         MEMBER,
-        GUEST
+        GUEST;
+
+        public static @NotNull Set<Role> rolesAllowedForCreation(@NotNull Role role) {
+            final Map<Role, Set<Role>> rolesAllowedForCreationMap = Map.of(
+                    Role.ROOT, Set.of(User.Role.ADMIN, User.Role.MEMBER),
+                    Role.ADMIN, Set.of(User.Role.MEMBER)
+            );
+            return rolesAllowedForCreationMap.get(role);
+        }
     }
 
     enum Status {

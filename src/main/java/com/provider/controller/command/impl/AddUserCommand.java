@@ -41,7 +41,7 @@ public class AddUserCommand extends AdminCommand {
         final String phone = params.get(UserParams.PHONE);
         final User.Role role = CommandUtil.parseUserRoleParam(params.get(UserParams.ROLE));
 
-        if (!userService.rolesAllowedForCreation(user).contains(role)) {
+        if (!User.Role.rolesAllowedForCreation(user.getRole()).contains(role)) {
             throw new UserAccessRightsException("User '" + user + "' is not allowed to create role '" + role + "'");
         }
         final User newUser = entityFactory.newUser(0, name, surname, login, phone, role, User.Status.ACTIVE);
