@@ -40,14 +40,9 @@ public class ReplenishCommand extends MemberCommand {
         final AccountService accountService = serviceFactory.getAccountService();
         final Optional<UserAccount> userAccount = accountService.findUserAccount(user, accountCurrency);
 
-        // TODO: get rid of duplicates
         if (userAccount.isEmpty()) {
             logger.warn("Failed to find user account: user: {}, currency: {}", user, accountCurrency);
             throw new CommandParamException("Failed to find user account");
-        }
-        if (!accountService.isUserAccount(userAccount.get(), user)) {
-            logger.warn("Account does not belong to the signed user! user: {}, account: {}", user, userAccount.get());
-            throw new CommandParamException("Account does not belong to the signed user!");
         }
 
         final CommandResult commandResult = newCommandResult(Paths.USER_PANEL_PAGE);
