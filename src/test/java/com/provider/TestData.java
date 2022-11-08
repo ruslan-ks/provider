@@ -2,13 +2,18 @@ package com.provider;
 
 import com.provider.entity.EntityFactory;
 import com.provider.entity.SimpleEntityFactory;
+import com.provider.entity.dto.SimpleTariffDto;
+import com.provider.entity.dto.TariffDto;
 import com.provider.entity.product.Service;
 import com.provider.entity.product.Tariff;
+import com.provider.entity.product.TariffDuration;
+import com.provider.entity.product.impl.TariffDurationImpl;
 import com.provider.entity.user.User;
 import com.provider.entity.user.impl.UserImpl;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -85,6 +90,17 @@ public class TestData {
                 entityFactory.newTariff(0, "Magic tariff", "Magic tariff description",
                         Tariff.Status.ACTIVE, BigDecimal.valueOf(200), "no_image")
         );
+    }
+
+    public static Stream<TariffDto> tariffDtoStream() {
+        return tariffStream()
+                .map(TestData::tariffDtoOf);
+    }
+
+    private static TariffDto tariffDtoOf(Tariff tariff) {
+        final TariffDuration tariffDuration = TariffDurationImpl.of(tariff.getId(), 1, 60);
+        final List<Service> services = serviceStream().toList();
+        return SimpleTariffDto.of(tariff, tariffDuration, services);
     }
 
     /**
