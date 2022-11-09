@@ -1,6 +1,7 @@
 package com.provider.controller.command.impl;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.AbstractMap;
@@ -12,6 +13,12 @@ import static org.mockito.Mockito.when;
 
 public class MockUtil {
     private MockUtil() {}
+
+    public static @NotNull HttpServletRequest mockRequestWithSession(@NotNull HttpSession session) {
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getSession()).thenReturn(session);
+        return request;
+    }
 
     public static @NotNull HttpServletRequest mockRequestWithParams(@NotNull Map<String, String> paramMap) {
         final HttpServletRequest request = mock(HttpServletRequest.class);

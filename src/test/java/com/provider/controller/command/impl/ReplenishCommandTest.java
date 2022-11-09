@@ -28,33 +28,21 @@ class ReplenishCommandTest extends AbstractCommandTest {
     @ParameterizedTest
     @MethodSource("com.provider.TestData#userStream")
     public void testPositiveExecuteAuthorized(User user) throws DBException, ValidationException, CommandParamException {
-        final Currency currency = Currency.USD;
-        final int amount = 1000;
-        final UserAccount account = UserAccountImpl.of(0, user.getId(), currency);
-        final Map<String, String> paramMap = Map.of(
-                ReplenishParams.CURRENCY, currency.name(),
-                ReplenishParams.AMOUNT, String.valueOf(amount)
-        );
-        final HttpServletRequest request = MockUtil.mockRequestWithParams(paramMap);
-
-        final AccountService accountService = mock(AccountService.class);
-        when(accountService.findUserAccount(user, currency)).thenReturn(Optional.of(account));
-        when(accountService.replenish(account, BigDecimal.valueOf(amount))).thenReturn(true);
-        when(serviceFactory.getAccountService()).thenReturn(accountService);
-
-        final ReplenishCommand command = new ReplenishCommand(request, response);
-        command.setServiceFactory(serviceFactory);
-
         final CommandResult expectedResult = CommandResultImpl.of(Paths.USER_PANEL_PAGE)
                 .addMessage(CommandResult.MessageType.SUCCESS, Messages.ACCOUNT_REPLENISH_SUCCESS);
-        assertEquals(expectedResult, command.executeAuthorized(user));
-
-        verify(accountService, times(1)).replenish(account, BigDecimal.valueOf(amount));
+        testReplenish(user, true, expectedResult);
     }
 
     @ParameterizedTest
     @MethodSource("com.provider.TestData#userStream")
     public void testNegativeExecuteAuthorized(User user) throws DBException, ValidationException, CommandParamException {
+        final CommandResult expectedResult = CommandResultImpl.of(Paths.USER_PANEL_PAGE)
+                .addMessage(CommandResult.MessageType.FAIL, Messages.ACCOUNT_REPLENISH_FAIL);
+        testReplenish(user, false, expectedResult);
+    }
+
+    private void testReplenish(User user, boolean replenishResult, CommandResult expectedCommandResult)
+            throws DBException, ValidationException, CommandParamException {
         final Currency currency = Currency.USD;
         final int amount = 1000;
         final UserAccount account = UserAccountImpl.of(0, user.getId(), currency);
@@ -66,15 +54,13 @@ class ReplenishCommandTest extends AbstractCommandTest {
 
         final AccountService accountService = mock(AccountService.class);
         when(accountService.findUserAccount(user, currency)).thenReturn(Optional.of(account));
-        when(accountService.replenish(account, BigDecimal.valueOf(amount))).thenReturn(false);
+        when(accountService.replenish(account, BigDecimal.valueOf(amount))).thenReturn(replenishResult);
         when(serviceFactory.getAccountService()).thenReturn(accountService);
 
         final ReplenishCommand command = new ReplenishCommand(request, response);
         command.setServiceFactory(serviceFactory);
 
-        final CommandResult expectedResult = CommandResultImpl.of(Paths.USER_PANEL_PAGE)
-                .addMessage(CommandResult.MessageType.FAIL, Messages.ACCOUNT_REPLENISH_FAIL);
-        assertEquals(expectedResult, command.executeAuthorized(user));
+        assertEquals(expectedCommandResult, command.executeAuthorized(user));
 
         verify(accountService, times(1)).replenish(account, BigDecimal.valueOf(amount));
     }

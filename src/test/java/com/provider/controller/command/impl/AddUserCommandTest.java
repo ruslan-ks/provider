@@ -25,32 +25,21 @@ public class AddUserCommandTest extends AbstractCommandTest {
     @MethodSource("com.provider.TestData#userStream")
     public void testPositiveExecuteAuthorized(User user)
             throws DBException, ValidationException, CommandParamException, UserAccessRightsException {
-        final String password = "pass_" + user.getName();
-        final Map<String, String> paramMap = Map.of(
-                UserParams.LOGIN, user.getLogin(),
-                UserParams.PASSWORD, password,
-                UserParams.NAME, user.getName(),
-                UserParams.SURNAME, user.getSurname(),
-                UserParams.PHONE, user.getPhone(),
-                UserParams.ROLE, user.getRole().name()
-        );
-        final HttpServletRequest request = MockUtil.mockRequestWithParams(paramMap);
-
-        final UserService userService = mock(UserService.class);
-        when(userService.insertUser(user, password)).thenReturn(true);
-        when(serviceFactory.getUserService()).thenReturn(userService);
-
-        final AddUserCommand command = new AddUserCommand(request, response);
-        command.setServiceFactory(serviceFactory);
         final CommandResult expectedResult = CommandResultImpl.of(Paths.USERS_MANAGEMENT_PAGE)
                 .addMessage(CommandResult.MessageType.SUCCESS, Messages.USER_INSERT_SUCCESS);
-        assertEquals(expectedResult, command.executeAuthorized(ADMIN));
+        testAddUser(user, true, expectedResult);
     }
 
     @ParameterizedTest
     @MethodSource("com.provider.TestData#userStream")
     public void testNegativeExecuteAuthorized(User user)
             throws DBException, ValidationException, CommandParamException, UserAccessRightsException {
+        final CommandResult expectedResult = CommandResultImpl.of(Paths.USERS_MANAGEMENT_PAGE)
+                .addMessage(CommandResult.MessageType.FAIL, Messages.USER_INSERT_FAIL);
+        testAddUser(user, false, expectedResult);
+    }
+
+    private void testAddUser(User user, boolean addUserResult, CommandResult expectedCommandResult) throws DBException, ValidationException, CommandParamException, UserAccessRightsException {
         final String password = "pass_" + user.getName();
         final Map<String, String> paramMap = Map.of(
                 UserParams.LOGIN, user.getLogin(),
@@ -63,13 +52,11 @@ public class AddUserCommandTest extends AbstractCommandTest {
         final HttpServletRequest request = MockUtil.mockRequestWithParams(paramMap);
 
         final UserService userService = mock(UserService.class);
-        when(userService.insertUser(user, password)).thenReturn(false);
+        when(userService.insertUser(user, password)).thenReturn(addUserResult);
         when(serviceFactory.getUserService()).thenReturn(userService);
 
         final AddUserCommand command = new AddUserCommand(request, response);
         command.setServiceFactory(serviceFactory);
-        final CommandResult expectedResult = CommandResultImpl.of(Paths.USERS_MANAGEMENT_PAGE)
-                .addMessage(CommandResult.MessageType.FAIL, Messages.USER_INSERT_FAIL);
-        assertEquals(expectedResult, command.executeAuthorized(ADMIN));
+        assertEquals(expectedCommandResult, command.executeAuthorized(ADMIN));
     }
 }

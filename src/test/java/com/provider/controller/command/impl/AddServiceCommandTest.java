@@ -26,27 +26,21 @@ class AddServiceCommandTest extends AbstractCommandTest {
     @MethodSource("com.provider.TestData#serviceStream")
     public void testPositiveExecuteAuthorized(Service service)
             throws DBException, ValidationException, ServletException, CommandParamException, IOException {
-        final Map<String, String> paramMap = Map.of(
-                ServiceParams.NAME, service.getName(),
-                ServiceParams.DESCRIPTION, service.getDescription());
-        final HttpServletRequest request = MockUtil.mockRequestWithParams(paramMap);
-
-        final TariffService tariffService = mock(TariffService.class);
-        when(tariffService.insertService(service)).thenReturn(true);        // inserted successfully
-        when(serviceFactory.getTariffService()).thenReturn(tariffService);
-
-        final AddServiceCommand addServiceCommand = new AddServiceCommand(request, response);
-        addServiceCommand.setServiceFactory(serviceFactory);
-
         final CommandResult expectedResult = CommandResultImpl.of(Paths.TARIFFS_MANAGEMENT_PAGE)
                 .addMessage(CommandResult.MessageType.SUCCESS, Messages.SERVICE_INSERT_SUCCESS);
-
-        assertEquals(expectedResult, addServiceCommand.executeAuthorized(ADMIN));
+        testAddService(service, true, expectedResult);
     }
 
     @ParameterizedTest
     @MethodSource("com.provider.TestData#serviceStream")
     public void testNegativeExecuteAuthorized(Service service)
+            throws DBException, ValidationException, ServletException, CommandParamException, IOException {
+        final CommandResult expectedResult = CommandResultImpl.of(Paths.TARIFFS_MANAGEMENT_PAGE)
+                .addMessage(CommandResult.MessageType.FAIL, Messages.SERVICE_INSERT_FAIL);
+        testAddService(service, false, expectedResult);
+    }
+
+    private void testAddService(Service service, boolean insertServiceResult, CommandResult expectedCommandResult)
             throws DBException, ValidationException, ServletException, CommandParamException, IOException {
         final Map<String, String> paramMap = Map.of(
                 ServiceParams.NAME, service.getName(),
@@ -54,15 +48,12 @@ class AddServiceCommandTest extends AbstractCommandTest {
         final HttpServletRequest request = MockUtil.mockRequestWithParams(paramMap);
 
         final TariffService tariffService = mock(TariffService.class);
-        when(tariffService.insertService(service)).thenReturn(false);       // failed to insert
+        when(tariffService.insertService(service)).thenReturn(insertServiceResult);
         when(serviceFactory.getTariffService()).thenReturn(tariffService);
 
         final AddServiceCommand addServiceCommand = new AddServiceCommand(request, response);
         addServiceCommand.setServiceFactory(serviceFactory);
 
-        final CommandResult expectedResult = CommandResultImpl.of(Paths.TARIFFS_MANAGEMENT_PAGE)
-                .addMessage(CommandResult.MessageType.FAIL, Messages.SERVICE_INSERT_FAIL);
-
-        assertEquals(expectedResult, addServiceCommand.executeAuthorized(ADMIN));
+        assertEquals(expectedCommandResult, addServiceCommand.executeAuthorized(ADMIN));
     }
 }
