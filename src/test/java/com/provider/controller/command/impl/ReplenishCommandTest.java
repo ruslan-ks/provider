@@ -62,6 +62,6 @@ class ReplenishCommandTest extends AbstractCommandTest {
 
         assertEquals(expectedCommandResult, command.executeAuthorized(user));
 
-        verify(accountService, times(1)).replenish(account, BigDecimal.valueOf(amount));
+        verify(accountService).replenish(account, BigDecimal.valueOf(amount));
     }
 }

@@ -25,6 +25,6 @@ class SignOutCommandTest extends AbstractCommandTest {
         final CommandResult expectedResult = CommandResultImpl.of(Paths.SIGN_IN_JSP);
         assertEquals(expectedResult, command.executeAuthorized(user));
 
-        verify(session, times(1)).removeAttribute(SessionAttributes.SIGNED_USER);
+        verify(session).removeAttribute(SessionAttributes.SIGNED_USER);
     }
 }

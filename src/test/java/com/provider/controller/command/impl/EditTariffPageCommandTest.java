@@ -44,6 +44,6 @@ class EditTariffPageCommandTest extends AbstractCommandTest {
         final CommandResult expectedResult = CommandResultImpl.of(Paths.EDIT_TARIFF_JSP);
         assertEquals(expectedResult, command.executeAuthorized(ADMIN));
 
-        verify(request, times(1)).setAttribute(RequestAttributes.TARIFF_DTO, tariffDto);
+        verify(request).setAttribute(RequestAttributes.TARIFF_DTO, tariffDto);
     }
 }
