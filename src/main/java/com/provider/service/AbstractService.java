@@ -14,24 +14,24 @@ import org.slf4j.Logger;
 import java.sql.SQLException;
 
 public abstract class AbstractService {
-    protected final DaoFactory daoFactory;
+    protected DaoFactory daoFactory;
 
-    protected final ConnectionSupplier connectionSupplier;
+    protected ConnectionSupplier connectionSupplier;
 
     protected final ValidatorFactory validatorFactory;
 
     protected final EntityFactory entityFactory;
-
-    /*
-    More Constructors(and corresponding newInstance() methods)
-    taking DaoFactory, ConnectionSupplier and so on could be provided in the future.
-     */
 
     protected AbstractService() throws DBException {
         daoFactory = PostgresDaoFactory.newInstance();
         connectionSupplier = daoFactory.newConnectionSupplier();
         validatorFactory = ValidatorFactoryImpl.newInstance();
         entityFactory = SimpleEntityFactory.newInstance();
+    }
+
+    public void setDaoFactory(@NotNull DaoFactory daoFactory) throws DBException {
+        this.daoFactory = daoFactory;
+        this.connectionSupplier = daoFactory.newConnectionSupplier();
     }
 
     protected void logFailedToCloseConnection(@NotNull Logger logger, @NotNull SQLException ex) {

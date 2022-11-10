@@ -13,7 +13,9 @@ import java.time.Instant;
 import java.util.List;
 import java.util.function.Consumer;
 
-public interface SubscriptionService {
+public abstract class SubscriptionService extends AbstractService {
+    protected SubscriptionService() throws DBException {}
+
     /**
      * Withdraws funds from {@code userAccount} and adds subscription for {@code tariff} <br>
      * @param userAccount user account to be used for payment
@@ -21,7 +23,7 @@ public interface SubscriptionService {
      * @return true if subscription was successfully added and money was withdrawn from the supplied account<br>
      * false if subscription already exists and is active
      */
-    boolean buySubscription(@NotNull UserAccount userAccount, @NotNull Tariff tariff) throws DBException;
+    public abstract boolean buySubscription(@NotNull UserAccount userAccount, @NotNull Tariff tariff) throws DBException;
 
     /**
      * Returns true if account money amount is enough to pay for tariff once
@@ -29,7 +31,7 @@ public interface SubscriptionService {
      * @param tariff tariff
      * @return true if account money amount is enough to pay for tariff once, false otherwise
      */
-    boolean hasEnoughMoneyToPay(@NotNull UserAccount userAccount, @NotNull Tariff tariff);
+    public abstract boolean hasEnoughMoneyToPay(@NotNull UserAccount userAccount, @NotNull Tariff tariff);
 
     /**
      * Checks whether subscription exists and is active
@@ -37,7 +39,8 @@ public interface SubscriptionService {
      * @param tariff tariff of the subscription
      * @return true if subscription of {@code userAccount} and {@code tariff} exists and has {@code ACTIVE} status
      */
-    boolean activeSubscriptionExists(@NotNull UserAccount userAccount, @NotNull Tariff tariff) throws DBException;
+    public abstract boolean activeSubscriptionExists(@NotNull UserAccount userAccount, @NotNull Tariff tariff)
+            throws DBException;
 
     /**
      * Returns list of subscriptions bound to {@code userAccount} and with status == ACTIVE
@@ -45,7 +48,8 @@ public interface SubscriptionService {
      * @return list of subscriptions bound to {@code userAccount} and with status == ACTIVE
      * @throws DBException if {@link com.provider.dao.SubscriptionDao} throws it
      */
-    @NotNull List<Subscription> findActiveSubscriptions(@NotNull UserAccount userAccount) throws DBException;
+    public abstract @NotNull List<Subscription> findActiveSubscriptions(@NotNull UserAccount userAccount)
+            throws DBException;
 
     /**
      * Returns list of SubscriptionTariffDto containing Subscription and TariffDto objects
@@ -53,8 +57,8 @@ public interface SubscriptionService {
      * @return list of SubscriptionTariffDto containing Subscription and TariffDto objects
      * @throws DBException if SLQException occurred
      */
-    @NotNull List<SubscriptionTariffDto> findActiveSubscriptionsFullInfo(@NotNull UserAccount userAccount,
-                                                                         @NotNull String locale) throws DBException;
+    public abstract @NotNull List<SubscriptionTariffDto> findActiveSubscriptionsFullInfo(
+            @NotNull UserAccount userAccount, @NotNull String locale) throws DBException;
 
     /**
      * Computes next payment time using subscription last payment time and tariff duration
@@ -63,21 +67,22 @@ public interface SubscriptionService {
      * @return instant when fee must be charged
      * @throws IllegalArgumentException if subscription's tariff id != tariffDuration's tariff id
      */
-    @NotNull Instant computeNextPaymentTime(@NotNull Subscription subscription, @NotNull TariffDuration tariffDuration);
+    public abstract @NotNull Instant computeNextPaymentTime(@NotNull Subscription subscription,
+                                                            @NotNull TariffDuration tariffDuration);
 
     /**
      * Inactivates subscription
      * @param subscription subscription to be inactivated
      * @return true if db changes were made successfully
      */
-    boolean unsubscribe(@NotNull Subscription subscription) throws DBException;
+    public abstract boolean unsubscribe(@NotNull Subscription subscription) throws DBException;
 
     /**
      * Reruns list of subscriptions that need to be renewed
      * @return list of subscriptions that need to be renewed. Active subscriptions only
      * @throws DBException if {@link com.provider.dao.SubscriptionDao} throws it
      */
-    List<SubscriptionDto> findAllExpiredActiveSubscriptions() throws DBException;
+    public abstract List<SubscriptionDto> findAllExpiredActiveSubscriptions() throws DBException;
 
     /**
      * Renews all expired active subscriptions
@@ -87,7 +92,6 @@ public interface SubscriptionService {
      * @throws DBException if {@link com.provider.dao.SubscriptionDao} or {@link com.provider.dao.UserAccountDao}
      * throws it
      */
-    void renewAllExpiredActiveSubscriptions(@NotNull Consumer<SubscriptionDto> renewedConsumer,
-            @NotNull Consumer<SubscriptionDto> notEnoughMoneyConsumer)
-            throws DBException;
+    public abstract void renewAllExpiredActiveSubscriptions(@NotNull Consumer<SubscriptionDto> renewedConsumer,
+            @NotNull Consumer<SubscriptionDto> notEnoughMoneyConsumer) throws DBException;
 }

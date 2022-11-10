@@ -4,7 +4,7 @@ import com.provider.dao.exception.DBException;
 import com.provider.entity.product.Subscription;
 import com.provider.entity.product.TariffDuration;
 import com.provider.service.ServiceFactory;
-import com.provider.service.ServiceFactoryImpl;
+import com.provider.service.impl.ServiceFactoryImpl;
 import com.provider.service.SubscriptionService;
 
 import java.time.Instant;

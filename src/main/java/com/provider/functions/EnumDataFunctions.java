@@ -4,7 +4,7 @@ import com.provider.dao.exception.DBException;
 import com.provider.entity.product.Tariff;
 import com.provider.entity.user.User;
 import com.provider.service.ServiceFactory;
-import com.provider.service.ServiceFactoryImpl;
+import com.provider.service.impl.ServiceFactoryImpl;
 import com.provider.service.UserService;
 
 import java.util.Arrays;

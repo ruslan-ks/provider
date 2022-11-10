@@ -1,4 +1,4 @@
-package com.provider.service;
+package com.provider.service.impl;
 
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -13,6 +13,7 @@ import com.provider.entity.dto.TariffDto;
 import com.provider.entity.product.Service;
 import com.provider.entity.product.Tariff;
 import com.provider.entity.product.TariffDuration;
+import com.provider.service.TariffService;
 import com.provider.service.exception.ValidationException;
 import com.provider.sorting.TariffOrderRule;
 import com.provider.validation.ServiceValidator;
@@ -25,7 +26,7 @@ import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.*;
 
-public class TariffServiceImpl extends AbstractService implements TariffService {
+public class TariffServiceImpl extends TariffService {
     private static final Logger logger = LoggerFactory.getLogger(TariffServiceImpl.class);
 
     protected TariffServiceImpl() throws DBException {}

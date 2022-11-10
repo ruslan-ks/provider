@@ -13,27 +13,29 @@ import java.util.Set;
 /**
  * Contains business logic and db access for User class data
  */
-public interface UserService {
+public abstract class UserService extends AbstractService {
+    protected UserService() throws DBException {}
+
     /**
      * Find user by id
      * @param id user id
      * @return Optional containing user with a specified id if found, empty optional otherwise
      */
-    @NotNull Optional<User> findUserById(long id) throws DBException;
+    public abstract @NotNull Optional<User> findUserById(long id) throws DBException;
 
     /**
      * Searches for user in db
      * @param login user login
      * @return Optional containing User with specified login if found, Optional.empty() otherwise
      */
-    @NotNull Optional<User> findUserByLogin(@NotNull String login) throws DBException;
+    public abstract @NotNull Optional<User> findUserByLogin(@NotNull String login) throws DBException;
 
     /**
      * Searches for user password in db
      * @param userId user id
      * @return Optional containing UserPassword with specified if found, Optional.empty() otherwise
      */
-    @NotNull Optional<UserPassword> findUserPassword(long userId) throws DBException;
+    public abstract @NotNull Optional<UserPassword> findUserPassword(long userId) throws DBException;
 
     /**
      * Inserts user to db.
@@ -43,7 +45,8 @@ public interface UserService {
      * @throws ValidationException if at least one of user properties or password is not valid according to
      * UserValidator calls result.
      */
-    boolean insertUser(@NotNull User user, @NotNull String password) throws DBException, ValidationException;
+    public abstract boolean insertUser(@NotNull User user, @NotNull String password)
+            throws DBException, ValidationException;
 
     /**
      * Checks login and password and returns authenticated user object
@@ -51,7 +54,8 @@ public interface UserService {
      * @param password user-provided password(NOT a hash)
      * @return Optional containing user object if login and password are correct, Optional.empty() otherwise
      */
-    @NotNull Optional<User> authenticate(@NotNull String login, @NotNull String password) throws DBException;
+    public abstract @NotNull Optional<User> authenticate(@NotNull String login, @NotNull String password)
+            throws DBException;
 
     /**
      * Checks if user is active - not suspended(banned and so on)
@@ -59,21 +63,21 @@ public interface UserService {
      * @param user user to be checked
      * @return true if user is active
      */
-    boolean isActiveUser(@NotNull User user);
+    public abstract boolean isActiveUser(@NotNull User user);
 
     /**
      * Checks whether user is admin or higher
      * @param user user to be checked
      * @return true is user has admin rights
      */
-    boolean hasAdminRights(@NotNull User user);
+    public abstract boolean hasAdminRights(@NotNull User user);
 
     /**
      * Checks whether user has root rights
      * @param user user to be checked
      * @return true is user has root rights
      */
-    boolean isRoot(@NotNull User user);
+    public abstract boolean isRoot(@NotNull User user);
 
     /**
      * Returns users of specified range sorted by id
@@ -83,13 +87,13 @@ public interface UserService {
      * @throws DBException is db logic fail occurred
      * @throws IllegalArgumentException if offset < 0 or limit <= 0
      */
-    List<User> findUsersPage(long offset, int limit) throws DBException;
+    public abstract List<User> findUsersPage(long offset, int limit) throws DBException;
 
     /**
      * Returns count of users in db
      * @return count of users
      */
-    long getUsersCount() throws DBException;
+    public abstract long getUsersCount() throws DBException;
 
     /**
      * Updates user status
@@ -99,7 +103,7 @@ public interface UserService {
      * @throws DBException if this UserDao throws this exception
      * @throws java.util.NoSuchElementException if there is no user with id userId
      */
-    boolean updateUserStatus(long userId, User.Status status) throws DBException;
+    public abstract boolean updateUserStatus(long userId, User.Status status) throws DBException;
 
     /**
      * Returns set of roles that may be created by the user
@@ -107,5 +111,5 @@ public interface UserService {
      * @return set of roles that may be created by the user
      * @throws IllegalArgumentException if user's role is neither ADMIN nor ROOT
      */
-    @NotNull Set<User.Role> rolesAllowedForCreation(@NotNull User user);
+    public abstract @NotNull Set<User.Role> rolesAllowedForCreation(@NotNull User user);
 }

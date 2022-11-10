@@ -1,10 +1,11 @@
-package com.provider.service;
+package com.provider.service.impl;
 
 import com.provider.dao.UserAccountDao;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.Currency;
 import com.provider.entity.user.User;
 import com.provider.entity.user.UserAccount;
+import com.provider.service.AccountService;
 import com.provider.service.exception.ValidationException;
 import com.provider.validation.MoneyValidator;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +17,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-public class AccountServiceImpl extends AbstractService implements AccountService {
+public class AccountServiceImpl extends AccountService {
     private static final Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
 
     AccountServiceImpl() throws DBException {}

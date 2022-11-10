@@ -1,4 +1,4 @@
-package com.provider.service;
+package com.provider.service.impl;
 
 import com.provider.dao.*;
 import com.provider.dao.exception.DBException;
@@ -8,6 +8,7 @@ import com.provider.entity.user.User;
 import com.provider.entity.user.UserAccount;
 import com.provider.entity.user.UserPassword;
 import com.provider.entity.user.hashing.PasswordHashing;
+import com.provider.service.UserService;
 import com.provider.service.exception.ValidationException;
 import com.provider.util.Checks;
 import com.provider.validation.UserValidator;
@@ -24,7 +25,7 @@ import java.util.Set;
 /**
  * User service implementation. Contains business logic and data access methods for User.
  */
-public class UserServiceImpl extends AbstractService implements UserService {
+public class UserServiceImpl extends UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final UserValidator userValidator = validatorFactory.getUserValidator();

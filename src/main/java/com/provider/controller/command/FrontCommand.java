@@ -14,7 +14,7 @@ import com.provider.entity.SimpleEntityFactory;
 import com.provider.entity.settings.UserSettings;
 import com.provider.entity.user.User;
 import com.provider.service.ServiceFactory;
-import com.provider.service.ServiceFactoryImpl;
+import com.provider.service.impl.ServiceFactoryImpl;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

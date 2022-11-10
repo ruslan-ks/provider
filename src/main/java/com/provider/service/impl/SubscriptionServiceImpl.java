@@ -1,4 +1,4 @@
-package com.provider.service;
+package com.provider.service.impl;
 
 import com.provider.dao.SubscriptionDao;
 import com.provider.dao.UserAccountDao;
@@ -10,6 +10,7 @@ import com.provider.entity.product.Subscription;
 import com.provider.entity.product.Tariff;
 import com.provider.entity.product.TariffDuration;
 import com.provider.entity.user.UserAccount;
+import com.provider.service.SubscriptionService;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,7 @@ import java.time.*;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class SubscriptionServiceImpl extends AbstractService implements SubscriptionService {
+public class SubscriptionServiceImpl extends SubscriptionService {
     private static final Logger logger = LoggerFactory.getLogger(SubscriptionServiceImpl.class);
 
     protected SubscriptionServiceImpl() throws DBException {}
