@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 
 public class AddUserCommandTest extends AbstractCommandTest {
     @ParameterizedTest
-    @MethodSource("com.provider.TestData#userStream")
+    @MethodSource("com.provider.TestData#zeroIdUserStream")
     public void testPositiveExecuteAuthorized(User user)
             throws DBException, ValidationException, CommandParamException, UserAccessRightsException {
         final CommandResult expectedResult = CommandResultImpl.of(Paths.USERS_MANAGEMENT_PAGE)

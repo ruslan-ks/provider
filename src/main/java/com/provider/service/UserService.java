@@ -1,5 +1,6 @@
 package com.provider.service;
 
+import com.provider.dao.DaoFactory;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.user.User;
 import com.provider.entity.user.UserPassword;
@@ -15,6 +16,10 @@ import java.util.Set;
  */
 public abstract class UserService extends AbstractService {
     protected UserService() throws DBException {}
+
+    protected UserService(@NotNull DaoFactory daoFactory) throws DBException {
+        super(daoFactory);
+    }
 
     /**
      * Find user by id

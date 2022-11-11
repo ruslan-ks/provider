@@ -63,14 +63,26 @@ public class TestData {
      * @return stream of test user objects
      */
     public static Stream<User> userStream() {
-        return IntStream.iterate(0, i -> ++i)
+        return IntStream.iterate(1, i -> ++i)
                 .limit(10)
                 .mapToObj(TestData::user);
     }
 
+    /**
+     * Returns stream of test users
+     * @return stream of test user objects
+     */
+    public static Stream<User> zeroIdUserStream() {
+        return IntStream.iterate(0, i -> ++i)
+                .limit(10)
+                .mapToObj(TestData::user)
+                .map(u -> UserImpl.of(0, u.getName(), u.getSurname(), u.getLogin(), u.getPhone(), u.getRole(),
+                        u.getStatus()));
+    }
+
     private static User user(int i) {
-        return UserImpl.of(0, "Name" + i, "Surname" + i, "user" + i, String.valueOf(i).repeat(8),
-                User.Role.MEMBER, User.Status.ACTIVE);
+        return UserImpl.of(i, "Name" + i, "Surname" + i, "user" + i,
+                String.valueOf(i).repeat(8).substring(0, 8), User.Role.MEMBER, User.Status.ACTIVE);
     }
 
     /**

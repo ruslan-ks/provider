@@ -32,8 +32,16 @@ public class UserServiceImpl extends UserService {
 
     UserServiceImpl() throws DBException {}
 
+    UserServiceImpl(@NotNull DaoFactory daoFactory) throws DBException {
+        super(daoFactory);
+    }
+
     public static UserServiceImpl newInstance() throws DBException {
         return new UserServiceImpl();
+    }
+
+    public static UserServiceImpl newInstance(@NotNull DaoFactory daoFactory) throws DBException {
+        return new UserServiceImpl(daoFactory);
     }
 
     @Override

@@ -23,15 +23,14 @@ public abstract class AbstractService {
     protected final EntityFactory entityFactory;
 
     protected AbstractService() throws DBException {
-        daoFactory = PostgresDaoFactory.newInstance();
+        this(PostgresDaoFactory.newInstance());
+    }
+
+    protected AbstractService(@NotNull DaoFactory daoFactory) throws DBException {
+        this.daoFactory = daoFactory;
         connectionSupplier = daoFactory.newConnectionSupplier();
         validatorFactory = ValidatorFactoryImpl.newInstance();
         entityFactory = SimpleEntityFactory.newInstance();
-    }
-
-    public void setDaoFactory(@NotNull DaoFactory daoFactory) throws DBException {
-        this.daoFactory = daoFactory;
-        this.connectionSupplier = daoFactory.newConnectionSupplier();
     }
 
     protected void logFailedToCloseConnection(@NotNull Logger logger, @NotNull SQLException ex) {
