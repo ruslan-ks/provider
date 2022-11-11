@@ -1,9 +1,5 @@
 package com.provider.controller.command.result;
 
-import com.provider.constants.Paths;
-import com.provider.constants.params.EditParams;
-import com.provider.constants.params.TariffParams;
-import com.provider.util.ParameterizedUrl;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,12 +43,4 @@ public interface CommandResult {
      * @return queue of messages of different types
      */
     @NotNull Queue<Pair<MessageType, String>> getMessages();
-
-    // TODO: move it somewhere
-    static @NotNull CommandResult editTariffPage(int tariffId, @NotNull String editLocale) {
-        final ParameterizedUrl url = ParameterizedUrl.of(Paths.EDIT_TARIFF_PAGE);
-        url.addParam(TariffParams.ID, String.valueOf(tariffId));
-        url.addParam(EditParams.LOCALE, editLocale);
-        return CommandResultImpl.of(url.getString());
-    }
 }

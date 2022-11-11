@@ -6,6 +6,7 @@ import com.provider.controller.command.AdminCommand;
 import com.provider.controller.command.CommandUtil;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.controller.command.result.CommandResult;
+import com.provider.controller.command.result.CommandResults;
 import com.provider.controller.upload.FileUploader;
 import com.provider.controller.upload.ImageUploader;
 import com.provider.controller.upload.InvalidMimeTypeException;
@@ -44,7 +45,7 @@ public class ChangeTariffImageCommand extends AdminCommand {
         final Tariff tariff = tariffService.findTariffById(tariffId)
                 .orElseThrow(() -> new CommandParamException("Tariff not found! tariff id: " + tariffId));
 
-        final CommandResult commandResult =  CommandResult.editTariffPage(tariffId, getLocale());
+        final CommandResult commandResult =  CommandResults.editTariffPage(tariffId, getLocale());
 
         // Loading new image
         final Part imagePart = request.getPart(TariffParams.IMAGE);

@@ -8,6 +8,7 @@ import com.provider.controller.command.AdminCommand;
 import com.provider.controller.command.CommandUtil;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.controller.command.result.CommandResult;
+import com.provider.controller.command.result.CommandResults;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.product.Tariff;
 import com.provider.entity.user.User;
@@ -44,14 +45,14 @@ public class EditTariffCommand extends AdminCommand {
                 .orElseThrow(() -> new CommandParamException("Tariff not found! tariff id: " + tariffId));
 
         // Resulting page
-        final CommandResult commandResult = CommandResult.editTariffPage(tariffId, editLocale);
+        final CommandResult commandResult = CommandResults.editTariffPage(tariffId, editLocale);
 
         // Setting new values
         final Tariff.Status tariffStatus = CommandUtil.parseTariffStatusParam(params.get(TariffParams.STATUS));
         setUpdatableTariffFields(tariff, params.get(TariffParams.TITLE), params.get(TariffParams.DESCRIPTION),
                 tariffStatus);
 
-        return tryUpdateUpsert(tariff, tariffService, editLocale, commandResult);
+        return tryUpdateOrUpsert(tariff, tariffService, editLocale, commandResult);
     }
 
     private void setUpdatableTariffFields(@NotNull Tariff tariff, @NotNull String title, @NotNull String description,
@@ -61,8 +62,8 @@ public class EditTariffCommand extends AdminCommand {
         tariff.setStatus(status);
     }
 
-    private @NotNull CommandResult tryUpdateUpsert(@NotNull Tariff tariff, @NotNull TariffService tariffService,
-                                                   @NotNull String editLocale, @NotNull CommandResult commandResult)
+    private @NotNull CommandResult tryUpdateOrUpsert(@NotNull Tariff tariff, @NotNull TariffService tariffService,
+                                                     @NotNull String editLocale, @NotNull CommandResult commandResult)
             throws DBException {
         final String defaultLocale = request.getServletContext().getInitParameter(AppInitParams.DEFAULT_LOCALE);
         boolean updated = false;
