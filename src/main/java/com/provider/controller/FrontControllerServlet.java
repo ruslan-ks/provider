@@ -1,6 +1,7 @@
 package com.provider.controller;
 
 import com.provider.constants.Paths;
+import com.provider.constants.attributes.SessionAttributes;
 import com.provider.controller.command.FrontCommand;
 import com.provider.controller.command.FrontCommandFactory;
 import com.provider.controller.command.exception.CommandParamException;
@@ -12,12 +13,14 @@ import com.provider.dao.exception.DBException;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.Queue;
 
 /**
  * The only servlet of the whole application. All requests are handled here.
@@ -36,14 +39,10 @@ public class FrontControllerServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         logger.debug("GET Request - Front Controller Servlet");
-        final Optional<CommandResult> result = handleRequest(request, response);
-        if (result.isPresent()) {
-            if (result.get() == CommandResult.NO_VIEW) {
-                return;
-            }
+        final Optional<String> location = handleRequest(request, response);
+        if (location.isPresent()) {
             logger.debug("Forward after GET Request - Front Controller Servlet");
-            request.getRequestDispatcher(result.get().getViewLocation())
-                    .forward(request, response);
+            request.getRequestDispatcher(location.get()).forward(request, response);
         }
     }
 
@@ -51,27 +50,29 @@ public class FrontControllerServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         logger.debug("POST Request - Front Controller Servlet");
-        final Optional<CommandResult> result = handleRequest(request, response);
-        if (result.isPresent()) {
-            if (result.get() == CommandResult.NO_VIEW) {
-                return;
-            }
+        final Optional<String> location = handleRequest(request, response);
+        if (location.isPresent()) {
             logger.debug("Redirect after POST Request - Front Controller Servlet");
-            response.sendRedirect(result.get().getViewLocation());
+            response.sendRedirect(location.get());
         }
     }
 
     /**
      * Handles all incoming requests.
-     * Obtains appropriate command via frontCommandFactory.getCommand(), then executes it.
+     * Obtains appropriate command and executes it.
      * @param request incoming request
      * @param response resulting response
+     * @return resulting location
      */
-    private Optional<CommandResult> handleRequest(HttpServletRequest request, HttpServletResponse response)
+    private Optional<String> handleRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             final FrontCommand frontCommand = frontCommandFactory.getCommand(request, response, getServletConfig());
-            return Optional.of(frontCommand.execute());
+            final CommandResult result = frontCommand.execute();
+            addMessages(request, result.getMessages());
+            if (result != CommandResult.NO_VIEW) {
+                return Optional.of(result.getViewLocation());
+            }
         } catch (IllegalCommandException | CommandParamException ex) {
             logger.warn("Bad request", ex);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -88,6 +89,19 @@ public class FrontControllerServlet extends HttpServlet {
         return Optional.empty();
     }
 
+    private void addMessages(@NotNull HttpServletRequest request,
+                             @NotNull Queue<Pair<CommandResult.MessageType, String>> messages) {
+        final HttpSession session = request.getSession();
+        @SuppressWarnings("unchecked")
+        final var messagesAttr = (Queue<Pair<CommandResult.MessageType, String>>)
+                session.getAttribute(SessionAttributes.MESSAGES);
+        if (messagesAttr == null) {
+            session.setAttribute(SessionAttributes.MESSAGES, messages);
+        } else {
+            messagesAttr.addAll(messages);
+        }
+    }
+
     private void forwardToBadRequestPage(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response)
             throws ServletException, IOException {
         request.getRequestDispatcher(Paths.BAD_REQUEST_ERROR_JSP).forward(request, response);
@@ -100,7 +114,7 @@ public class FrontControllerServlet extends HttpServlet {
     }
 
     private void forwardToUnauthorizedPage(@NotNull HttpServletRequest request,
-                                                  @NotNull HttpServletResponse response)
+                                           @NotNull HttpServletResponse response)
             throws ServletException, IOException {
         request.getRequestDispatcher(Paths.UNAUTHORIZED_ERROR_JSP).forward(request, response);
     }
