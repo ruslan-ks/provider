@@ -89,8 +89,7 @@ public class AppListener implements ServletContextListener {
         final String fileUploadDir = servletContext.getInitParameter(AppInitParams.FILE_UPLOAD_DIR);
         final Path imageUploadPath = Paths.get(fileUploadDir, "images");
 
-        servletContext.setAttribute(AppAttributes.TARIFF_IMAGE_UPLOAD_PATH, imageUploadPath.toString());
-        servletContext.setAttribute(AppAttributes.TARIFF_IMAGE_DIR, fileUploadDir);
+        servletContext.setAttribute(AppAttributes.TARIFF_IMAGE_UPLOAD_DIR_PATH, imageUploadPath.toString());
     }
 
     public void tryCreateRootUser() {

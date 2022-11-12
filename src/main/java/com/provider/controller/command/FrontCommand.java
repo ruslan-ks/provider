@@ -182,7 +182,7 @@ public abstract class FrontCommand {
      */
     protected @NotNull Path getImageUploadPath() {
         final var uploadPathString = (String) request.getServletContext()
-                .getAttribute(AppAttributes.TARIFF_IMAGE_UPLOAD_PATH);
+                .getAttribute(AppAttributes.TARIFF_IMAGE_UPLOAD_DIR_PATH);
         return Paths.get(uploadPathString);
     }
 

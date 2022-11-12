@@ -1,5 +1,8 @@
 package com.provider.constants;
 
+/**
+ * Application(servlet context) init parameter names
+ */
 public class AppInitParams {
     private AppInitParams() {}
 

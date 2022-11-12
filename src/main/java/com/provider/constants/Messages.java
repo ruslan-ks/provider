@@ -1,9 +1,8 @@
 package com.provider.constants;
 
 /**
- * Messages shown to a user
+ * Messages shown to a user after server state changing actions
  */
-// TODO: add messages localization
 public class Messages {
     private Messages() {}
 
