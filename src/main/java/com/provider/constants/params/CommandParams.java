@@ -1,5 +1,8 @@
 package com.provider.constants.params;
 
+/**
+ * Command parameter names
+ */
 public class CommandParams {
     private CommandParams() {}
 
@@ -7,8 +10,6 @@ public class CommandParams {
      * Command parameter name
      */
     public static final String COMMAND = "command";
-
-    // Possible command parameter values
 
     /**
      * Sign in command

@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ page import="com.provider.constants.params.SignInParams" %>
+<%@ page import="com.provider.constants.params.UserParams" %>
 <%@ page import="com.provider.constants.Paths" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -22,13 +22,13 @@
     <div class="mb-3 row">
         <label for="loginInput" class="col-md-3 col-form-label"><fmt:message key="user.login"/></label>
         <div class="col">
-            <input type="text" name="${SignInParams.LOGIN}" class="form-control" id="loginInput">
+            <input type="text" name="${UserParams.LOGIN}" class="form-control" id="loginInput">
         </div>
     </div>
     <div class="mb-3 row">
         <label for="passwordInput" class="col-md-3 col-form-label"><fmt:message key="user.password"/></label>
         <div class="col">
-            <input type="password" name="${SignInParams.PASSWORD}" class="form-control" id="passwordInput">
+            <input type="password" name="${UserParams.PASSWORD}" class="form-control" id="passwordInput">
         </div>
     </div>
     <div class="row">

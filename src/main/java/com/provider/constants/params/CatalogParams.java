@@ -1,5 +1,8 @@
 package com.provider.constants.params;
 
+/**
+ * Catalog parameter names
+ */
 public class CatalogParams {
     private CatalogParams() {}
 

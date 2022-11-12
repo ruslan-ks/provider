@@ -1,5 +1,8 @@
 package com.provider.constants.params;
 
+/**
+ * Service parameter names
+ */
 public class ServiceParams {
     private ServiceParams() {}
 

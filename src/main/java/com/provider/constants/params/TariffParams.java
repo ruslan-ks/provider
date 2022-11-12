@@ -1,13 +1,24 @@
 package com.provider.constants.params;
 
+/**
+ * Tariff parameter names
+ */
 public class TariffParams {
     private TariffParams() {}
 
     public static final String ID = "tariffId";
+
     public static final String TITLE = "tariffTitle";
+
     public static final String DESCRIPTION = "tariffDescription";
+
+    /**
+     * Floating. 2 signs after comma
+     */
     public static final String USD_PRICE = "tariffUsdPrice";
+
     public static final String DURATION_MONTHS = "tariffDurationMonths";
+
     public static final String DURATION_MINUTES = "tariffDurationMinutes";
 
     /**
