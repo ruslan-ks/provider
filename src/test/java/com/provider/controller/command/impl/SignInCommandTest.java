@@ -2,7 +2,7 @@ package com.provider.controller.command.impl;
 
 import com.provider.constants.Messages;
 import com.provider.constants.Paths;
-import com.provider.constants.params.SignInParams;
+import com.provider.constants.params.UserParams;
 import com.provider.controller.command.exception.CommandParamException;
 import com.provider.controller.command.result.CommandResult;
 import com.provider.controller.command.result.CommandResultImpl;
@@ -52,8 +52,8 @@ class SignInCommandTest extends AbstractCommandTest {
             throws DBException, ServletException, CommandParamException, IOException {
         final String password = "pass_" + user;
         final Map<String, String> paramMap = Map.of(
-                SignInParams.LOGIN, user.getLogin(),
-                SignInParams.PASSWORD, password
+                UserParams.LOGIN, user.getLogin(),
+                UserParams.PASSWORD, password
         );
         final HttpServletRequest request = MockUtil.mockRequestWithParams(paramMap);
         when(request.getSession()).thenReturn(mock(HttpSession.class));
