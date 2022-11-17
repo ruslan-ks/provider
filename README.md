@@ -1,8 +1,9 @@
 # provider
 Provider Java web application
 
-_**(Internet) Provider** is an organization that provides services for accessing, using, or participating in the Internet; 
-this specific provider may also provide **any other kind of services imaginable, such as TV, mobile network and so on**._
+_**(Internet) Provider** is an organization that provides services for accessing, using, or participating in the 
+Internet; this specific provider may also provide **any other kind of services imaginable, such as TV, mobile network 
+and so on**._
 
 ## Technologies used
 * Java 17
@@ -62,14 +63,19 @@ may be hidden instead**
       * may create Users of _ADMIN_ role
       * may block and unblock Users of _ADMIN_ role
 
+## Deployment
+1. Install Servlet container supporting Jakarta Servlet API 5.0
+   * for example Tomcat 10
+2. Place this app
+
 ## Architecture and design specifics
-### General:
+### General
 * MVC architecture is applied.
 * Front Controller pattern is applied along with Command pattern, so there is only one Servlet per app
 * Commands use Services. Services use DAOs and other Services
 
 ### Database structure
-
+#### Relations
 * User : UserPassword - 1:1
 * User : UserAccount - 1:1
 * UserAccount : Subscription - 1:M
@@ -94,6 +100,9 @@ may be hidden instead**
 calling DB methods
 * DAO instances **NEVER close Connection**, it must be closed(returned to pool) by the calling code
 
+#### Testing
+Dao testing is implemented using test database with the structure similar to the production one.
+Test db is created using project db tables creation script(/sql/postgres/create_db.sql)
 
 
 
