@@ -11,7 +11,7 @@ public interface DaoFactory {
      * Creates new ConnectionSupplier for created daos
      * @return new ConnectionSupplier
      */
-    @NotNull ConnectionSupplier newConnectionSupplier() throws DBException;
+    @NotNull ConnectionSupplier getConnectionSupplier() throws DBException;
 
     /**
      * Creates new UserDao

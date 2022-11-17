@@ -29,6 +29,6 @@ abstract class AbstractServiceTest {
     public void prepare() throws DBException {
         MockitoAnnotations.openMocks(this);
         when(connectionSupplier.get()).thenReturn(connection);
-        when(daoFactory.newConnectionSupplier()).thenReturn(connectionSupplier);
+        when(daoFactory.getConnectionSupplier()).thenReturn(connectionSupplier);
     }
 }

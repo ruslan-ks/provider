@@ -13,8 +13,8 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class PostgresConnectionSupplier implements ConnectionSupplier {
-    private static final Logger logger = LoggerFactory.getLogger(PostgresConnectionSupplier.class);
+public class PooledPostgresConnectionSupplier implements ConnectionSupplier {
+    private static final Logger logger = LoggerFactory.getLogger(PooledPostgresConnectionSupplier.class);
 
     private static final String DATASOURCE_NAME = "java:/comp/env/jdbc/postgres/provider";
 

@@ -28,7 +28,7 @@ public abstract class AbstractService {
 
     protected AbstractService(@NotNull DaoFactory daoFactory) throws DBException {
         this.daoFactory = daoFactory;
-        connectionSupplier = daoFactory.newConnectionSupplier();
+        connectionSupplier = daoFactory.getConnectionSupplier();
         validatorFactory = ValidatorFactoryImpl.newInstance();
         entityFactory = SimpleEntityFactory.newInstance();
     }
