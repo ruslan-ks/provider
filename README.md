@@ -64,17 +64,44 @@ may be hidden instead**
       * may block and unblock Users of _ADMIN_ role
 
 ## Deployment
+What one needs to deploy and start using this app
+
+_If any of the context init parameter names(specified in the DD) you need is not listed here, just take a look
+at the DD, it's pretty obvious_
+
+### Environment
+#### Servlet Container
 Servlet Container required: **Tomcat 10+**(Jakarta Servlet API 5 support required)
 
 Application should be deployed according to used Servlet Container rules: both .war and simply compiled classes 
 approach may be chosen
 
+#### RDBMS Server
+PostgreSQL version used during development: 14.5
+
+Before running the app, PostgreSQL server should be started and app database with its tables should be created
+1. Create project db(default name: provider)
+2. Change project db name in /src/main/webapp/WEB-INF/context.xml if needed
+3. Open created db and run PostgreSQL db creation script /sql/postgres/create_db.sql
+
 ### Files uploading
+Upload path - directory for files uploading path; all the uploaded files will be place under this dir
 * To upload files(tariff images), file upload path must be specified in the DD
 * **File upload path must be outside the project directory**
 * File upload path DD context init parameter name: 'fileUploadDir'(for example: /home/provider/upload)
   * **Application process needs read, write and execute(rwx) permissions on this dir**
 * Application automatically creates subdirectories it needs(for example 'images' dir)
+
+### Default locale
+Default locale is specified in the DD(set to 'en')
+
+### Default user timezone
+Default user timezone is specified in the DD(set to 'GMT+2')
+
+### Locate properties file
+Locale properties file - properties file that contains (locale, user friendly language title) pairs
+
+Locale properties file path is specified in the DD(context init param name: localesPropertiesFilePath)
 
 ## Architecture and design specifics
 ### General
@@ -83,7 +110,7 @@ approach may be chosen
 * Commands use Services. Services use DAOs and other Services
 
 ### Database structure
-#### Relations
+Relations:
 * User : UserPassword - 1:1
 * User : UserAccount - 1:1
 * UserAccount : Subscription - 1:M
