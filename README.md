@@ -64,9 +64,17 @@ may be hidden instead**
       * may block and unblock Users of _ADMIN_ role
 
 ## Deployment
-1. Install Servlet container supporting Jakarta Servlet API 5.0
-   * for example Tomcat 10
-2. Place this app
+Servlet Container required: **Tomcat 10+**(Jakarta Servlet API 5 support required)
+
+Application should be deployed according to used Servlet Container rules: both .war and simply compiled classes 
+approach may be chosen
+
+### Files uploading
+* To upload files(tariff images), file upload path must be specified in the DD
+* **File upload path must be outside the project directory**
+* File upload path DD context init parameter name: 'fileUploadDir'(for example: /home/provider/upload)
+  * **Application process needs read, write and execute(rwx) permissions on this dir**
+* Application automatically creates subdirectories it needs(for example 'images' dir)
 
 ## Architecture and design specifics
 ### General
