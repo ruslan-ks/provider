@@ -1,5 +1,6 @@
 package com.provider.service;
 
+import com.provider.dao.DaoFactory;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.Currency;
 import com.provider.entity.user.User;
@@ -14,19 +15,16 @@ import java.util.Optional;
 public abstract class AccountService extends AbstractService {
     protected AccountService() throws DBException {}
 
+    protected AccountService(@NotNull DaoFactory daoFactory) throws DBException{
+        super(daoFactory);
+    }
+
     /**
      * Returns list containing all accounts belonging to user with a specified id
      * @param userId user id
      * @return List containing all accounts belonging to user with a specified id
      */
     public abstract @NotNull List<UserAccount> findUserAccounts(long userId) throws DBException;
-
-    /**
-     * Returns optional containing UserAccount with specified id
-     * @param accountId account id
-     * @return Optional containing account with specified id if found, empty optional owherwise
-     */
-    public abstract @NotNull Optional<UserAccount> findAccount(long accountId) throws DBException;
 
     /**
      * Replenish account and save changes to db

@@ -1,5 +1,6 @@
 package com.provider.service.impl;
 
+import com.provider.dao.DaoFactory;
 import com.provider.dao.UserAccountDao;
 import com.provider.dao.exception.DBException;
 import com.provider.entity.Currency;
@@ -22,24 +23,16 @@ public class AccountServiceImpl extends AccountService {
 
     AccountServiceImpl() throws DBException {}
 
+    public AccountServiceImpl(@NotNull DaoFactory daoFactory) throws DBException {
+        super(daoFactory);
+    }
+
     @Override
     public @NotNull List<UserAccount> findUserAccounts(long userId) throws DBException {
         try (var connection = connectionSupplier.get()) {
             final UserAccountDao userAccountDao = daoFactory.newUserAccountDao();
             userAccountDao.setConnection(connection);
             return userAccountDao.findAll(userId);
-        } catch (SQLException ex) {
-            logFailedToCloseConnection(logger, ex);
-            throw new DBException(ex);
-        }
-    }
-
-    @Override
-    public @NotNull Optional<UserAccount> findAccount(long accountId) throws DBException {
-        try (var connection = connectionSupplier.get()) {
-            final UserAccountDao userAccountDao = daoFactory.newUserAccountDao();
-            userAccountDao.setConnection(connection);
-            return userAccountDao.findByKey(accountId);
         } catch (SQLException ex) {
             logFailedToCloseConnection(logger, ex);
             throw new DBException(ex);
