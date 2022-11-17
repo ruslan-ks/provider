@@ -1,5 +1,5 @@
 # provider
-Provider Java web application
+Provider Java Servlet web application
 
 _**(Internet) Provider** is an organization that provides services for accessing, using, or participating in the 
 Internet; this specific provider may also provide **any other kind of services imaginable, such as TV, mobile network 
@@ -92,18 +92,17 @@ Upload path - directory for files uploading path; all the uploaded files will be
   * **Application process needs read, write and execute(rwx) permissions on this dir**
 * Application automatically creates subdirectories it needs(for example 'images' dir)
 
-### Default locale
+### Locales
 Default locale is specified in the DD(set to 'en')
 
-### Default user timezone
-Default user timezone is specified in the DD(set to 'GMT+2')
-
-### Locate properties file
 Locale properties file - properties file that contains (locale, user friendly language title) pairs
 
 Locale properties file path is specified in the DD(context init param name: localesPropertiesFilePath)
 
-## Architecture and design specifics
+### Default user timezone
+Default user timezone is specified in the DD(set to 'GMT+2')
+
+## Design specifics
 ### General
 * MVC architecture is applied.
 * Front Controller pattern is applied along with Command pattern, so there is only one Servlet per app
@@ -135,10 +134,12 @@ Relations:
 calling DB methods
 * DAO instances **NEVER close Connection**, it must be closed(returned to pool) by the calling code
 
-#### Testing
+### Testing
+Testing is done using JUnit 5 and Mockito.
+
+Coverage achieved: 40% methods
+
+#### Dao testing
 Dao testing is implemented using test database with the structure similar to the production one.
 Test db is created using project db tables creation script(/sql/postgres/create_db.sql)
-
-
-
 
