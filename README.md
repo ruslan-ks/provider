@@ -29,8 +29,8 @@ Design patterns used:
 * PRG
 * and so on
 
-## Domain specifics
-
+## Business logic and app capabilities
+Business logic implemented in this app
 1. The User is provided with a list of Services (Telephone, Internet, Cable TV, IP-TV,etc.) and a list of Tariffs. 
 2. Tariff includes at least one Service, has certain rate and duration. **Once created, it can never be deleted, 
 may be hidden instead**
@@ -63,7 +63,7 @@ may be hidden instead**
       * may create Users of _ADMIN_ role
       * may block and unblock Users of _ADMIN_ role
 
-## Deployment
+## Deployment and Configuration
 What one needs to deploy and start using this app
 
 _If any of the context init parameter names(specified in the DD) you need is not listed here, just take a look
@@ -102,6 +102,9 @@ Locale properties file path is specified in the DD(context init param name: loca
 ### Default user timezone
 Default user timezone is specified in the DD(set to 'GMT+2')
 
+### Logging
+Log4j2 is used along with slf4j, so just find log4j2 config file /src/main/resources/log4j2.xml
+
 ## Design specifics
 ### General
 * MVC architecture is applied.
@@ -116,8 +119,12 @@ Relations:
 * Subscription : Tariff M:1
 * Tariff : Service - M:M
 
+Content localization support is achieved via content tables duplicating. Such tables contain translated content 
+data and locale only. **Any significant content(for example price, duration) is never duplicated**. 
+Translation tables: tariff_translations, service_translations
+
 #### Database scheme
-![Database scheme](img/postgres_db_scheme.png)
+![Database scheme](img/postgres_db_scheme.png "Database scheme")
 
 ### Command classes
 * Command instances are obtained via factory instance
@@ -128,7 +135,7 @@ Relations:
   * AdminCommand abstract class is a base class for commands that may be executed by Users of _ADMIN_ role  
   or higher(_ROOT_)
 
-### DAO
+### DAO classes
 * All DAO classes extend EntityDao
 * DAO instances **obtain Connection from the calling code**, so setConnection() method must always be called before 
 calling DB methods
@@ -142,4 +149,3 @@ Coverage achieved: 40% methods
 #### Dao testing
 Dao testing is implemented using test database with the structure similar to the production one.
 Test db is created using project db tables creation script(/sql/postgres/create_db.sql)
-
