@@ -1,8 +1,6 @@
 # provider
 Provider Java web application
 
-_by Ruslan Kostiuk_
-
 _**(Internet) Provider** is an organization that provides services for accessing, using, or participating in the Internet; 
 this specific provider may also provide **any other kind of services imaginable, such as TV, mobile network and so on**._
 
@@ -36,33 +34,33 @@ Design patterns used:
 2. Tariff includes at least one Service, has certain rate and duration. **Once created, it can never be deleted, 
 may be hidden instead**
 3. Tariff list supports:
-    * sorting
-        * alphabetically(a-z, z-a)
-        * by price
-    * filtering by Services included
-    * pagination
+   * sorting
+     * alphabetically(a-z, z-a)
+     * by price
+   * filtering by Services included
+   * pagination
 4. Tariff data may be downloaded as PDF
 5. The User can choose and Subscribe to one or more services at a certain rate
 6. Subscription includes Tariff and payment time data
 7. The User has an Account they can replenish. 
 8. Funds are withdrawn from the account by the system depending on the User Subscriptions
-    * If the amount in the Account is not enough, the system shows the User the message about it
-    (and imaginary stops supplying unpaid Subscriptions Service(s)).
-    * The required amount is withdrawn automatically after the user replenishes their Account
-    (this means Subscription Services are now supplied again)
+   * If the amount in the Account is not enough, the system shows the User the message about it
+   (and imaginary stops supplying unpaid Subscriptions Service(s)).
+   * The required amount is withdrawn automatically after the user replenishes their Account
+   (this means Subscription Services are now supplied again)
 9. Supported User roles:
-    1) GUEST - unauthorized user; no permissions
-    2) MEMBER - authorized user; has an Account, may authorize and buy subscriptions
-    3) ADMIN - manages users, services and tariffs:
-        * may register Users of _MEMBER_ role
-        * may ban and unban Users of _MEMBER_ role
-        * may create Services
-        * may create Tariffs
-        * may update Tariffs
-        * may hide Tariffs
-    4) ROOT - has _ADMIN_ rights, + manages Users of _ADMIN_ role:
-        * may create Users of _ADMIN_ role
-        * may block and unblock Users of _ADMIN_ role
+   1) GUEST - unauthorized user; no permissions
+   2) MEMBER - authorized user; has an Account, may replenish it; may authorize and buy subscriptions
+   3) ADMIN - manages users, services and tariffs:
+      * may register Users of _MEMBER_ role
+      * may ban and unban Users of _MEMBER_ role
+      * may create Services
+      * may create Tariffs
+      * may update Tariffs
+      * may hide Tariffs
+   4) ROOT - has _ADMIN_ rights + manages Users of _ADMIN_ role:
+      * may create Users of _ADMIN_ role
+      * may block and unblock Users of _ADMIN_ role
 
 ## Architecture and design specifics
 ### General:
@@ -70,17 +68,29 @@ may be hidden instead**
 * Front Controller pattern is applied along with Command pattern, so there is only one Servlet per app
 * Commands use Services. Services use DAOs and other Services
 
+### Database structure
+
+* User : UserPassword - 1:1
+* User : UserAccount - 1:1
+* UserAccount : Subscription - 1:M
+* Subscription : Tariff M:1
+* Tariff : Service - M:M
+
+#### Database scheme
+![Database scheme](img/postgres_db_scheme.png)
+
 ### Command classes
 * Command instances are obtained via factory instance
 * FrontCommand abstract class is a base class for all command classes
-* Command hierarchy controlls user authorization
-* MemberCommand abstract class is a base class for commands that may be executed by any authorized User
-* AdminCommand abstract class is a base class for commands that may be executed by Users of _ADMIN_ role permissions 
-or higher
+* Command hierarchy controls user authorization
+  * UserAccessCommand overrides execute() method and adds methods for authentication control
+  * MemberCommand abstract class is a base class for commands that may be executed by any authorized User
+  * AdminCommand abstract class is a base class for commands that may be executed by Users of _ADMIN_ role  
+  or higher(_ROOT_)
 
 ### DAO
 * All DAO classes extend EntityDao
-* DAO instances **obtain Connaction from the calling code**, so setConnection() method must always be called before 
+* DAO instances **obtain Connection from the calling code**, so setConnection() method must always be called before 
 calling DB methods
 * DAO instances **NEVER close Connection**, it must be closed(returned to pool) by the calling code
 
