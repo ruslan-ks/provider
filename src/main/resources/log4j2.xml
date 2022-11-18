@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration monitorInterval="86400"> <!-- Reload configuration every 24 hours -->
     <Properties>
-        <Property name="logs_dir">/var/log/provider</Property>
+        <Property name="logs_dir">/home/provider/log</Property>
         <Property name="log_file">${logs_dir}/log.txt</Property>
         <Property name="logs_archive">${logs_dir}/archive</Property>
         <Property name="archived_log">${logs_archive}/$${date:yyyy-MM-dd}/%d{yyyy-MM-dd}_%i.log.gz</Property>
@@ -14,24 +14,21 @@
             <PatternLayout pattern="%style{%date{DEFAULT}}{yellow} [%t] %highlight{%-5level}{
                     FATAL=bg_red, ERROR=red, WARN=yellow, INFO=green}: %message%n%style{%exception}{red}"/>
         </Console>
-        <!--
         <RollingFile name="RollingTXTFileAppender" fileName="${log_file}"
                 filePattern="${archived_log}">
             <PatternLayout pattern="%d{DEFAULT} [%t] %-5level %message%n"/>
             <Policies>
                 <OnStartupTriggeringPolicy/>
-
                 <SizeBasedTriggeringPolicy size="8 kB"/>
-
                 <TimeBasedTriggeringPolicy interval="12" modulate="true"/>
             </Policies>
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
-        -->
     </Appenders>
     <Loggers>
         <Root level="TRACE">
             <AppenderRef ref="ColoredConsoleAppender"/>
+            <AppenderRef ref="RollingTXTFileAppender"/>
         </Root>
     </Loggers>
 </Configuration>
