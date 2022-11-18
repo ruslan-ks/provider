@@ -4,9 +4,6 @@ import com.provider.constants.AppInitParams;
 import com.provider.constants.attributes.AppAttributes;
 import com.provider.service.*;
 import com.provider.dao.exception.DBException;
-import com.provider.entity.user.User;
-import com.provider.entity.user.impl.UserImpl;
-import com.provider.service.exception.ValidationException;
 import com.provider.service.impl.ServiceFactoryImpl;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.*;
@@ -23,9 +20,6 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @WebListener
 public class AppListener implements ServletContextListener {
@@ -37,9 +31,6 @@ public class AppListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         setAppLocales(servletContextEvent.getServletContext());
         setTariffImagesUploadPath(servletContextEvent.getServletContext());
-
-        tryCreateRootUser();
-        tryCreateTestUsers();
 
         startSubscriptionRenewalExecutor();
 
@@ -88,60 +79,6 @@ public class AppListener implements ServletContextListener {
         //final String tariffImagesUploadPath = servletContext.getRealPath("") + File.separator + tariffImageDir;
         final String fileUploadDir = servletContext.getInitParameter(AppInitParams.FILE_UPLOAD_DIR);
         final Path imageUploadPath = Paths.get(fileUploadDir, "images");
-
         servletContext.setAttribute(AppAttributes.TARIFF_IMAGE_UPLOAD_DIR_PATH, imageUploadPath.toString());
-    }
-
-    public void tryCreateRootUser() {
-        try {
-            // TODO: fix this: root object doesn't get updated if root user already exists in db.
-            User root = UserImpl.of(0, "root", "root", "root", "000000",
-                    User.Role.ROOT, User.Status.ACTIVE);
-            final ServiceFactory serviceFactory = ServiceFactoryImpl.newInstance();
-            final UserService userService = serviceFactory.getUserService();
-            final Optional<User> found = userService.findUserByLogin(root.getLogin());
-            if (found.isEmpty()) {
-                // Create and insert new root user
-                final boolean inserted = userService.insertUser(root, "password");
-                logger.info("Init: inserted root user: {}", inserted);
-            }
-        } catch (DBException ex) {
-            logger.error("Failed to create root user", ex);
-        } catch (ValidationException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void tryCreateTestUsers() {
-        final ServiceFactory serviceFactory = ServiceFactoryImpl.newInstance();
-        final UserService userService;
-        try {
-            userService = serviceFactory.getUserService();
-        } catch (DBException ex) {
-            throw new RuntimeException(ex);
-        }
-
-        final Map<User, String> testUsers = getTestUsers();
-        for (var entry : testUsers.entrySet()) {
-            try {
-                final Optional<User> found = userService.findUserByLogin(entry.getKey().getLogin());
-                if (found.isEmpty()) {
-                    userService.insertUser(entry.getKey(), entry.getValue());
-                }
-                logger.info("Inserted test user: {}", entry.getKey());
-            } catch (DBException ex) {
-                logger.error("Failed to create test user: " + entry.getKey(), ex);
-            } catch (ValidationException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    private Map<User, String> getTestUsers() {
-        return Stream.iterate(2, i -> ++i)
-                .map(i -> UserImpl.of(0, "name" + i, "surname" + i, "user" + i,
-                        String.valueOf(i).repeat(10).substring(0, 10), User.Role.MEMBER, User.Status.ACTIVE))
-                .limit(10)
-                .collect(Collectors.toMap(Function.identity(), u -> "pass"));
     }
 }

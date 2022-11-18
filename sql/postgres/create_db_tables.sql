@@ -144,15 +144,4 @@ CREATE TABLE subscriptions(
     FOREIGN KEY(tariff_id) REFERENCES tariffs(id)
 );
 
-insert into services(name, description)
-values
-    ('Internet', 'Fast internet - You will like it'),
-    ('TV', 'More than 1000 channels'),
-    ('Mobile network', 'The whole world in your pocket');
-insert into service_translations(service_id, name, description, locale)
-values
-    (1, 'Інтернет', 'Швидкий інтернет', 'uk'),
-    (2, 'Телебачення', 'Ви ще не викинули ящик?', 'uk');
-
-
 END;

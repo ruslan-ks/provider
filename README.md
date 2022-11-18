@@ -50,7 +50,7 @@ may be hidden instead**
    * The required amount is withdrawn automatically after the user replenishes their Account
    (this means Subscription Services are now supplied again)
 9. Supported User roles:
-   1) GUEST - unauthorized user; no permissions
+   1) GUEST - unauthorized user; may thumb through the tariff catalog
    2) MEMBER - authorized user; has an Account, may replenish it; may authorize and buy subscriptions
    3) ADMIN - manages users, services and tariffs:
       * may register Users of _MEMBER_ role
@@ -106,7 +106,7 @@ Coverage achieved: 40%+ methods
 
 #### Dao testing
 Dao testing is implemented using test database with the structure similar to the production one.
-Test db is created using project db tables creation script(/sql/postgres/create_db.sql)
+Test db is created using project db tables creation script(/sql/postgres/create_db_tables.sql)
 
 ## Deployment and Configuration
 What one needs to deploy and start using this app
@@ -124,10 +124,16 @@ approach may be chosen
 #### RDBMS Server
 PostgreSQL version used during development: 14.5
 
+Db creation and startup data insertion scripts reside under /sql/postgres directory.
+
 Before running the app, PostgreSQL server should be started and app database with its tables should be created
 1. Create project db(default name: provider)
 2. Change project db name in /src/main/webapp/WEB-INF/context.xml if needed
-3. Open created db and run PostgreSQL db creation script /sql/postgres/create_db.sql
+3. Open created db
+4. Run PostgreSQL db creation script /sql/postgres/create_db_tables.sql
+   * psql command: \i sql/postgres/create_db_tables.sql
+5. Run PostgreSQL db data dump script /sql/postgres/db_data_dump.sql
+    * psql command: \i sql/postgres/db_data_dump.sql
 
 ### Files uploading
 Upload path - directory for files uploading path; all the uploaded files will be place under this dir
