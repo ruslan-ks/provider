@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -36,10 +37,37 @@ public abstract class AbstractAccountServiceTest extends AbstractServiceTest {
             when(daoFactory.newUserAccountDao()).thenReturn(userAccountDao);
 
             assertTrue(accountService.replenish(userAccount, amount));
-
             assertEquals(amount, userAccount.getAmount());
 
             verify(userAccountDao).update(userAccount);
+        }
+
+        @ParameterizedTest
+        @MethodSource("com.provider.TestData#userStream")
+        public void testFindUserAccount(User user) throws DBException {
+            final UserAccount userAccount = entityFactory.newUserAccount(1, user.getId(), Currency.USD);
+            userAccount.replenish(BigDecimal.valueOf(user.getId() * 11 + 10));
+            final List<UserAccount> userAccountList = List.of(userAccount);
+            when(userAccountDao.findAll(user.getId())).thenReturn(userAccountList);
+            when(daoFactory.newUserAccountDao()).thenReturn(userAccountDao);
+
+            final var found = accountService.findUserAccount(user);
+            assertEquals(userAccount, found);
+        }
+    }
+
+    @Nested
+    class Negative {
+        @ParameterizedTest
+        @MethodSource("com.provider.TestData#userStream")
+        public void testReplenishWithNegativeAmount(User user) throws DBException {
+            final UserAccount userAccount = entityFactory.newUserAccount(1, user.getId(), Currency.USD);
+            final BigDecimal amount = BigDecimal.valueOf(-user.getId() * 11 -100);
+            when(daoFactory.newUserAccountDao()).thenReturn(userAccountDao);
+
+            assertThrows(ValidationException.class, () -> accountService.replenish(userAccount, amount));
+
+            verify(userAccountDao, never()).update(userAccount);
         }
     }
 }
