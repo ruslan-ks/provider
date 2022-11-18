@@ -25,6 +25,7 @@ import java.util.Queue;
 /**
  * The only servlet of the whole application. All requests are handled here.
  * Uses Command pattern to obtain a command for request handling, then executes this command.
+ * PRG is also implemented here
  */
 @WebServlet(name = "FrontControllerServlet", value = "/controller")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024,
