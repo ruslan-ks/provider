@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Queue;
 
@@ -97,7 +98,7 @@ public class FrontControllerServlet extends HttpServlet {
         final var messagesAttr = (Queue<Pair<CommandResult.MessageType, String>>)
                 session.getAttribute(SessionAttributes.MESSAGES);
         if (messagesAttr == null) {
-            session.setAttribute(SessionAttributes.MESSAGES, messages);
+            session.setAttribute(SessionAttributes.MESSAGES, new LinkedList<>(messages));
         } else {
             messagesAttr.addAll(messages);
         }
