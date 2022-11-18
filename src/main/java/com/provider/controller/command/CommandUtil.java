@@ -47,7 +47,12 @@ public class CommandUtil {
         }
     }
 
-    // TODO: javadoc
+    /**
+     * Parses integer value; throws {@link CommandParamException} if value cannot be parsed
+     * @param value value to be parsed
+     * @return parsed integer value
+     * @throws CommandParamException if value cannot be parsed
+     */
     public static int parseIntParam(@NotNull String value) throws CommandParamException {
         try {
             return Integer.parseInt(value);
@@ -56,6 +61,12 @@ public class CommandUtil {
         }
     }
 
+    /**
+     * Parses integer value; throws {@link CommandParamException} if value cannot be parsed
+     * @param values values to be parsed
+     * @return parsed values set
+     * @throws CommandParamException if at least one value cannot be parsed
+     */
     public static Set<Integer> parseIntParams(@NotNull Collection<String> values) throws CommandParamException {
         try {
             return values.stream()
@@ -66,7 +77,12 @@ public class CommandUtil {
         }
     }
 
-    // TODO: javadoc
+    /**
+     * Parses long value; throws {@link CommandParamException} if value cannot be parsed
+     * @param value value to be parsed
+     * @return parsed long value
+     * @throws CommandParamException if value cannot be parsed
+     */
     public static long parseLongParam(@NotNull String value) throws CommandParamException {
         try {
             return Long.parseLong(value);
@@ -75,6 +91,12 @@ public class CommandUtil {
         }
     }
 
+    /**
+     * Parses {@link User.Status} value; throws {@link CommandParamException} if value cannot be parsed
+     * @param value value to be parsed
+     * @return parsed value
+     * @throws CommandParamException if value cannot be parsed
+     */
     public static @NotNull User.Status parseUserStatusParam(@NotNull String value) throws CommandParamException {
         try {
             return User.Status.valueOf(value);
@@ -83,6 +105,12 @@ public class CommandUtil {
         }
     }
 
+    /**
+     * Parses {@link User.Role} value; throws {@link CommandParamException} if value cannot be parsed
+     * @param value value to be parsed
+     * @return parsed value
+     * @throws CommandParamException if value cannot be parsed
+     */
     public static @NotNull User.Role parseUserRoleParam(@NotNull String value) throws CommandParamException {
         try {
             return User.Role.valueOf(value);
@@ -91,6 +119,12 @@ public class CommandUtil {
         }
     }
 
+    /**
+     * Parses {@link Tariff.Status} value; throws {@link CommandParamException} if value cannot be parsed
+     * @param value value to be parsed
+     * @return parsed value
+     * @throws CommandParamException if value cannot be parsed
+     */
     public static @NotNull Tariff.Status parseTariffStatusParam(@NotNull String value) throws CommandParamException {
         try {
             return Tariff.Status.valueOf(value);

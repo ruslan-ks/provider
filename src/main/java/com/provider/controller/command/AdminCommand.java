@@ -7,6 +7,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Base class for ADMIN access rights command
+ */
 public abstract class AdminCommand extends MemberCommand {
     public AdminCommand(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
         super(request, response);

@@ -215,8 +215,8 @@ public abstract class FrontCommand {
      * If no parameter found, default value is used<br><br>
      * Pagination parameters: <br>
      * - Page number: name: {@code PaginationParams.PAGE_NUMBER}, default value: 1<br>
-     * - Page size: name: {@code PaginationParams.PAGE_SIZE}, default value: constructor argument - {@code defaultPageSize}
-     * or 5 if no arg constructor used<br><br>
+     * - Page size: name: {@code PaginationParams.PAGE_SIZE}, default value: constructor argument -
+     * {@code defaultPageSize} or 5 if no arg constructor used<br><br>
      * Page size and offset can be obtained via getters<br>
      * For appropriate pagination, {@code computeAndSetPageCountAttribute} method must be called after object creation
      */
