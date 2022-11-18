@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-// TODO: replace this filter with command
 @WebFilter(filterName = "SignInAccessFilter", urlPatterns = {"/signIn"})
 public class SignInAccessFilter implements Filter {
     private static final Logger logger = LoggerFactory.getLogger(SignInAccessFilter.class);
