@@ -1,5 +1,6 @@
 <%@ attribute name="tariffDto" type="com.provider.entity.dto.TariffDto" required="true" rtexprvalue="true" %>
 <%@ tag dynamic-attributes="dynamicAttributes" body-content="scriptless" %>
+<%@ tag import="com.provider.constants.Paths" %>
 <%@ tag import="com.provider.constants.params.CommandParams" %>
 <%@ tag import="com.provider.constants.params.TariffParams" %>
 <%@ taglib prefix="pro" uri="http://provider.com" %>
@@ -15,7 +16,7 @@
                 <h4 class="card-title">${tariffDto.tariff.title}</h4>
             </div>
             <div class="col-5 ms-auto">
-                <form action="#">
+                <form action="${Paths.CONTROLLER}">
                     <input type="text" name="${CommandParams.COMMAND}" value="${CommandParams.DOWNLOAD_TARIFF_PDF}"
                            readonly hidden>
                     <input type="number" name="${TariffParams.ID}" value="${tariffDto.tariff.id}" readonly hidden>
