@@ -15,15 +15,13 @@ public class CharsetFilter implements Filter {
 
     private String defaultCharset;
 
+    @Override
     public void init(FilterConfig config) throws ServletException {
         defaultCharset = config.getInitParameter("defaultCharset");
         if (defaultCharset == null) {
             throw new RuntimeException("Default charset init parameter not specified");
         }
         logger.info("Filter {} was successfully initialized", this);
-    }
-
-    public void destroy() {
     }
 
     @Override
