@@ -1,12 +1,5 @@
 package com.provider.service.impl;
 
-import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Paragraph;
-
 import com.provider.dao.ServiceDao;
 import com.provider.dao.TariffDao;
 import com.provider.dao.TariffDurationDao;
@@ -19,13 +12,14 @@ import com.provider.entity.product.TariffDuration;
 import com.provider.service.TariffService;
 import com.provider.service.exception.ValidationException;
 import com.provider.sorting.TariffOrderRule;
+import com.provider.util.ItextTariffPdfWriter;
+import com.provider.util.TariffPdfWriter;
 import com.provider.validation.ServiceValidator;
 import com.provider.validation.TariffValidator;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.*;
@@ -260,36 +254,7 @@ public class TariffServiceImpl extends TariffService {
 
     @Override
     public void writeTariffPdf(@NotNull TariffDto tariffDto, @NotNull OutputStream os) {
-        final Tariff tariff = tariffDto.getTariff();
-        final PdfWriter pdfWriter = new PdfWriter(os);
-        final PdfDocument pdfDocument = new PdfDocument(pdfWriter);
-        pdfDocument.addNewPage();
-
-        try (var document = new Document(pdfDocument)) {
-            final PdfFont font = PdfFontFactory.createFont("fonts/LiberationSerif-Regular.ttf");
-            document.setFont(font);
-
-            final var titleParagraph = new Paragraph(tariff.getTitle());
-            document.add(titleParagraph);
-
-            final var priceParagraph = new Paragraph("Price: $" + tariff.getUsdPrice());
-            document.add(priceParagraph);
-
-            final TariffDuration duration = tariffDto.getDuration();
-            final var durationParagraph = new Paragraph("Duration: " + duration.getMonths()
-                    + " months, " + duration.getMinutes() + " minutes");
-            document.add(durationParagraph);
-
-            final var descriptionParagraph = new Paragraph(tariff.getDescription());
-            document.add(descriptionParagraph);
-
-            final var list = new com.itextpdf.layout.element.List();
-            for (var service : tariffDto.getServices()) {
-                list.add(service.getName() + ": " + service.getDescription());
-            }
-            document.add(list);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        final TariffPdfWriter tariffPdfWriter = ItextTariffPdfWriter.newInstance();
+        tariffPdfWriter.write(tariffDto, os);
     }
 }
