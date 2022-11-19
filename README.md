@@ -135,6 +135,13 @@ Before running the app, PostgreSQL server should be started and app database wit
 5. Run PostgreSQL db data dump script /sql/postgres/db_data_dump.sql
     * psql command: \i sql/postgres/db_data_dump.sql
 
+**Default users created by db dump script credentials:**
+
+| Login | Password | Comment                |
+|-------|----------|------------------------|
+| root  | password | Root user              |
+| userN | pass     | N - number(1, 2, 3...) |
+
 ### Files uploading
 Upload path - directory for files uploading path; all the uploaded files will be place under this dir
 * To upload files(tariff images), file upload path must be specified in the DD
