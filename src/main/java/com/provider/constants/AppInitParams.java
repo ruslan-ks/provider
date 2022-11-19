@@ -12,6 +12,11 @@ public class AppInitParams {
     public static final String DEFAULT_LOCALE = "defaultLocale";
 
     /**
+     * Default user timezone - used when showing date and time
+     */
+    public static final String DEFAULT_USER_TIMEZONE = "defaultUserTimezone";
+
+    /**
      * File upload directory path parameter.
      */
     public static final String FILE_UPLOAD_DIR = "fileUploadDir";

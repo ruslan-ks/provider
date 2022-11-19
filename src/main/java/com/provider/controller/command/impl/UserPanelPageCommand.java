@@ -34,6 +34,8 @@ public class UserPanelPageCommand extends MemberCommand {
                 subscriptionService.findActiveSubscriptionsFullInfo(userUsdAccount, getLocale());
         request.setAttribute(RequestAttributes.USER_ACTIVE_SUBSCRIPTION_DTOS, userActiveSubscriptionDtoList);
 
+        System.out.println(userActiveSubscriptionDtoList);
+
         return newCommandResult(Paths.USER_PANEL_JSP);
     }
 }
