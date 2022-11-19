@@ -31,7 +31,7 @@ public class DownloadTariffPdfCommand extends FrontCommand {
         final String tariffIdParam = getRequiredParam(TariffParams.ID);
         final int tariffId = CommandUtil.parseIntParam(tariffIdParam);
 
-        final String locale = "en";
+        final String locale = getLocale();
 
         final TariffService tariffService = serviceFactory.getTariffService();
         final Optional<TariffDto> tariffDtoOptional = tariffService.findTariffFullInfoById(tariffId, locale);

@@ -1,9 +1,12 @@
 package com.provider.service.impl;
 
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
+
 import com.provider.dao.ServiceDao;
 import com.provider.dao.TariffDao;
 import com.provider.dao.TariffDurationDao;
@@ -22,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.*;
@@ -262,6 +266,9 @@ public class TariffServiceImpl extends TariffService {
         pdfDocument.addNewPage();
 
         try (var document = new Document(pdfDocument)) {
+            final PdfFont font = PdfFontFactory.createFont("fonts/LiberationSerif-Regular.ttf");
+            document.setFont(font);
+
             final var titleParagraph = new Paragraph(tariff.getTitle());
             document.add(titleParagraph);
 
@@ -281,6 +288,8 @@ public class TariffServiceImpl extends TariffService {
                 list.add(service.getName() + ": " + service.getDescription());
             }
             document.add(list);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
