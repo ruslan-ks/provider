@@ -64,11 +64,6 @@ may be hidden instead**
       * may block and unblock Users of _ADMIN_ role
 
 ## Design specifics
-### General
-* MVC architecture is applied.
-* Front Controller pattern is applied along with Command pattern, so there is only one Servlet per app
-* Commands use Services. Services use DAOs and other Services
-
 ### Database structure
 Relations:
 * User : UserPassword - 1:1
@@ -83,6 +78,11 @@ Translation tables: tariff_translations, service_translations
 
 #### Database scheme
 ![Database scheme](img/postgres_db_scheme.png "Database scheme")
+
+### Architecture
+* MVC architecture is applied.
+* Front Controller pattern is applied along with Command pattern, so there is only one Servlet per app
+* Commands use Services. Services use DAOs and other Services
 
 ### Command classes
 * Command instances are obtained via factory instance
