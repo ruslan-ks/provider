@@ -22,9 +22,9 @@ SET row_security = off;
 
 COPY public.services (id, name, description) FROM stdin;
 1	Internet	Fast internet - You will like it
-2	TV	More than 1000 channels
 3	Mobile network	The whole world in your pocket
-4	Dark magic	1000 of magic points
+2	TV	Do you really think you need it?
+4	Dark magic	Your favourite necromancy
 5	Satellite TV	More than 1000 channels
 \.
 
@@ -36,6 +36,9 @@ COPY public.services (id, name, description) FROM stdin;
 COPY public.service_translations (service_id, locale, name, description) FROM stdin;
 1	uk	Інтернет	Швидкий інтернет
 2	uk	Телебачення	Ви ще не викинули ящик?
+5	uk	Супутникове ТБ	Більше 1000 каналів
+4	uk	Темна магія	Відтепер вам доступна некромантія!
+3	uk	Мобільний інтернет	Цілий світ в вашій кишені
 \.
 
 
@@ -45,7 +48,11 @@ COPY public.service_translations (service_id, locale, name, description) FROM st
 
 COPY public.tariffs (id, title, description, status, usd_price, image_file_name) FROM stdin;
 1	Internet	How can you live without it???	ACTIVE	10.00	1192569022img
-2	TV Madness	Even more TV than you need	ACTIVE	1000.00	584876309img
+2	TV Madness	Even more TV than you need	ACTIVE	1000.00	556852510connectingtotheinternet_image.png
+3	Стартовий інтернет-пакет	Цей пакет вам точно потрібен!	ACTIVE	100.00	892007640internet.jpg
+4	Sattelite TV	Kind of gripping description	ACTIVE	50.00	1512866863connectingtotheinternet_image.png
+5	The most unusual tariff	Are you strong enough to carry this one?	ACTIVE	999999.00	1249973391magic.jpg
+6	Mobile pack	Mobile network pack	ACTIVE	50.00	1943274817img
 \.
 
 
@@ -85,7 +92,7 @@ COPY public.user_accounts (id, user_id, currency, amount) FROM stdin;
 10	10	USD	0.00
 11	11	USD	0.00
 12	12	USD	0.00
-1	1	USD	0.00
+1	1	USD	840.00
 \.
 
 
@@ -100,6 +107,13 @@ COPY public.subscriptions (id, user_account_id, tariff_id, start_time, last_paym
 4	1	1	2022-11-11 21:16:31.851938+02	2022-11-13 12:44:07.882283+02	INACTIVE
 5	1	2	2022-11-13 13:03:06.682139+02	2022-11-13 13:03:06.682139+02	INACTIVE
 6	1	2	2022-11-13 13:03:28.881216+02	2022-11-18 19:46:12.778903+02	INACTIVE
+8	1	1	2022-11-19 23:03:47.198508+02	2022-11-19 23:41:52.427277+02	INACTIVE
+9	1	1	2022-11-19 23:42:04.640985+02	2022-11-20 00:06:41.598628+02	INACTIVE
+7	1	2	2022-11-19 22:55:25.076342+02	2022-11-20 15:52:23.43875+02	INACTIVE
+10	1	1	2022-11-20 00:06:56.552864+02	2022-11-20 16:22:17.725023+02	INACTIVE
+13	1	3	2022-11-20 17:26:24.177727+02	2022-11-20 17:26:24.177727+02	INACTIVE
+11	1	6	2022-11-20 17:26:14.859401+02	2022-11-20 17:26:14.859401+02	INACTIVE
+12	1	1	2022-11-20 17:26:18.562441+02	2022-11-20 17:26:18.562441+02	INACTIVE
 \.
 
 
@@ -110,6 +124,10 @@ COPY public.subscriptions (id, user_account_id, tariff_id, start_time, last_paym
 COPY public.tariff_durations (tariff_id, months, minutes) FROM stdin;
 1	0	10
 2	0	3
+3	1	0
+4	1	0
+5	0	60
+6	0	60
 \.
 
 
@@ -121,6 +139,11 @@ COPY public.tariff_services (tariff_id, service_id) FROM stdin;
 1	1
 2	2
 2	5
+3	1
+3	3
+4	5
+5	4
+6	3
 \.
 
 
@@ -131,6 +154,9 @@ COPY public.tariff_services (tariff_id, service_id) FROM stdin;
 COPY public.tariff_translations (tariff_id, locale, title, description) FROM stdin;
 1	uk	Інтернет	Хіба можна без нього жити?
 2	uk	ТБ безумство	Більше каналів, ніж тобі треба
+4	uk	Супутникове телебачення	Типу дуже цікавий опис
+5	uk	Самий незвичайний тариф	Ви впевнені, що вам це треба?
+6	uk	Мобільний пакет	Пакет мобільного інтернету
 \.
 
 
@@ -158,21 +184,21 @@ COPY public.user_passwords (user_id, hash, salt, hash_method) FROM stdin;
 -- Name: services_id_seq; Type: SEQUENCE SET; Schema: public; Owner: ruslan
 --
 
-SELECT pg_catalog.setval('public.services_id_seq', 5, true);
+SELECT pg_catalog.setval('public.services_id_seq', 6, true);
 
 
 --
 -- Name: subscriptions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: ruslan
 --
 
-SELECT pg_catalog.setval('public.subscriptions_id_seq', 6, true);
+SELECT pg_catalog.setval('public.subscriptions_id_seq', 13, true);
 
 
 --
 -- Name: tariffs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: ruslan
 --
 
-SELECT pg_catalog.setval('public.tariffs_id_seq', 2, true);
+SELECT pg_catalog.setval('public.tariffs_id_seq', 6, true);
 
 
 --
