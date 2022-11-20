@@ -67,14 +67,17 @@ public class ChangeTariffImageCommand extends AdminCommand {
             Files.delete(oldImageFilePath);
             logger.info("Deleted old image: {}", oldImageFilePath);
         } catch (NoSuchFileException ex) {
-            logger.error("Failed to delete old image: {}", oldImageFilePath);
+            logger.warn("Failed to delete old image: {}", oldImageFilePath);
+        }
+        try {
+            tariff.setImageFileName(uploadedImageFileName);
+            return tryUpdateTariff(tariff, tariffService, commandResult);
+        } catch (Throwable ex) {
+            logger.error("Failed to update tariff image", ex);
             final Path uploadedImagePath = Paths.get(getImageUploadPath().toString(), uploadedImageFileName);
             Files.delete(uploadedImagePath);
             throw ex;
         }
-
-        tariff.setImageFileName(uploadedImageFileName);
-        return tryUpdateTariff(tariff, tariffService, commandResult);
     }
 
     private CommandResult tryUpdateTariff(@NotNull Tariff tariff, @NotNull TariffService tariffService,
