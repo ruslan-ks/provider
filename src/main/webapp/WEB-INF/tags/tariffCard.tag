@@ -10,18 +10,10 @@
 <div class="card border border-0 shadow rounded rounded-3 my-2" <pro:attributes map="${dynamicAttributes}"/>>
     <img src="${pro:tariffImageUrl(tariffDto.tariff.imageFileName)}" class="card-img-top"
          alt="Tariff image">
-    <div class="card-body">
+    <div class="card-body pb-0">
         <div class="row">
             <div class="col">
                 <h4 class="card-title">${tariffDto.tariff.title}</h4>
-            </div>
-            <div class="col-5 ms-auto">
-                <form action="${Paths.CONTROLLER}">
-                    <input type="text" name="${CommandParams.COMMAND}" value="${CommandParams.DOWNLOAD_TARIFF_PDF}"
-                           readonly hidden>
-                    <input type="number" name="${TariffParams.ID}" value="${tariffDto.tariff.id}" readonly hidden>
-                    <input type="submit" class="btn btn-link" value="<fmt:message key="tariffCard.downloadPdfBtn"/>">
-                </form>
             </div>
         </div>
     </div>
@@ -42,5 +34,13 @@
             </div>
         </div>
         <jsp:doBody/>
+        <div class="row">
+            <form action="${Paths.CONTROLLER}" class="col">
+                <input type="text" name="${CommandParams.COMMAND}" value="${CommandParams.DOWNLOAD_TARIFF_PDF}"
+                       readonly hidden>
+                <input type="number" name="${TariffParams.ID}" value="${tariffDto.tariff.id}" readonly hidden>
+                <input type="submit" class="btn btn-link p-0" value="<fmt:message key="tariffCard.downloadPdfBtn"/>">
+            </form>
+        </div>
     </div>
 </div>
