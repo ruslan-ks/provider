@@ -31,7 +31,6 @@
                 </li>
                 <li class="nav-item"><a href="${Paths.CATALOG_PAGE}"
                                         class="nav-link"><fmt:message key="nav.catalog"/></a></li>
-                <li class="nav-item"><a href="#" class="nav-link"><fmt:message key="nav.about"/></a></li>
                 <c:choose>
                     <c:when test="${not empty user}">
                         <li class="nav-item dropdown">
